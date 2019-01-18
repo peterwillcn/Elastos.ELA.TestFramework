@@ -1,0 +1,4 @@
+2019-01-16 22:22:45,211 [INFO ] [main] : Logging initialized @242ms
+2019-01-16 22:22:45,230 [INFO ] [main] : jetty-9.2.z-SNAPSHOT
+2019-01-16 22:22:45,272 [INFO ] [main] : Started ServerConnector@291ec15a{HTTP/1.1}{0.0.0.0:8989}
+2019-01-16 22:22:45,272 [INFO ] [main] : Started @306ms

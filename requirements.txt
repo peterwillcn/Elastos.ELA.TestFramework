@@ -1,0 +1,5 @@
+base58==1.0.0
+requests==2.18.4
+pycrypto==2.6.1
+ecdsa==0.13
+pycryptodome==3.6.6
