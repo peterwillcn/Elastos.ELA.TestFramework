@@ -5,7 +5,7 @@
 
 import os
 import json
-from utils import config
+from configs import constant
 from core.wallet.keystore import KeyStore
 
 
@@ -24,14 +24,14 @@ class KeyStoreManager(object):
         return keystores
 
     def _save_to_file(self, k):
-        path = config.KEYSTORE_FILE_NAME
+        path = constant.KEYSTORE_FILE_NAME
         if os.path.exists(path):
             with open(path, 'r') as f:
                 load_dict = json.load(f)
                 length = len(load_dict)
-                load_dict[config.KEYSTORE_MANAGER_PREFIX + str(length)] = k.to_dict()
+                load_dict[constant.KEYSTORE_MANAGER_PREFIX + str(length)] = k.to_dict()
             with open(path, 'w') as f:
                 json.dump(load_dict, f, indent=4)
         else:
             with open(path, 'w') as f:
-                json.dump({config.KEYSTORE_MANAGER_PREFIX + '0': k.to_dict()}, f, indent=4)
+                json.dump({constant.KEYSTORE_MANAGER_PREFIX + '0': k.to_dict()}, f, indent=4)

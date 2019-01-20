@@ -9,7 +9,8 @@
 import os
 import json
 import base58
-from utils import util, config
+from utils import util
+from configs import constant
 from Crypto.PublicKey import ECC
 from Crypto.Hash import SHA256
 from Crypto.Hash import RIPEMD160
@@ -28,7 +29,7 @@ class KeyStore(object):
 
     def _create_keystore(self):
 
-        ecc_key_pair = ECC.generate(curve=config.KEYSTORE_ECC_TYPE)
+        ecc_key_pair = ECC.generate(curve=constant.KEYSTORE_ECC_TYPE)
         self.private_key = ecc_key_pair.d.to_bytes()
         ecc_key_public = ecc_key_pair.public_key()
         self.public_key = util.encode_point(True, ecc_key_public)
@@ -37,7 +38,7 @@ class KeyStore(object):
         self.address = self._program_hash_to_address().decode()
 
     def _publickey_to_sign_script(self):
-        return bytes([len(self.public_key)]) + self.public_key + bytes([config.TX_STANDARD])
+        return bytes([len(self.public_key)]) + self.public_key + bytes([constant.TX_STANDARD])
 
     def _script_to_program_hash(self):
         temp = SHA256.new(self.sign_script)
@@ -45,9 +46,9 @@ class KeyStore(object):
         data = md.digest()
         sign_type = self.sign_script[len(self.sign_script) - 1]
         program_hash = None
-        if sign_type == config.TX_STANDARD:
+        if sign_type == constant.TX_STANDARD:
             program_hash = bytes([33]) + data
-        if sign_type == config.TX_MULTI_SIG:
+        if sign_type == constant.TX_MULTI_SIG:
             program_hash = bytes([18]) + data
         return program_hash
 
@@ -71,7 +72,7 @@ class KeyStore(object):
         return data
 
     def _save_to_file(self):
-        path = config.KEYSTORE_FILE_NAME
+        path = constant.KEYSTORE_FILE_NAME
         if os.path.exists(path):
             with open(path, 'r') as f:
                 load_dict = json.load(f)

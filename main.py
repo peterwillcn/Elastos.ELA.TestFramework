@@ -6,16 +6,17 @@
 # time: 2019-01-16 18:00
 # file: main.py
 
-from core.wallet import keystoremanager
+import os
+import shutil
+from configs import config
+from logs.log import Logger
+from core.deploy import deploy
+from configs import constant
 
 if __name__ == "__main__":
 
-    manager = keystoremanager.KeyStoreManager(10)
-
-    keystores = manager.keystores
-    keystore = keystores[5]
-    print(keystore.private_key.hex())
-    print(keystore.public_key.hex())
-    print(keystore.sign_script.hex())
-    print(keystore.program_hash.hex())
-    print(keystore.address)
+    d = deploy.Deploy()
+    result = d.deploy_node_environment(constant.NODE_TYPE_MAIN, 5)
+    Logger.info('[Main test] deploy result: {}'.format(result))
+    result = d.deploy_node_environment(constant.NODE_TYPE_ARBITER, 5)
+    Logger.info('[Main test] deploy result: {}'.format(result))

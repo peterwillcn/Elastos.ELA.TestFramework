@@ -9,7 +9,7 @@
 import os
 import time
 import subprocess
-from utils import config
+from configs import constant
 from logs.log import Logger
 
 
@@ -23,7 +23,7 @@ class JarService(object):
     def __init__(self):
         self.process = None
         self.running = False
-        self.command = "java -cp " + "./jars/" + config.JAR_NAME + config.JAR_HTTP_SERVICE
+        self.command = "java -cp " + "./jars/" + constant.JAR_NAME + constant.JAR_HTTP_SERVICE
         self.start()
 
     def start(self):
