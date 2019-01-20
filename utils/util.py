@@ -6,7 +6,8 @@
 # time: 2019-01-17 10:20
 # file: util.py
 
-from configs import config
+from utils import config
+
 
 def encode_point(is_compressed, ecc_publick_key):
     public_key_x = ecc_publick_key._point._x
@@ -41,4 +42,6 @@ def encode_point(is_compressed, ecc_publick_key):
     else:
         encoded_data[0] = config.NON_COMPRESSED_FLAG
     return bytes(encoded_data)
+
+
 

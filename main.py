@@ -6,19 +6,16 @@
 # time: 2019-01-16 18:00
 # file: main.py
 
-import time
-from service import jar
-
-import base58
-
-from Crypto.PublicKey import ECC
-from Crypto.Hash import SHA256
-from Crypto.Hash import RIPEMD160
-
-from logs.log import Logger
-from keystore import keystore
+from core.wallet import keystoremanager
 
 if __name__ == "__main__":
 
-    keystore = keystore.KeyStore()
-    print("keystore information: \n", keystore.to_string())
+    manager = keystoremanager.KeyStoreManager(10)
+
+    keystores = manager.keystores
+    keystore = keystores[5]
+    print(keystore.private_key.hex())
+    print(keystore.public_key.hex())
+    print(keystore.sign_script.hex())
+    print(keystore.program_hash.hex())
+    print(keystore.address)

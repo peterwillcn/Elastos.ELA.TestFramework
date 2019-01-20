@@ -7,7 +7,9 @@
 # file: log.py
 
 import time
-from configs import config
+from utils import config
+
+
 class Logger:
 
     level = 0
