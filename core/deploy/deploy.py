@@ -5,11 +5,14 @@
 
 import os
 import json
+import time
 import shutil
+
 from configs import constant
 from configs import config
 from logs.log import Logger
 from core.deploy import node
+from core.service import rpc
 
 
 class Deploy(object):
@@ -20,6 +23,7 @@ class Deploy(object):
         self.did_nodes = []
         self.token_nodes = []
         self.neo_nodes = []
+        self.rpc = rpc.RPC()
         self.tag = '[Deploy] '
         self.switch_list = self._switch_list()
         self.switch_path = self._switch_path()
@@ -35,13 +39,13 @@ class Deploy(object):
         }
         return switcher
 
-    def _switch_node(self, _config):
+    def _switch_node(self, index, data_dir, _config):
         switcher = {
-            constant.NODE_TYPE_MAIN: node.MainNode(_config),
-            constant.NODE_TYPE_ARBITER: node.ArbiterNode(_config),
-            constant.NODE_TYPE_DID: node.DidNode(_config),
-            constant.NODE_TYPE_TOKEN: node.TokenNode(_config),
-            constant.NODE_TYPE_NEO: node.NeoNode(_config)
+            constant.NODE_TYPE_MAIN: node.MainNode(index, data_dir, _config),
+            # constant.NODE_TYPE_ARBITER: node.ArbiterNode(index, data_dir, _config),
+            # constant.NODE_TYPE_DID: node.DidNode(index, data_dir, _config),
+            # constant.NODE_TYPE_TOKEN: node.TokenNode(index, data_dir, _config),
+            # constant.NODE_TYPE_NEO: node.NeoNode(index, data_dir, _config)
         }
         return switcher
 
@@ -82,13 +86,54 @@ class Deploy(object):
                                      constant.CURRENT_DATE_TIME, 'node' + str(i))
             if not os.path.exists(dest_path):
                 os.makedirs(dest_path)
-            shutil.copy(src_path, dest_path)
+            shutil.copy(src_path, dest_path + '/ela')
 
             config_path = dest_path + '/config.json'
-            n = self._switch_node(_config)[node_type]
-            n.reset_config(i)
+            n = self._switch_node(i, dest_path, _config)[node_type]
+            n.reset_config()
             with open(config_path, 'w') as f:
                 json.dump(n.config, f, indent=4)
-            self.switch_list[node_type].append(node)
+            self.switch_list[node_type].append(n)
 
+        return True
+
+    def start_nodes(self, node_type: str):
+        length = len(self.switch_list[node_type])
+        for i in range(length):
+            self.switch_list[node_type][i].start()
+            time.sleep(1)
+
+    def stop_nodes(self, node_type: str):
+        length = len(self.switch_list[node_type])
+        for i in range(length):
+            self.switch_list[node_type][i].stop()
+
+    def wait_rpc_service(self, content=1,  timeout=60):
+
+        stop_time = time.time() + timeout
+
+        while time.time() <= stop_time:
+            result = []
+            for i in range(len(self.main_nodes)):
+                count = self.rpc.get_connection_count(self.main_nodes[i].rpc_port)
+                Logger.debug('{} connection count: {}'.format(self.tag, count))
+                if count and count >= content:
+                    result.append(True)
+                else:
+                    result.append(False)
+                if result.count(True) == len(self.main_nodes):
+                    Logger.debug('{} Nodes connect with each other, '
+                                 'rpc service is successfully started.'.format(self.tag))
+                    return True
+                time.sleep(2)
+        Logger.error('{} Node can not connect with each other, wait rpc service timed out!')
+        return False
+
+    def mining_101_blocks(self):
+        hash_list = self.rpc.discrete_mining(self.main_nodes[0].rpc_port, 101)
+        if len(hash_list) != 101:
+            Logger.error("{} Discrete mining 101 blocks failed.".format(self.tag))
+            return False
+        Logger.debug('{} Discrete mining 101 blocks on success'.format(self.tag))
+        Logger.debug('{} Discrete mining 101 blocks hashes: {}'.format(self.tag, hash_list))
         return True
