@@ -11,11 +11,13 @@ import time
 import shutil
 from configs import config
 from logs.log import Logger
-from core.deploy import deploy
 from configs import constant
+from core.deploy import deploy
+from core.wallet import keystore
+from core.wallet import keystoremanager
 
-if __name__ == "__main__":
 
+def func1():
     Logger.level = 0
     d = deploy.Deploy()
     node_type = constant.NODE_TYPE_MAIN
@@ -30,9 +32,39 @@ if __name__ == "__main__":
     if result:
         Logger.info('[Main test] Wait rpc service on success')
     time.sleep(3)
+    d.check_foundation_amount()
     result = d.mining_101_blocks()
     if result:
         Logger.info('[Main test] Discrete mining 101 blocks on success.')
     time.sleep(10)
     d.stop_nodes(node_type)
+
+
+def func2():
+    k = keystoremanager.KeyStoreManager(10)
+    time.sleep(1)
+    print('length: ', len(k.key_stores))
+
+
+def func3():
+    d = deploy.Deploy()
+    result = d.deploy_node_environment(constant.NODE_TYPE_MAIN, 4)
+    Logger.info('[Main test] result = {}'.format(result))
+
+    result = d.deploy_node_environment(constant.NODE_TYPE_ARBITER, 4)
+    Logger.info('[Main test] deploy {} result: {}'.format(constant.NODE_TYPE_ARBITER, result))
+
+    result = d.deploy_node_environment(constant.NODE_TYPE_DID, 4)
+    Logger.info('[Main test] deploy {} result: {}'.format(constant.NODE_TYPE_DID, result))
+
+    result = d.deploy_node_environment(constant.NODE_TYPE_TOKEN, 4)
+    Logger.info('[Main test] deploy {} result: {}'.format(constant.NODE_TYPE_TOKEN, result))
+
+    result = d.deploy_node_environment(constant.NODE_TYPE_NEO, 4)
+    Logger.info('[Main test] deploy {} result: {}'.format(constant.NODE_TYPE_NEO, result))
+
+
+if __name__ == "__main__":
+    func3()
+
 

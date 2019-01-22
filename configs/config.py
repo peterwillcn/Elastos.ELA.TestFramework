@@ -5,25 +5,25 @@
 
 main_chain = {
   "Configuration":  {
-      "Magic": 20190120,
+      "Magic": 7530401,
       "Version": 23,
       "SeedList": [
-            "127.0.0.1:30338",
-            "127.0.0.1:31338",
-            "127.0.0.1:32338",
-            "127.0.0.1:33338",
+            "127.0.0.1:10015",
+            "127.0.0.1:10115",
+            "127.0.0.1:10215",
+            "127.0.0.1:10315",
       ],
-      "HttpInfoPort": 31333,
+      "HttpInfoPort": 10011,
       "HttpInfoStart": True,
-      "HttpRestPort": 31334,
-      "NodeOpenPort": 30866,
+      "HttpRestPort": 10012,
+      "NodeOpenPort": 10016,
       "OpenService": True,
-      "HttpWsPort": 31335,
+      "HttpWsPort": 10013,
       "WsHeartbeatInterval": 60,
-      "HttpJsonPort": 31336,
+      "HttpJsonPort": 10014,
       "NoticeServerUrl": "",
       "OauthServerUrl": "",
-      "NodePort": 31338,
+      "NodePort": 10015,
       "PrintLevel": 1,
       "IsTLS": False,
       "CertPath": "./sample-cert.pem",
@@ -62,32 +62,43 @@ main_chain = {
   }
 }
 
+
 arbiter_chain = {
   "Configuration": {
     "Magic": 7530402,
     "Version": 0,
-    "SeedList": ["127.0.0.1:10538",
-                 "127.0.0.1:11538"],
-    "NodePort": 30338,
+    "SeedList": [
+        "127.0.0.1:10025",
+        "127.0.0.1:10125",
+        "127.0.0.1:10225",
+        "127.0.0.1:10325"
+    ],
     "PrintLevel": 1,
     "SpvPrintLevel": 4,
-    "HttpJsonPort": 30336,
+    "HttpInfoPort": 10021,
+    "HttpInfoStart": True,
+    "HttpRestPort": 10022,
+    "HttpWsPort": 10023,
+    "NodePort": 10025,
+    "HttpJsonPort": 10024,
+    "NodeOpenPort": 10056,
+    "OpenService": False,
     "MainNode": {
       "Rpc": {
         "IpAddress": "127.0.0.1",
-        "HttpJsonPort": 31336
+        "HttpJsonPort": 10014
       },
-      "SpvSeedList": ["127.0.0.1:20866"],
+      "SpvSeedList": ["127.0.0.1:10016"],
       "Magic": 7630401,
       "MinOutbound": 1,
       "MaxConnections": 3,
       "FoundationAddress": "8VYXVxKKSAxkmRrfmGpQR2Kc66XhG6m3ta",
-      "DefaultPort": 30866
+      "DefaultPort": 10015
     },
     "SideNodeList": [
         {"Rpc": {
           "IpAddress": "127.0.0.1",
-          "HttpJsonPort": 33336
+          "HttpJsonPort": 10034
         },
          "ExchangeRate": 1.0,
          "GenesisBlock": "56be936978c261b2e649d58dbfaf3f23d4a868274f5522cd2adb4308a955c4a3",
@@ -109,16 +120,16 @@ arbiter_chain = {
 
 did_chain = {
   "Configuration": {
-      "Magic": 7630404,
+      "Magic": 7630403,
       "SpvMagic": 7630401,
       "Version": 23,
       "SeedList": [
-            "127.0.0.1:30608",
-            "127.0.0.1:31608",
-            "127.0.0.1:32608",
-            "127.0.0.1:33608"
+            "127.0.0.1:10035",
+            "127.0.0.1:10135",
+            "127.0.0.1:10235",
+            "127.0.0.1:10335"
         ],
-      "SpvSeedList": ["127.0.0.1:30866"],
+      "SpvSeedList": ["127.0.0.1:10015"],
       "MainChainFoundationAddress": "EM8DhdWEFmuLff9fH7fZssK7h5ayUzKcV7",
       "FoundationAddress": "8VYXVxKKSAxkmRrfmGpQR2Kc66XhG6m3ta",
       "SpvMinOutbound": 3,
@@ -126,16 +137,16 @@ did_chain = {
       "SpvPrintLevel": 1,
       "ExchangeRate": 1.0,
       "MinCrossChainTxFee": 10000,
-      "HttpInfoPort": 33333,
+      "HttpInfoPort": 10031,
       "HttpInfoStart": True,
-      "HttpRestPort": 33334,
-      "HttpWsPort": 33335,
+      "HttpRestPort": 10032,
+      "HttpWsPort": 10033,
       "WsHeartbeatInterval": 60,
-      "HttpJsonPort": 33336,
+      "HttpJsonPort": 10034,
       "NoticeServerUrl": "",
       "OauthServerUrl": "",
-      "NodePort": 33338,
-      "NodeOpenPort": 30607,
+      "NodePort": 10035,
+      "NodeOpenPort": 10036,
       "OpenService": True,
       "PrintLevel": 1,
       "MaxLogsSize": 1000,
@@ -158,34 +169,35 @@ did_chain = {
   }
 }
 
+
 token_chain = {
   "Configuration": {
-        "Magic": 7630402,
+        "Magic": 7630404,
         "SpvMagic": 7630401,
         "Version": 23,
         "SeedList": [
-          "127.0.0.1:10808",
-          "127.0.0.1:11808",
-          "127.0.0.1:12808",
-          "127.0.0.1:13808"
+          "127.0.0.1:10045",
+          "127.0.0.1:10145",
+          "127.0.0.1:10245",
+          "127.0.0.1:10345"
         ],
         "SpvSeedList": [
-          "127.0.0.1:20866"
+          "127.0.0.1:10015"
         ],
         "SpvMinOutbound": 3,
         "SpvMaxConnections": 10,
         "ExchangeRate": 1.0,
         "MinCrossChainTxFee": 10000,
-        "HttpInfoPort": 31603,
+        "HttpInfoPort": 10041,
         "HttpInfoStart": True,
-        "HttpRestPort": 31604,
-        "HttpWsPort": 31605,
+        "HttpRestPort": 10042,
+        "HttpWsPort": 10043,
         "WsHeartbeatInterval": 60,
-        "HttpJsonPort": 31606,
+        "HttpJsonPort": 10044,
         "NoticeServerUrl": "",
         "OauthServerUrl": "",
-        "NodePort": 31608,
-        "NodeOpenPort": 31607,
+        "NodePort": 10045,
+        "NodeOpenPort": 10046,
         "OpenService": True,
         "PrintLevel": 1,
         "MaxLogsSize": 0,
@@ -199,7 +211,7 @@ token_chain = {
         "MaxBlockSize": 8000000,
         "ConsensusType": "pow",
         "PrintSyncState": True,
-        "MainChainDefaultPort": 30866,
+        "MainChainDefaultPort": 10015,
         "MainChainFoundationAddress": "8ZNizBf4KhhPjeJRGpox6rPcHE5Np6tFx3",
         "FoundationAddress": "8NRxtbMKScEWzW8gmPDGUZ8LSzm688nkZZ",
         "PowConfiguration": {
@@ -214,14 +226,14 @@ token_chain = {
 
 neo_chain = {
     "Configuration": {
-        "Magic": 7630409,
+        "Magic": 7630405,
         "SpvMagic": 7630401,
         "Version": 1,
         "SeedList": [
-          "127.0.0.1:10908",
-          "127.0.0.1:11908",
-          "127.0.0.1:12908",
-          "127.0.0.1:13908"
+          "127.0.0.1:10055",
+          "127.0.0.1:10155",
+          "127.0.0.1:10255",
+          "127.0.0.1:10355"
         ],
         "SpvSeedList": [
         ],
@@ -229,16 +241,16 @@ neo_chain = {
         "SpvMaxConnections": 10,
         "ExchangeRate": 1.0,
         "MinCrossChainTxFee": 10000,
-        "HttpInfoPort":  30603,
+        "HttpInfoPort":  10051,
         "HttpInfoStart": True,
-        "HttpRestPort": 30604,
-        "HttpWsPort": 30607,
+        "HttpRestPort": 10052,
+        "HttpWsPort": 10053,
         "WsHeartbeatInterval": 60,
-        "HttpJsonPort": 30606,
+        "HttpJsonPort": 10054,
         "NoticeServerUrl": "",
         "OauthServerUrl": "",
-        "NodePort": 30808,
-        "NodeOpenPort": 30807,
+        "NodePort": 10055,
+        "NodeOpenPort": 10056,
         "OpenService": True,
         "PrintLevel":  1,
         "MaxLogsSize": 0,
@@ -253,7 +265,7 @@ neo_chain = {
         "ConsensusType": "pow",
         "PrintSyncState": True,
         "DisableTxFilters": False,
-        "MainChainDefaultPort": 30866,
+        "MainChainDefaultPort": 10015,
         "MainChainFoundationAddress": "EM8DhdWEFmuLff9fH7fZssK7h5ayUzKcV7",
         "FoundationAddress": "EPwPux7M4YQZyhJbGsZzCUSdkEby3s8uYJ",
         "PowConfiguration": {

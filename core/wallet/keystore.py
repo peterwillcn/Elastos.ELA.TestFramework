@@ -25,7 +25,6 @@ class KeyStore(object):
         self.program_hash = None
         self.address = None
         self._create_keystore()
-        self._save_to_file()
 
     def _create_keystore(self):
 
@@ -72,7 +71,7 @@ class KeyStore(object):
         return data
 
     def _save_to_file(self):
-        path = constant.KEYSTORE_FILE_NAME
+        path = constant.KEYSTORE_FILE_PATH
         if os.path.exists(path):
             with open(path, 'r') as f:
                 load_dict = json.load(f)

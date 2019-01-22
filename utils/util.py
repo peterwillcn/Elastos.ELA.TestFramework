@@ -7,6 +7,9 @@
 # file: util.py
 
 from configs import constant
+from utils import switch
+from logs.log import Logger
+from core.wallet.keystore import KeyStore
 
 
 def encode_point(is_compressed, ecc_publick_key):
@@ -44,4 +47,17 @@ def encode_point(is_compressed, ecc_publick_key):
     return bytes(encoded_data)
 
 
+def reset_config_ports(index, node_type: str, port_type: str):
+    port = (index + 100) * 100 + switch.switch_node_type()[node_type] + switch.switch_port_type()[port_type]
+    return port
+
+
+def gen_arbiter_public_keys(key_stores):
+    public_keys = []
+    if len(key_stores) != 5:
+        Logger.error("[util] Invalid argument, the length of the argument must be equal 5")
+        exit(0)
+    for key_store in key_stores:
+        public_keys.append(key_store.public_key.hex())
+    return public_keys
 

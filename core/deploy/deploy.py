@@ -11,8 +11,11 @@ import shutil
 from configs import constant
 from configs import config
 from logs.log import Logger
+from utils import switch
+from utils import util
 from core.deploy import node
 from core.service import rpc
+from core.wallet import keystoremanager
 
 
 class Deploy(object):
@@ -26,8 +29,13 @@ class Deploy(object):
         self.rpc = rpc.RPC()
         self.tag = '[Deploy] '
         self.switch_list = self._switch_list()
-        self.switch_path = self._switch_path()
-        self.switch_config = self._switch_config()
+        self.switch_path = switch.switch_path()
+        self.switch_config = switch.switch_config()
+        self.key_manager = keystoremanager.KeyStoreManager(constant.KEYSTORE_MANAGER_INIT_COUNT)
+        self.main_chain_foundation_address = self.key_manager.key_stores[0].address
+        self.side_chain_foundation_address = self.key_manager.key_stores[1].address
+        self.miner_address = self.key_manager.key_stores[2].address
+        self.arbiter_public_keys = util.gen_arbiter_public_keys(self.key_manager.key_stores[3:8])
 
     def _switch_list(self):
         switcher = {
@@ -39,33 +47,13 @@ class Deploy(object):
         }
         return switcher
 
-    def _switch_node(self, index, data_dir, _config):
+    def _switch_node(self, index, cmd_dir, _config, content):
         switcher = {
-            constant.NODE_TYPE_MAIN: node.MainNode(index, data_dir, _config),
-            # constant.NODE_TYPE_ARBITER: node.ArbiterNode(index, data_dir, _config),
-            # constant.NODE_TYPE_DID: node.DidNode(index, data_dir, _config),
-            # constant.NODE_TYPE_TOKEN: node.TokenNode(index, data_dir, _config),
-            # constant.NODE_TYPE_NEO: node.NeoNode(index, data_dir, _config)
-        }
-        return switcher
-
-    def _switch_path(self):
-        switcher = {
-            constant.NODE_TYPE_MAIN: constant.NODE_PATH_MAIN,
-            constant.NODE_TYPE_ARBITER: constant.NODE_PATH_ARBITER,
-            constant.NODE_TYPE_DID: constant.NODE_PATH_DID,
-            constant.NODE_TYPE_TOKEN: constant.NODE_PATH_TOKEN,
-            constant.NODE_TYPE_NEO: constant.NODE_PATH_NEO
-        }
-        return switcher
-
-    def _switch_config(self):
-        switcher = {
-            constant.NODE_TYPE_MAIN: config.main_chain,
-            constant.NODE_TYPE_ARBITER: config.arbiter_chain,
-            constant.NODE_TYPE_DID: config.did_chain,
-            constant.NODE_TYPE_TOKEN: config.token_chain,
-            constant.NODE_TYPE_NEO: config.neo_chain
+            constant.NODE_TYPE_MAIN: node.MainNode(index, cmd_dir, _config, content),
+            constant.NODE_TYPE_ARBITER: node.ArbiterNode(index, cmd_dir, _config, content),
+            constant.NODE_TYPE_DID: node.DidNode(index, cmd_dir, _config, content),
+            constant.NODE_TYPE_TOKEN: node.TokenNode(index, cmd_dir, _config, content),
+            constant.NODE_TYPE_NEO: node.NeoNode(index, cmd_dir, _config, content)
         }
         return switcher
 
@@ -81,6 +69,11 @@ class Deploy(object):
             return False
         _config = self.switch_config[node_type]
 
+        content = {}
+        content[constant.MAIN_CHAIN_FOUNDATION_ADDRESS] = self.main_chain_foundation_address
+        content[constant.SIDE_CHAIN_FOUNDATION_ADDRESS] = self.side_chain_foundation_address
+        content[constant.MINER_ADDRESS] = self.miner_address
+
         for i in range(num):
             dest_path = os.path.join(constant.TEST_PARAENT_PATH, node_type,
                                      constant.CURRENT_DATE_TIME, 'node' + str(i))
@@ -88,9 +81,14 @@ class Deploy(object):
                 os.makedirs(dest_path)
             shutil.copy(src_path, dest_path + '/ela')
 
-            config_path = dest_path + '/config.json'
-            n = self._switch_node(i, dest_path, _config)[node_type]
-            n.reset_config()
+            config_path = os.path.join(dest_path, 'config.json')
+            # config_path = dest_path + '/config.json'
+            main_chain_default_port = util.reset_config_ports(i, constant.NODE_TYPE_MAIN, constant.CONFIG_PORT_OPEN)
+            content[constant.MAIN_CHAIN_DEFAULT_PORT] = main_chain_default_port
+            content[constant.SPV_SEED_LIST] = [constant.LOCAL_HOST + ':' + str(main_chain_default_port)]
+            content[constant.CONFIG_ARBITERS] = self.arbiter_public_keys
+            n = self._switch_node(i, dest_path, _config, content)[node_type]
+            n.generate_config()
             with open(config_path, 'w') as f:
                 json.dump(n.config, f, indent=4)
             self.switch_list[node_type].append(n)
@@ -128,6 +126,10 @@ class Deploy(object):
                 time.sleep(2)
         Logger.error('{} Node can not connect with each other, wait rpc service timed out!')
         return False
+
+    def check_foundation_amount(self):
+        balance = self.rpc.get_wallet_balance(self.main_nodes[0].rpc_port, self.main_nodes[0].foundation_address)
+        Logger.debug('{} foundation address balance: {}'.format(self.tag, balance))
 
     def mining_101_blocks(self):
         hash_list = self.rpc.discrete_mining(self.main_nodes[0].rpc_port, 101)

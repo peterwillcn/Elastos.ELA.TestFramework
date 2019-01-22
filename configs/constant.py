@@ -26,17 +26,6 @@ NODE_BINARY_DID = 'did'
 NODE_BINARY_TOKEN = 'token'
 NODE_BINARY_NEO = 'sideNeo'
 
-NODE_CONFIG = 'Configuration'
-NODE_PORT = 'NodePort'
-NODE_PORT_INFO = 'HttpInfoPort'
-NODE_PORT_REST = 'HttpRestPort'
-NODE_PORT_WS = 'HttpWsPort'
-NODE_PORT_JSON = 'HttpJsonPort'
-NODE_PORT_OPEN = 'NodeOpenPort'
-NODE_PORT_BASE = 30000
-NODE_PORT_DIFF = 1000
-NODE_PORT_TYPE = 100
-
 NODE_PATH_MAIN = os.path.join(HOME_DIR, 'dev/src/github.com/elastos/Elastos.ELA/ela')
 NODE_PATH_ARBITER = os.path.join(HOME_DIR, 'dev/src/github.com/elastos/Elastos.ELA.Arbiter/arbiter')
 NODE_PATH_DID = os.path.join(HOME_DIR, 'dev/src/github.com/elastos/Elastos.ELA.SideChain.ID/did')
@@ -45,6 +34,21 @@ NODE_PATH_NEO = os.path.join(HOME_DIR, 'dev/src/github.com/elastos/Elastos.ELA.S
 TEST_PARAENT_PATH = os.path.join(HOME_DIR, 'testing-work/standard-test')
 CURRENT_DATE_TIME = time.strftime('%Y-%m-%d_%H:%M:%S', time.localtime())
 
+CONFIG_TITLE = 'Configuration'
+CONFIG_PORT_NODE = 'NodePort'
+CONFIG_PORT_INFO = 'HttpInfoPort'
+CONFIG_PORT_REST = 'HttpRestPort'
+CONFIG_PORT_WS = 'HttpWsPort'
+CONFIG_PORT_JSON = 'HttpJsonPort'
+CONFIG_PORT_OPEN = 'NodeOpenPort'
+CONFIG_FOUNDATION_ADDRESS = 'FoundationAddress'
+CONFIG_PAY_TO_MINER = 'PayToAddr'
+CONFIG_POW = 'PowConfiguration'
+CONFIG_ARBITERS = 'Arbiters'
+
+CONFIG_PORT_BASE = 30000
+CONFIG_PORT_DIFF = 1000
+CONFIG_PORT_TYPE = 100
 
 COLOR_END = '\033[0m'
 COLOR_BLUE = '\033[0;34m'
@@ -53,8 +57,9 @@ COLOR_YELLOW = '\033[1;33m'
 COLOR_RED = '\033[0;31m'
 
 KEYSTORE_ECC_TYPE = 'P-256'
-KEYSTORE_FILE_NAME = "./datas/keystore.json"
+KEYSTORE_FILE_PATH = "./datas/keystore.json"
 KEYSTORE_MANAGER_PREFIX = 'Addr #'
+KEYSTORE_MANAGER_INIT_COUNT = 10
 
 POST_RESPONSE_ERROR = 'error'
 POST_RESPONSE_RESULT = 'result'
@@ -77,7 +82,15 @@ UINT168_SIZE = 21
 
 LOCAL_HOST = '127.0.0.1'
 
-METHOD_GET_CONNECTION_COUNT = 'getconnectioncount'
+MAIN_CHAIN_FOUNDATION_ADDRESS = 'MainChainFoundationAddress'
+MAIN_CHAIN_DEFAULT_PORT = 'MainChainDefaultPort'
+SIDE_CHAIN_FOUNDATION_ADDRESS = 'SideChainFoundationAddress'
+MINER_ADDRESS = 'MinerAddress'
+SPV_SEED_LIST = 'SpvSeedList'
+
+METHOD_CONNECTION_COUNT = 'getconnectioncount'
 METHOD_DISCRETE_MINING = 'discretemining'
+METHOD_WALLET_BALANCE = 'getreceivedbyaddress'
+METHOD_SEND_RAW_TRANSACTION = 'sendrawtransaction'
 
 

@@ -29,7 +29,15 @@ class RPC(object):
             return False
 
     def get_connection_count(self, port: int):
-        return self.post_request(constant.METHOD_GET_CONNECTION_COUNT, port, params={})
+        return self.post_request(constant.METHOD_CONNECTION_COUNT, port, params={})
 
     def discrete_mining(self, port: int, n: int):
         return self.post_request(constant.METHOD_DISCRETE_MINING, port, params={"count": str(n)})
+
+    def get_wallet_balance(self, port: int, address: str):
+        return self.post_request(constant.METHOD_WALLET_BALANCE, port, params={"address": address})
+
+    def send_raw_transaction(self, port: int, data):
+        return self.post_request(constant.METHOD_SEND_RAW_TRANSACTION, port, params={"data": data})
+
+
