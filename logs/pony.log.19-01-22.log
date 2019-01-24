@@ -1,0 +1,97 @@
+2019-01-22 12:22:22,666 [INFO ] [main] : Logging initialized @639ms
+2019-01-22 12:22:22,715 [INFO ] [main] : jetty-9.2.z-SNAPSHOT
+2019-01-22 12:22:22,811 [INFO ] [main] : Started ServerConnector@71bc1ae4{HTTP/1.1}{0.0.0.0:8989}
+2019-01-22 12:22:22,811 [INFO ] [main] : Started @790ms
+2019-01-22 12:22:57,193 [INFO ] [main] : Logging initialized @243ms
+2019-01-22 12:22:57,214 [INFO ] [main] : jetty-9.2.z-SNAPSHOT
+2019-01-22 12:22:57,249 [WARN ] [main] : FAILED ServerConnector@311d617d{HTTP/1.1}{0.0.0.0:8989}: java.net.BindException: Address already in use
+java.net.BindException: Address already in use
+	at sun.nio.ch.Net.bind0(Native Method)
+	at sun.nio.ch.Net.bind(Net.java:433)
+	at sun.nio.ch.Net.bind(Net.java:425)
+	at sun.nio.ch.ServerSocketChannelImpl.bind(ServerSocketChannelImpl.java:223)
+	at sun.nio.ch.ServerSocketAdaptor.bind(ServerSocketAdaptor.java:74)
+	at org.eclipse.jetty.server.ServerConnector.open(ServerConnector.java:321)
+	at org.eclipse.jetty.server.AbstractNetworkConnector.doStart(AbstractNetworkConnector.java:80)
+	at org.eclipse.jetty.server.ServerConnector.doStart(ServerConnector.java:236)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at org.eclipse.jetty.server.Server.doStart(Server.java:366)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at org.elastos.elaweb.HttpServer.main(HttpServer.java:14)
+2019-01-22 12:22:57,252 [WARN ] [main] : FAILED org.eclipse.jetty.server.Server@2aae9190: java.net.BindException: Address already in use
+java.net.BindException: Address already in use
+	at sun.nio.ch.Net.bind0(Native Method)
+	at sun.nio.ch.Net.bind(Net.java:433)
+	at sun.nio.ch.Net.bind(Net.java:425)
+	at sun.nio.ch.ServerSocketChannelImpl.bind(ServerSocketChannelImpl.java:223)
+	at sun.nio.ch.ServerSocketAdaptor.bind(ServerSocketAdaptor.java:74)
+	at org.eclipse.jetty.server.ServerConnector.open(ServerConnector.java:321)
+	at org.eclipse.jetty.server.AbstractNetworkConnector.doStart(AbstractNetworkConnector.java:80)
+	at org.eclipse.jetty.server.ServerConnector.doStart(ServerConnector.java:236)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at org.eclipse.jetty.server.Server.doStart(Server.java:366)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at org.elastos.elaweb.HttpServer.main(HttpServer.java:14)
+2019-01-22 12:23:21,996 [INFO ] [main] : Logging initialized @227ms
+2019-01-22 12:23:22,019 [INFO ] [main] : jetty-9.2.z-SNAPSHOT
+2019-01-22 12:23:22,063 [INFO ] [main] : Started ServerConnector@3ea4dc69{HTTP/1.1}{0.0.0.0:8989}
+2019-01-22 12:23:22,063 [INFO ] [main] : Started @296ms
+2019-01-22 12:24:27,982 [INFO ] [main] : Logging initialized @256ms
+2019-01-22 12:24:28,003 [INFO ] [main] : jetty-9.2.z-SNAPSHOT
+2019-01-22 12:24:28,048 [INFO ] [main] : Started ServerConnector@3ea4dc69{HTTP/1.1}{0.0.0.0:8989}
+2019-01-22 12:24:28,048 [INFO ] [main] : Started @324ms
+2019-01-22 12:26:39,672 [INFO ] [main] : Logging initialized @225ms
+2019-01-22 12:26:39,692 [INFO ] [main] : jetty-9.2.z-SNAPSHOT
+2019-01-22 12:26:39,736 [INFO ] [main] : Started ServerConnector@71bc1ae4{HTTP/1.1}{0.0.0.0:8989}
+2019-01-22 12:26:39,736 [INFO ] [main] : Started @292ms
+2019-01-22 12:34:00,868 [INFO ] [main] : Logging initialized @227ms
+2019-01-22 12:34:00,887 [INFO ] [main] : jetty-9.2.z-SNAPSHOT
+2019-01-22 12:34:00,928 [INFO ] [main] : Started ServerConnector@71bc1ae4{HTTP/1.1}{0.0.0.0:8989}
+2019-01-22 12:34:00,928 [INFO ] [main] : Started @290ms
+2019-01-22 12:35:56,774 [INFO ] [main] : Logging initialized @236ms
+2019-01-22 12:35:56,794 [INFO ] [main] : jetty-9.2.z-SNAPSHOT
+2019-01-22 12:35:56,837 [INFO ] [main] : Started ServerConnector@291ec15a{HTTP/1.1}{0.0.0.0:8989}
+2019-01-22 12:35:56,837 [INFO ] [main] : Started @302ms
+2019-01-22 12:38:34,297 [INFO ] [main] : Logging initialized @231ms
+2019-01-22 12:38:34,317 [INFO ] [main] : jetty-9.2.z-SNAPSHOT
+2019-01-22 12:38:34,361 [INFO ] [main] : Started ServerConnector@3ea4dc69{HTTP/1.1}{0.0.0.0:8989}
+2019-01-22 12:38:34,361 [INFO ] [main] : Started @298ms
+2019-01-22 12:39:55,909 [INFO ] [main] : Logging initialized @232ms
+2019-01-22 12:39:55,928 [INFO ] [main] : jetty-9.2.z-SNAPSHOT
+2019-01-22 12:39:55,969 [INFO ] [main] : Started ServerConnector@71bc1ae4{HTTP/1.1}{0.0.0.0:8989}
+2019-01-22 12:39:55,969 [INFO ] [main] : Started @295ms
+2019-01-22 12:41:14,861 [INFO ] [main] : Logging initialized @240ms
+2019-01-22 12:41:14,884 [INFO ] [main] : jetty-9.2.z-SNAPSHOT
+2019-01-22 12:41:14,927 [INFO ] [main] : Started ServerConnector@71bc1ae4{HTTP/1.1}{0.0.0.0:8989}
+2019-01-22 12:41:14,927 [INFO ] [main] : Started @308ms
+2019-01-22 12:43:53,604 [INFO ] [main] : Logging initialized @238ms
+2019-01-22 12:43:53,629 [INFO ] [main] : jetty-9.2.z-SNAPSHOT
+2019-01-22 12:43:53,672 [INFO ] [main] : Started ServerConnector@455b7a55{HTTP/1.1}{0.0.0.0:8989}
+2019-01-22 12:43:53,672 [INFO ] [main] : Started @309ms
+2019-01-22 12:45:59,746 [INFO ] [main] : Logging initialized @236ms
+2019-01-22 12:45:59,766 [INFO ] [main] : jetty-9.2.z-SNAPSHOT
+2019-01-22 12:45:59,813 [INFO ] [main] : Started ServerConnector@57d265a4{HTTP/1.1}{0.0.0.0:8989}
+2019-01-22 12:45:59,813 [INFO ] [main] : Started @306ms
+2019-01-22 12:47:36,577 [INFO ] [main] : Logging initialized @229ms
+2019-01-22 12:47:36,596 [INFO ] [main] : jetty-9.2.z-SNAPSHOT
+2019-01-22 12:47:36,637 [INFO ] [main] : Started ServerConnector@57d265a4{HTTP/1.1}{0.0.0.0:8989}
+2019-01-22 12:47:36,638 [INFO ] [main] : Started @293ms
+2019-01-22 12:50:34,335 [INFO ] [main] : Logging initialized @228ms
+2019-01-22 12:50:34,354 [INFO ] [main] : jetty-9.2.z-SNAPSHOT
+2019-01-22 12:50:34,397 [INFO ] [main] : Started ServerConnector@67a18f64{HTTP/1.1}{0.0.0.0:8989}
+2019-01-22 12:50:34,397 [INFO ] [main] : Started @293ms
+2019-01-22 12:52:56,697 [INFO ] [main] : Logging initialized @254ms
+2019-01-22 12:52:56,720 [INFO ] [main] : jetty-9.2.z-SNAPSHOT
+2019-01-22 12:52:56,766 [INFO ] [main] : Started ServerConnector@3ea4dc69{HTTP/1.1}{0.0.0.0:8989}
+2019-01-22 12:52:56,766 [INFO ] [main] : Started @327ms
+2019-01-22 12:53:16,087 [INFO ] [qtp2058534881-13] : {"result":{"rawtx":"09020001001232373639383332323633363730343533363201B0786E1F95E11ED4E03BE0D12BEE567C285AD07807340F6AFFE3D38B8219C6C600000000000002B037DB964A231458D2D6FFD5EA18944C4F90E63D547C5D3B9874DF66A4EAD0A30010A5D4E80000000000000021C4CE2BD2C459BA2FCF3A4A65CBE5289D9D32D50800B037DB964A231458D2D6FFD5EA18944C4F90E63D547C5D3B9874DF66A4EAD0A39C2F1D4B6CB80B00000000002100CE41969483120D38A329E398E468466865A863000000000001414045AB773E023491C02A242BCF4C7896A633524F588E27667606232EC95CD903FB6FA14B9424CDC12809C1738F5EF7FA6A6BF95BCEF9D059AB5E3AD5EDB83CA60D232102D1D0225E87847DE5A6B03EC10A2DCDBF4D8DB311E3D864DD0829B1EF3237C9A7AC","txhash":"CECD34404F4214787F4C5D0633C0397DE6230F946FF1AAF6AB9E2078411BA8B4"},"id":null,"jsonrpc":"2.0","error":null}
+2019-01-22 12:53:55,078 [INFO ] [main] : Logging initialized @234ms
+2019-01-22 12:53:55,097 [INFO ] [main] : jetty-9.2.z-SNAPSHOT
+2019-01-22 12:53:55,139 [INFO ] [main] : Started ServerConnector@71bc1ae4{HTTP/1.1}{0.0.0.0:8989}
+2019-01-22 12:53:55,139 [INFO ] [main] : Started @298ms
+2019-01-22 12:54:14,319 [INFO ] [qtp2058534881-14] : {"result":{"rawtx":"0902000100142D33343335363634313134343131303433383134017FC1263AF71CF5D8E35FB62D12B7BCE4A64AD8E0A1595008DDB52BDFE2F9BC3400000000000002B037DB964A231458D2D6FFD5EA18944C4F90E63D547C5D3B9874DF66A4EAD0A30010A5D4E80000000000000021A6CEB4D44AF628318C53A85B67BA517D85C3F0D700B037DB964A231458D2D6FFD5EA18944C4F90E63D547C5D3B9874DF66A4EAD0A39C2F1D4B6CB80B00000000002156CEAF320548AFF966A15423DD2913BE094829C00000000000014140F573CDE82443FD52771FDA5BA9A7ABED33E93F69591BCAF935409677B6DCC869070348FAC672C75A9ACE64E53DECF80A6F1194C963499B55E867F258439636782321020C4C07589DF4AD4602AEE6D9EF4D0A4838826E9F8FABC54A0DEC69257F3004BDAC","txhash":"9371596E8D42C67A2941F9A42B03F0799B85E3E52DEF6FDDE184F7072D3A7E27"},"id":null,"jsonrpc":"2.0","error":null}
+2019-01-22 12:57:54,209 [INFO ] [main] : Logging initialized @229ms
+2019-01-22 12:57:54,229 [INFO ] [main] : jetty-9.2.z-SNAPSHOT
+2019-01-22 12:57:54,270 [INFO ] [main] : Started ServerConnector@3ea4dc69{HTTP/1.1}{0.0.0.0:8989}
+2019-01-22 12:57:54,270 [INFO ] [main] : Started @293ms
+2019-01-22 12:58:13,400 [INFO ] [qtp2058534881-13] : {"result":{"rawtx":"0902000100133839343533303332373439393233313639313901B41AE0F9C1306E7FF1F5C419A2F932996AA73D8DC9DB185ED508E484C307F46300000000000002B037DB964A231458D2D6FFD5EA18944C4F90E63D547C5D3B9874DF66A4EAD0A30010A5D4E80000000000000021EE7CE9775EBC1BB98EAA34D741B3B320835E0CA400B037DB964A231458D2D6FFD5EA18944C4F90E63D547C5D3B9874DF66A4EAD0A39C2F1D4B6CB80B00000000002110426910DAB4097A5C5FFDB36F56399ED986F8B600000000000141407E945ACFC8DD831E8120DC7CD89315D9D18F5168368B17E4DD855FCECA78D79D45FDBC5ED503FB3389F5E607EB0B6D5FCBEE658419F7A4CE27A42DD3661600942321031B49308BE5B44E6BD98773BDEEBB176390EE267FB5134B933848546BAF9DFB8AAC","txhash":"2D132A90E3101DC2A00D104B7DAD151E24AED57E1DFB135A8E3550FAB8F1FB04"},"id":null,"jsonrpc":"2.0","error":null}

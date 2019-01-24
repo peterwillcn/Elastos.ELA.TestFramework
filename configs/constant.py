@@ -46,6 +46,9 @@ CONFIG_PAY_TO_MINER = 'PayToAddr'
 CONFIG_POW = 'PowConfiguration'
 CONFIG_ARBITERS = 'Arbiters'
 
+CONFIG_ARBITER_CONFIGURATION = 'ArbiterConfiguration'
+CONFIG_ARBITER_CONFIGURATION_NAME = 'PublicKey'
+
 CONFIG_PORT_BASE = 30000
 CONFIG_PORT_DIFF = 1000
 CONFIG_PORT_TYPE = 100
@@ -80,7 +83,7 @@ TX_MULTI_SIG = 0xae
 
 UINT168_SIZE = 21
 
-LOCAL_HOST = '127.0.0.1'
+HOST_NAME = '127.0.0.1'
 
 MAIN_CHAIN_FOUNDATION_ADDRESS = 'MainChainFoundationAddress'
 MAIN_CHAIN_DEFAULT_PORT = 'MainChainDefaultPort'
@@ -88,9 +91,5 @@ SIDE_CHAIN_FOUNDATION_ADDRESS = 'SideChainFoundationAddress'
 MINER_ADDRESS = 'MinerAddress'
 SPV_SEED_LIST = 'SpvSeedList'
 
-METHOD_CONNECTION_COUNT = 'getconnectioncount'
-METHOD_DISCRETE_MINING = 'discretemining'
-METHOD_WALLET_BALANCE = 'getreceivedbyaddress'
-METHOD_SEND_RAW_TRANSACTION = 'sendrawtransaction'
 
 

@@ -36,7 +36,17 @@ def func1():
     result = d.mining_101_blocks()
     if result:
         Logger.info('[Main test] Discrete mining 101 blocks on success.')
-    time.sleep(10)
+
+    time.sleep(2)
+    input_keystore = d.key_manager.key_stores[0]
+    output_address = d.key_manager.key_stores[9].address
+    result = d.ordinary_transaction(input_keystore, [output_address], 10000 * 100000000)
+    Logger.info('[Main test] ordinary transaction result: {}'.format(result))
+    rpc_port = d.main_nodes[0].rpc_port
+    d.rpc.discrete_mining(2)
+    balance1 = d.rpc.get_balance_by_address(input_keystore.address)
+    balance2 = d.rpc.get_balance_by_address(output_address)
+    print('balance1 = ', balance1, 'balance2 = ', balance2)
     d.stop_nodes(node_type)
 
 
@@ -65,6 +75,6 @@ def func3():
 
 
 if __name__ == "__main__":
-    func3()
+    func1()
 
 

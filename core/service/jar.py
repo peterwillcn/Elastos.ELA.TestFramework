@@ -9,9 +9,10 @@
 import os
 import time
 import subprocess
+from utils import util
 from configs import constant
 from logs.log import Logger
-
+from core.service import rpc
 
 """JarService is a class that support jar service
 
@@ -23,6 +24,7 @@ class JarService(object):
     def __init__(self):
         self.process = None
         self.running = False
+        self.rpc_port = 8989
         self.command = "java -cp " + "./jars/" + constant.JAR_NAME + constant.JAR_HTTP_SERVICE
         self.start()
 
@@ -43,3 +45,12 @@ class JarService(object):
             Logger.error("unable to stop jar service. %s" % e)
         Logger.debug("Java service is stopped")
         self.running = False
+
+
+    def create_transaction(self, utxos, outputs, memo=None):
+        if memo == None:
+            return util.post_request("gentx", self.rpc_port,
+                                     params={"transaction": {"inputs": utxos, "outputs": outputs}})
+        else:
+            return util.post_request("gentx", self.rpc_port,
+                                     params={"transaction": {"inputs": utxos, "outputs": outputs, "memo": memo}})

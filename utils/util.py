@@ -6,10 +6,10 @@
 # time: 2019-01-17 10:20
 # file: util.py
 
+import requests
 from configs import constant
 from utils import switch
 from logs.log import Logger
-from core.wallet.keystore import KeyStore
 
 
 def encode_point(is_compressed, ecc_publick_key):
@@ -60,4 +60,18 @@ def gen_arbiter_public_keys(key_stores):
     for key_store in key_stores:
         public_keys.append(key_store.public_key.hex())
     return public_keys
+
+
+def post_request(method, port: int, params):
+    try:
+        url = 'http://127.0.0.1:' + str(port)
+        resp = requests.post(url, json={"method": method, "params": params},
+                                 headers={"content-type": "application/json"})
+        response = resp.json()
+        if response[constant.POST_RESPONSE_ERROR] == None:
+            return response[constant.POST_RESPONSE_RESULT]
+        else:
+            return response[constant.POST_RESPONSE_ERROR]
+    except requests.exceptions.RequestException as e:
+        return False
 
