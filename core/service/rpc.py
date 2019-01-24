@@ -58,7 +58,7 @@ class RPC(object):
     def get_block_by_height(self, height: int):
         return self.post_request('getblockbyheight', params={"height": height})
 
-    def get_block_height_by_hash(self, height: int):
+    def get_block_hash_by_height(self, height: int):
         return self.post_request('getblockhash', params={"height": height})
 
     def get_raw_mempool(self):

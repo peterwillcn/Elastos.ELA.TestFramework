@@ -17,6 +17,7 @@ from utils import util
 from core.deploy import node
 from core.service import jar
 from core.service import rpc
+from core.service import rest
 from core.wallet import keystoremanager
 
 
@@ -29,6 +30,7 @@ class Deploy(object):
         self.token_nodes = []
         self.neo_nodes = []
         self.rpc = rpc.RPC()
+        self.rest = rest.REST()
         self.tag = '[Deploy] '
         self.fee = 10000
         self.jar_service = jar.JarService()
