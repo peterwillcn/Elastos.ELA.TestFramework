@@ -42,3 +42,5 @@ class KeyStoreManager(object):
         else:
             with open(path, 'w') as f:
                 json.dump({constant.KEYSTORE_MANAGER_PREFIX + '0': k.to_dict()}, f, indent=4)
+
+

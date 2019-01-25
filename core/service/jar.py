@@ -12,7 +12,7 @@ import subprocess
 from utils import util
 from configs import constant
 from logs.log import Logger
-from core.service import rpc
+from core.service import net
 
 """JarService is a class that support jar service
 
@@ -22,9 +22,11 @@ Jar service can create private key, public key, address, transactions and so on
 
 class JarService(object):
     def __init__(self):
+        self.tag = '[core.service.jar.JarService]'
         self.process = None
         self.running = False
         self.rpc_port = 8989
+        self.url = 'http://127.0.0.1:8989'
         self.command = "java -cp " + "./jars/" + constant.JAR_NAME + constant.JAR_HTTP_SERVICE
         self.start()
 
@@ -32,7 +34,7 @@ class JarService(object):
         self.process = subprocess.Popen(self.command, stdout=open(os.devnull, 'w'), shell=True)
         self.running = True
         time.sleep(2)
-        if self.process != None:
+        if self.process is not None:
             Logger.debug("Jar service starts ")
 
     def stop(self):
@@ -46,11 +48,9 @@ class JarService(object):
         Logger.debug("Java service is stopped")
         self.running = False
 
-
-    def create_transaction(self, utxos, outputs, memo=None):
-        if memo == None:
-            return util.post_request("gentx", self.rpc_port,
-                                     params={"transaction": {"inputs": utxos, "outputs": outputs}})
+    def create_transaction(self, inputs, outputs, memo=None):
+        if memo is None:
+            return net.post_request(self.url, "gentx", params={"transaction": {"inputs": inputs, "outputs": outputs}})
         else:
-            return util.post_request("gentx", self.rpc_port,
-                                     params={"transaction": {"inputs": utxos, "outputs": outputs, "memo": memo}})
+            return net.post_request(self.url, "gentx",
+                                    params={"transaction": {"inputs": inputs, "outputs": outputs, "memo": memo}})

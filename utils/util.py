@@ -18,32 +18,32 @@ def encode_point(is_compressed, ecc_publick_key):
 
     if public_key_x is None or public_key_y is None:
         infinity = []
-        for i in range(constant.INFINITY_LEN):
-            infinity.append(constant.EMPTY_BYTE)
+        for i in range(1):
+            infinity.append(0x00)
         return infinity
     encoded_data = []
     if is_compressed:
-        for i in range(constant.COMPRESSED_LEN):
-            encoded_data.append(constant.EMPTY_BYTE)
+        for i in range(33):
+            encoded_data.append(0x00)
     else:
-        for i in range(constant.NON_COMPRESSED_LEN):
-            encoded_data.append(constant.EMPTY_BYTE)
+        for i in range(65):
+            encoded_data.append(0x00)
         y_bytes = public_key_y.to_bytes()
-        for i in range(constant.NON_COMPRESSED_LEN - len(y_bytes), constant.NON_COMPRESSED_LEN):
-            encoded_data[i] = y_bytes[i - constant.NON_COMPRESSED_LEN + len(y_bytes)]
+        for i in range(65 - len(y_bytes), 65):
+            encoded_data[i] = y_bytes[i - 65 + len(y_bytes)]
 
     x_bytes = public_key_x.to_bytes()
     x_len = len(x_bytes)
-    for i in range(constant.COMPRESSED_LEN - x_len, constant.COMPRESSED_LEN):
-        encoded_data[i] = x_bytes[i - constant.COMPRESSED_LEN + x_len]
+    for i in range(33 - x_len, 33):
+        encoded_data[i] = x_bytes[i - 33 + x_len]
 
     if is_compressed:
         if public_key_y % 2 == 0:
-            encoded_data[0] = constant.COMPEVEN_FLAG
+            encoded_data[0] = 0x02
         else:
-            encoded_data[0] = constant.COMPODD_FLAG
+            encoded_data[0] = 0x03
     else:
-        encoded_data[0] = constant.NON_COMPRESSED_FLAG
+        encoded_data[0] = 0x04
     return bytes(encoded_data)
 
 
@@ -62,16 +62,4 @@ def gen_arbiter_public_keys(key_stores):
     return public_keys
 
 
-def post_request(method, port: int, params):
-    try:
-        url = 'http://127.0.0.1:' + str(port)
-        resp = requests.post(url, json={"method": method, "params": params},
-                                 headers={"content-type": "application/json"})
-        response = resp.json()
-        if response[constant.POST_RESPONSE_ERROR] == None:
-            return response[constant.POST_RESPONSE_RESULT]
-        else:
-            return response[constant.POST_RESPONSE_ERROR]
-    except requests.exceptions.RequestException as e:
-        return False
 

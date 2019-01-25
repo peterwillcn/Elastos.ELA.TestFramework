@@ -29,6 +29,17 @@ def switch_config():
     return switcher
 
 
+# def switch_node_init_number():
+#     switcher = {
+#         constant.NODE_TYPE_MAIN: constant.NODE_INIT_NUMBER_MAIN,
+#         constant.NODE_TYPE_ARBITER: constant.NODE_INIT_NUMBER_ARBITER,
+#         constant.NODE_TYPE_DID: constant.NODE_INIT_NUMBER_DID,
+#         constant.NODE_TYPE_TOKEN: constant.NODE_INIT_NUMBER_TOKEN,
+#         constant.NODE_TYPE_NEO: constant.NODE_INIT_NUMBER_NEO
+#     }
+#     return switcher
+
+
 def switch_node_type():
     switcher = {
         constant.NODE_TYPE_MAIN: 10,

@@ -5,7 +5,6 @@
 
 import requests
 from logs.log import Logger
-from configs import constant
 
 tag = '[core.service.net]'
 
@@ -28,7 +27,7 @@ def post_request(url, method, params):
     try:
         Logger.debug('{} post request url: {}'.format(tag, url))
         Logger.debug('{} post request method: {}'.format(tag, method))
-        Logger.debug('{} post request params: '.format(tag, params))
+        Logger.debug('{} post request params: {}'.format(tag, params))
         response = requests.post(url, json={"method": method, "params": params},
                              headers={"content-type": "application/json"})
         resp = response.json()

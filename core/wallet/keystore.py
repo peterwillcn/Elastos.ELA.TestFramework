@@ -69,16 +69,3 @@ class KeyStore(object):
             "address": self.address
         }
         return data
-
-    def _save_to_file(self):
-        path = constant.KEYSTORE_FILE_PATH
-        if os.path.exists(path):
-            with open(path, 'r') as f:
-                load_dict = json.load(f)
-                length = len(load_dict)
-                load_dict['addr #' + str(length)] = self.to_dict()
-            with open(path, 'w') as f:
-                json.dump(load_dict, f, indent=4)
-        else:
-            with open(path, 'w') as f:
-                json.dump({"addr #0": self.to_dict()}, f, indent=4)

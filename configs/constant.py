@@ -26,6 +26,13 @@ NODE_BINARY_DID = 'did'
 NODE_BINARY_TOKEN = 'token'
 NODE_BINARY_NEO = 'sideNeo'
 
+NODE_INIT_NUMBER_MAIN = 5
+NODE_INIT_NUMBER_ARBITER = 5
+NODE_INIT_NUMBER_DID = 5
+NODE_INIT_NUMBER_TOKEN = 5
+NODE_INIT_NUMBER_NEO = 5
+
+
 NODE_PATH_MAIN = os.path.join(HOME_DIR, 'dev/src/github.com/elastos/Elastos.ELA/ela')
 NODE_PATH_ARBITER = os.path.join(HOME_DIR, 'dev/src/github.com/elastos/Elastos.ELA.Arbiter/arbiter')
 NODE_PATH_DID = os.path.join(HOME_DIR, 'dev/src/github.com/elastos/Elastos.ELA.SideChain.ID/did')
@@ -62,7 +69,8 @@ COLOR_RED = '\033[0;31m'
 KEYSTORE_ECC_TYPE = 'P-256'
 KEYSTORE_FILE_PATH = "./datas/keystore.json"
 KEYSTORE_MANAGER_PREFIX = 'Addr #'
-KEYSTORE_MANAGER_INIT_COUNT = 10
+KEYSTORE_INIT_NUMBER = 10
+
 
 POST_RESPONSE_ERROR = 'error'
 POST_RESPONSE_RESULT = 'result'

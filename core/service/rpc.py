@@ -40,8 +40,7 @@ class RPC(object):
         if assetid is None:
             return self.post_request('listunspent', params={"addresses": [addresses]})
         else:
-            return self.post_request('listunspent', params={"addresses": [addresses],
-                                                                                       "assetid": assetid})
+            return self.post_request('listunspent', params={"addresses": [addresses], "assetid": assetid})
 
     def toggle_mining(self, mining: bool):
         return self.post_request('togglemining', params={"mining": mining})
