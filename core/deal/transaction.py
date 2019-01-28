@@ -12,15 +12,16 @@ from core.service.jar import JarService
 
 class Transaction(object):
 
-    def __init__(self, jar_service: JarService, rpc: RPC, rest: REST):
+    def __init__(self, jar_service: JarService, rpc: RPC, rest: REST, assist: Assist):
         self.tag = '[core.deal.transaction.Transaction]'
         self.jar_service = jar_service
         self.rpc = rpc
         self.rest = rest
-        self.assist = Assist(self.rpc)
+        self.assist = assist
 
     def ordinary_single_sign(self, input_keystore, output_addresses, amount, fee=100, mode='address'):
-        inputs, utxos_value = self.assist.gen_inputs_utxos_value(input_keystore, amount, fee, mode)
+        inputs, utxos_value = self.assist.gen_inputs_utxos_value(input_keystore=input_keystore,
+                                                                 amount=amount, fee=fee, mode=mode)
         Logger.debug('{} ordinary single sign inputs: {}'.format(self.tag, inputs))
         Logger.debug('{} utxos value: {}'.format(self.tag, utxos_value))
         outputs = self.assist.gen_single_sign_outputs(output_addresses, input_keystore.address, utxos_value, amount)

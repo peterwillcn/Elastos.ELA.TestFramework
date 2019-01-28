@@ -345,19 +345,19 @@ dpos_chain = {
             "CRCArbiters": [
                 {
                     "PublicKey": "024babfecea0300971a6f0ad13b27519faff0ef595faf9490dc1f5f4d6e6d7f3fb",
-                    "IP": "172.31.32.193:25339"
+                    "NetAddress": "172.31.32.193:25339"
                 },
                 {
                     "PublicKey": "0243ff13f1417c69686bfefc35227ad4f5f4ca03ccb3d3a635ae8ed67d57c20b97",
-                    "IP": "172.31.43.101:25339"
+                    "NetAddress": "172.31.43.101:25339"
                 },
                 {
                     "PublicKey": "024ac1cdf73e3cbe88843b2d7279e6afdc26fc71d221f28cfbecbefb2a48d48304",
-                    "IP": "172.31.45.130:25339"
+                    "NetAddress": "172.31.45.130:25339"
                 },
                 {
                     "PublicKey": "0274fe9f165574791f74d5c4358415596e408b704be9003f51a25e90fd527660b5",
-                    "IP": "172.31.40.70:25339"
+                    "NetAddress": "172.31.40.70:25339"
                 }
             ],
         },

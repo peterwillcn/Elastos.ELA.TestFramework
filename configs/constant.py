@@ -38,8 +38,14 @@ NODE_PATH_ARBITER = os.path.join(HOME_DIR, 'dev/src/github.com/elastos/Elastos.E
 NODE_PATH_DID = os.path.join(HOME_DIR, 'dev/src/github.com/elastos/Elastos.ELA.SideChain.ID/did')
 NODE_PATH_TOKEN = os.path.join(HOME_DIR, 'dev/src/github.com/elastos/Elastos.ELA.SideChain.Token/token')
 NODE_PATH_NEO = os.path.join(HOME_DIR, 'dev/src/github.com/elastos/Elastos.ELA.SideChain.NeoVM/sideNeo')
+
 TEST_PARAENT_PATH = os.path.join(HOME_DIR, 'testing-work/standard-test')
 CURRENT_DATE_TIME = time.strftime('%Y-%m-%d_%H:%M:%S', time.localtime())
+
+PRODUCER_REGISTER = "Register Producer"
+PRODUCER_UPDATE = "Update Producer"
+PRODUCER_CANCEL = "Cancel producer"
+PRODUCER_REDEEM = "Redeem Producer"
 
 CONFIG_TITLE = 'Configuration'
 CONFIG_PORT_NODE = 'NodePort'
@@ -69,7 +75,7 @@ COLOR_RED = '\033[0;31m'
 KEYSTORE_ECC_TYPE = 'P-256'
 KEYSTORE_FILE_PATH = "./datas/keystore.json"
 KEYSTORE_MANAGER_PREFIX = 'Addr #'
-KEYSTORE_INIT_NUMBER = 10
+KEYSTORE_INIT_NUMBER = 1000
 
 
 POST_RESPONSE_ERROR = 'error'

@@ -40,7 +40,7 @@ class Deploy(object):
         self.main_chain_foundation_address = self._key_stores[0].address
         self.side_chain_foundation_address = self._key_stores[1].address
         self.miner_address = self._key_stores[2].address
-        self.arbiter_public_keys = util.gen_arbiter_public_keys(self._key_stores[3:8])
+        self.arbiter_public_keys = util.arbiter_public_keys(self._key_stores[3:8])
 
     def _switch_list(self):
         switcher = {

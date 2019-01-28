@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+# !/usr/bin/env python
 # encoding: utf-8
 
 # author: liteng
@@ -54,3 +54,55 @@ class JarService(object):
         else:
             return net.post_request(self.url, "gentx",
                                     params={"transaction": {"inputs": inputs, "outputs": outputs, "memo": memo}})
+
+    def register_producer_transaction(self, inputs, outputs, privatekeysign, payload):
+        return net.post_request(self.url, "genregisterproducertx",
+                                params={
+                                    "transaction": {
+                                        "inputs": inputs,
+                                        "outputs": outputs,
+                                        "privatekeysign": privatekeysign,
+                                        "payload": payload}
+                                })
+
+    def update_producer_transaction(self, inputs, outputs, privatekeysign, payload):
+        return net.post_request(self.url, "genupdateproducertx",
+                                params={
+                                    "transaction": {
+                                        "inputs": inputs,
+                                        "outputs": outputs,
+                                        "privatekeysign": privatekeysign,
+                                        "payload": payload}
+                                })
+
+    def cancel_producer_transaction(self, inputs, outputs, privatekeysign, payload):
+        return net.post_request(self.url, "gencancelproducertx",
+                                params={
+                                    "transaction": {
+                                        "inputs": inputs,
+                                        "outputs": outputs,
+                                        "privatekeysign": privatekeysign,
+                                        "payload": payload}
+                                })
+
+    def redemption_producer_transaction(self, inputs, outputs, privatekeysign):
+        return net.post_request(self.url, "genreturndepositcointx",
+                                params={
+                                    "transaction": {
+                                        "inputs": inputs,
+                                        "outputs": outputs,
+                                        "privatekeysign": privatekeysign}
+                                })
+
+    def vote_transaction(self, inputs, outputs, privatekeysign):
+        return net.post_request(self.url, "genvotetx",
+                                params={
+                                    "transaction": {
+                                        "inputs": inputs,
+                                        "outputs": outputs,
+                                        "privatekeysign": privatekeysign}
+                                })
+
+    def gen_deposit_address(self, publickey: str):
+        return net.post_request(self.url, "genpledgeaddress", params={"publickey": publickey})
+

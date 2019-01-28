@@ -52,7 +52,7 @@ def reset_config_ports(index, node_type: str, port_type: str):
     return port
 
 
-def gen_arbiter_public_keys(key_stores):
+def arbiter_public_keys(key_stores):
     public_keys = []
     if len(key_stores) != 5:
         Logger.error("[util] Invalid argument, the length of the argument must be equal 5")
@@ -61,5 +61,14 @@ def gen_arbiter_public_keys(key_stores):
         public_keys.append(key_store.public_key.hex())
     return public_keys
 
+
+def assert_equal(arg1, arg2):
+    result = False
+    if arg1 != arg2:
+        print(constant.COLOR_RED + '[NOT EQUAL]' + constant.COLOR_END)
+        # exit(-1)
+    else:
+        result = True
+    return result
 
 
