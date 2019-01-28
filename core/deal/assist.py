@@ -3,16 +3,18 @@
 # date: 2019/1/24 2:31 PM
 # author: liteng
 
-from core.service.rpc import RPC
 from logs.log import Logger
 from decimal import Decimal
+from core.service.rpc import RPC
+from core.service.rest import REST
 
 
 class Assist(object):
 
-    def __init__(self, rpc: RPC):
+    def __init__(self, rpc: RPC, rest: REST):
         self.tag = '[core.deal.assist.Assist]'
         self.rpc = rpc
+        self.rest = rest
 
     def _collect_utxos_by_keystore(self, input_keystore, deposit_address: str):
         if deposit_address != '':

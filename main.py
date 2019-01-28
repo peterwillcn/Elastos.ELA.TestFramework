@@ -6,7 +6,6 @@
 # time: 2019-01-16 18:00
 # file: main.py
 
-from core.wallet.keystore import KeyStore
 from utils import util
 from logs.log import Logger
 from core.control.controller import Controller
@@ -34,7 +33,7 @@ def func1():
         Logger.error('transaction error')
         exit(0)
     Logger.info('transaction success.')
-    balance = controller.rpc_service.get_balance_by_address(test_address)
+    balance = controller.get_balance_by_address(test_address)
     Logger.info('after transaction balance: {}'.format(balance))
 
     controller.shutdown()
@@ -42,7 +41,9 @@ def func1():
 
 def func2():
     tag = 'Main Test'
+    Logger.level = 1
     controller = Controller(40)
+
     foundation_keystore = controller.wallets_list[0]
     keystores = controller.wallets_list[10:]
 
@@ -52,7 +53,7 @@ def func2():
     for keystore in keystores:
         addresses.append(keystore.address)
 
-    result = controller.tx.ordinary_single_sign(foundation_keystore, addresses, 20000 * TO_SELA, mode='privatekey')
+    result = controller.tx.ordinary_single_sign(foundation_keystore, addresses, 20000 * TO_SELA)
     if not result:
         Logger.error('{} ordinary single sign transaction error!'.format(tag))
     Logger.info('{} ordinary single sign transaction success1'.format(tag))
@@ -104,7 +105,7 @@ def func2():
     if all_cancelled:
         Logger.info('{} all producers cancelled success!'.format(tag))
 
-    controller.rpc_service.discrete_mining(2160)
+    controller.discrete_mining_blocks(2160)
 
     all_redeem = True
     for pro in producers:
