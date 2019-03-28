@@ -6,19 +6,14 @@
 # time: 2019-01-16 18:00
 # file: main.py
 
-from utils import util
-from logs.log import Logger
-from core.control.controller import Controller
+import os
+import json
+from middle import util
+from bottom.logs.log import Logger
+from top import constant
+from top.controller_bak import Controller
 
 TO_SELA = 100000000
-
-
-def func0():
-    a = ['abc', 123, 'how']
-    if a:
-        print("123")
-    else:
-        print('456')
 
 
 def func1():
@@ -121,7 +116,44 @@ def func2():
     controller.shutdown()
 
 
+def func3():
+    print("func3 start")
+    gopath = os.environ["GOPATH"]
+    if ":" in gopath:
+        print("1111")
+    else:
+        print("222")
+    print(gopath)
+
+
+def get_go_path():
+    go_path = ""
+    path = os.environ.get("GOPATH")
+    if ":" in path:
+        go_path = path.split(":")[0]
+    return go_path
+
+
+def func4():
+    binary_path = ["src", "github.com", "elastos", "Elastos.ELA"]
+    path = get_go_path()
+    for _path in binary_path:
+       path = os.path.join(path, _path)
+    sample_path = os.path.join(path, "hello.txt")
+
+    load_dict = []
+    if os.path.exists(sample_path):
+        print("111")
+        with open(sample_path, 'r') as f:
+            print("222")
+            load_dict = json.load(f)
+    print(load_dict)
+    print(type(load_dict))
+    load_dict[constant.CONFIG_TITLE]["HttpInfoPort"] = 51336
+    with open("./datas/config.json", "w") as f:
+        json.dump(load_dict, f, indent=4)
+
+
 if __name__ == "__main__":
-    func2()
-
-
+    elastos_dir_path = os.path.join(get_go_path(), "src/github.com/elastos")
+    print(elastos_dir_path)

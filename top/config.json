@@ -1,0 +1,14 @@
+{
+  "configuration" :{
+    "ela_node_enable": true,
+    "ela_node_num": 5,
+    "arbiter_node_enable": true,
+    "arbiter_node_num": 4,
+    "did_node_enable": true,
+    "did_node_num": 3,
+    "token_node_enable": true,
+    "token_node_num": 2,
+    "neo_node_enable": true,
+    "neo_node_num": 1
+  }
+}
