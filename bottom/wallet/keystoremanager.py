@@ -3,43 +3,35 @@
 # date: 2019/1/18 7:00 PM
 # author: liteng
 
-import os
-import json
+from bottom.wallet import keytool
 from bottom.logs.log import Logger
-from middle import constant
 from bottom.wallet.keystore import KeyStore
 
 
 class KeyStoreManager(object):
 
-    def __init__(self, count):
+    def __init__(self, password: str, count: int):
         self.tag = "[KeyStoreManager]"
         if count < 10:
             Logger.error("{} count should not be less than 10," 
                          " here count is {}".format(self.tag, count))
             exit(0)
         self.count = count
+        self.password = password
         self.key_stores = []
-        self._get_key_stores()
+        self._save_keystore_files()
 
-    def _get_key_stores(self):
+    def _save_keystore_files(self):
         for i in range(self.count):
-            k = KeyStore()
+            k = KeyStore(self.password)
             self.key_stores.append(k)
-            self._save_to_file(k)
+            keytool.save_to_json(k)
+            keytool.save_to_dat(k, i)
+            print("generate keystore {} on success!".format(i))
 
-    @staticmethod
-    def _save_to_file(k):
-        path = constant.KEYSTORE_FILE_PATH
-        if os.path.exists(path):
-            with open(path, "r") as f:
-                load_dict = json.load(f)
-                length = len(load_dict)
-                load_dict[constant.KEYSTORE_MANAGER_PREFIX + str(length)] = k.to_dict()
-            with open(path, "w") as f:
-                json.dump(load_dict, f, indent=4)
-        else:
-            with open(path, "w") as f:
-                json.dump({constant.KEYSTORE_MANAGER_PREFIX + "0": k.to_dict()}, f, indent=4)
+
+if __name__ == "__main__":
+    m = KeyStoreManager("123", 10)
+
 
 
