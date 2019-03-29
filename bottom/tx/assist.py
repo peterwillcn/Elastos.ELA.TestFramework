@@ -5,30 +5,30 @@
 
 from bottom.logs.log import Logger
 from decimal import Decimal
-from bottom.service.rpc import RPC
-from bottom.service.rest import REST
+from bottom.services.rpc import RPC
+from bottom.services.rest import REST
 
 
 class Assist(object):
 
     def __init__(self, rpc: RPC, rest: REST):
-        self.tag = '[bottom.tx.assist.Assist]'
+        self.tag = "[bottom.tx.assist.Assist]"
         self.rpc = rpc
         self.rest = rest
 
     def _collect_utxos_by_keystore(self, input_keystore, deposit_address: str):
-        if deposit_address != '':
-            utxos_resp = self.rpc.list_unspent_utxos(addresses=deposit_address, assetid='None')
+        if deposit_address != "":
+            utxos_resp = self.rpc.list_unspent_utxos(addresses=deposit_address, assetid="None")
         else:
-            utxos_resp = self.rpc.list_unspent_utxos(addresses=input_keystore.address, assetid='None')
+            utxos_resp = self.rpc.list_unspent_utxos(addresses=input_keystore.address, assetid="None")
         if not utxos_resp:
-            Logger.error('{} gen unspent utxos response: {}'.format(self.tag, utxos_resp))
+            Logger.error("{} gen unspent utxos response: {}".format(self.tag, utxos_resp))
             exit(-1)
 
         utxos = []
         for utxo in utxos_resp:
-            utxos.append({'txid': utxo['txid'], 'index': utxo['vout'], 'amount': utxo['amount'],
-                          'address': utxo['address'], 'privatekey': input_keystore.private_key.hex()})
+            utxos.append({"txid": utxo["txid"], "index": utxo["vout"], "amount": utxo["amount"],
+                          "address": utxo["address"], "privatekey": input_keystore.private_key.hex()})
         return utxos
 
     def _get_utxos_amount(self, utxos):
@@ -36,12 +36,12 @@ class Assist(object):
         if not isinstance(utxos, list):
             utxos = [utxos]
         for utxo in utxos:
-            amount += float(utxo['amount']) * 100000000
+            amount += float(utxo["amount"]) * 100000000
         return int(amount)
 
     def _get_enough_value_for_amount(self, utxos, amount, fee, utxo_value=0, index=-1, quantity=0):
         if amount < 0:
-            Logger.error('{} Invalid argument amount: {}'.format(self.tag, amount))
+            Logger.error("{} Invalid argument amount: {}".format(self.tag, amount))
             exit(-1)
 
         if utxo_value <= amount + fee and amount >= 0:
@@ -51,13 +51,13 @@ class Assist(object):
             return self._get_enough_value_for_amount(utxos, amount, fee, utxo_value, index, quantity)
 
         else:
-            return {'value': utxo_value, 'quantity': quantity}
+            return {"value": utxo_value, "quantity": quantity}
 
-    def gen_inputs_utxos_value(self, input_keystore, amount: int, deposit_address='', fee=100, mode='address'):
+    def gen_inputs_utxos_value(self, input_keystore, amount: int, deposit_address="", fee=100, mode="address"):
         invalid_utxos = self._collect_utxos_by_keystore(input_keystore, deposit_address)
         value_quantity = self._get_enough_value_for_amount(utxos=invalid_utxos, amount=amount, fee=fee)
-        utxos_value = value_quantity['value']
-        utxos_quantitiy = value_quantity['quantity']
+        utxos_value = value_quantity["value"]
+        utxos_quantitiy = value_quantity["quantity"]
         inputs = []
         for utxo in invalid_utxos[0:utxos_quantitiy]:
             inputs.append({"txid": utxo["txid"], "vout": utxo["index"], mode: utxo[mode]})
@@ -65,7 +65,7 @@ class Assist(object):
 
     def _gen_normal_outputs(self, addresses: list, amount: int, change_address: str, utxo_value: int, fee=100):
         if utxo_value < ((amount + fee) * len(addresses) + 1):
-            Logger.error('{} utxo is not enough!'.format(self.tag))
+            Logger.error("{} utxo is not enough!".format(self.tag))
             return None
         else:
             change_value = utxo_value - (amount + fee) * len(addresses)
@@ -95,7 +95,7 @@ class Assist(object):
     def gen_register_producer_output(self, deposit_address: str, amount: int, change_address: str, utxo_value: int,
                                      fee=10000):
         if utxo_value < amount + fee + 1:
-            Logger.error('{} utxo value is not enough!'.format(self.tag))
+            Logger.error("{} utxo value is not enough!".format(self.tag))
             return None
 
         else:
@@ -110,7 +110,7 @@ class Assist(object):
 
     def gen_update_producer_output(self, address: str, utxo_value: int, fee=100):
         if utxo_value < fee + 1:
-            Logger.error('{} utxo value is not enough?!'.format(self.tag))
+            Logger.error("{} utxo value is not enough?!".format(self.tag))
             return None
 
         else:
@@ -122,7 +122,7 @@ class Assist(object):
 
     def gen_cancel_producer_output(self, address: str, utxo_value: int, fee=100):
         if utxo_value < fee + 1:
-            Logger.error('{} utxo value is not enough!'.format(self.tag))
+            Logger.error("{} utxo value is not enough!".format(self.tag))
             return None
 
         else:
@@ -134,7 +134,7 @@ class Assist(object):
 
     def gen_redeem_producer_output(self, address: str, utxo_value: int, fee=10000):
         if utxo_value < fee + 1:
-            Logger.error('{} utxo value is not enough!'.format(self.tag))
+            Logger.error("{} utxo value is not enough!".format(self.tag))
             return None
 
         else:
@@ -161,7 +161,7 @@ class Assist(object):
     def gen_vote_outputs(self, vote_address: str, change_address: str, utxos_value: int, vote_amount: int, outputtype: int,
                          version: int, contents, fee=100):
         if utxos_value < fee + 1 + vote_amount:
-            Logger.error('{} utxo value is not enough!'.format(self.tag))
+            Logger.error("{} utxo value is not enough!".format(self.tag))
             return None
 
         else:
@@ -174,7 +174,6 @@ class Assist(object):
             if not float(change_value) == 0:
                 output.append({"address": change_address, "amount": change_value})
             return output
-
 
     def gen_register_producer_payload(self, privatekey, owner_publickey, node_publickey,
                                       nickname, url, location, address):

@@ -7,8 +7,7 @@
 # file: wallet.py
 
 import base58
-from middle import util
-from top import constant
+from middle import util, constant
 from Crypto.PublicKey import ECC
 from Crypto.Hash import SHA256
 from Crypto.Hash import RIPEMD160

@@ -8,9 +8,8 @@
 
 import os
 import json
-from middle import util
+from middle import util, constant
 from bottom.logs.log import Logger
-from top import constant
 from top.controller_bak import Controller
 
 TO_SELA = 100000000

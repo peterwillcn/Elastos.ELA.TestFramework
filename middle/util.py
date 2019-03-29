@@ -8,8 +8,7 @@
 
 import os
 import json
-from top import constant
-from middle import switch
+from middle import switch, constant
 from bottom.logs.log import Logger
 
 
@@ -74,7 +73,7 @@ def arbiter_public_keys(key_stores):
 def assert_equal(arg1, arg2):
     result = False
     if arg1 != arg2:
-        print(constant.COLOR_RED + '[NOT EQUAL]' + constant.COLOR_END)
+        print(constant.COLOR_RED + "[NOT EQUAL]" + constant.COLOR_END)
         # exit(-1)
     else:
         result = True
@@ -82,10 +81,10 @@ def assert_equal(arg1, arg2):
 
 
 def read_config_file(config_file_path):
-    with open(config_file_path, 'r', encoding="utf8") as f:
+    with open(config_file_path, "r", encoding="utf8") as f:
         content = f.read()
-        if content.startswith(u'\ufeff'):
-            content = content.encode('utf8')[3:].decode('utf8')
+        if content.startswith(u"\ufeff"):
+            content = content.encode("utf8")[3:].decode("utf8")
         load_dict = json.loads(content)
 
     return load_dict

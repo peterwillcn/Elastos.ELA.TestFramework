@@ -9,11 +9,11 @@ import shutil
 from middle import util
 from middle.env import Environment
 
-from bottom.node.mainnode import MainNode
-from bottom.node.arbiter import Arbiter
-from bottom.node.did import Did
-from bottom.node.token import Token
-from bottom.node.neo import Neo
+from bottom.nodes.mainnode import MainNode
+from bottom.nodes.arbiter import Arbiter
+from bottom.nodes.did import Did
+from bottom.nodes.token import Token
+from bottom.nodes.neo import Neo
 
 
 class NodeManager(object):
@@ -55,7 +55,7 @@ class NodeManager(object):
 
             shutil.copy(os.path.join(src_path, category), os.path.join(dest_path, category))
             node = self.init_node(category, config_dict, i)
-            node.reset_config()
+            node.reset_config(num)
             util.write_config_file(node.config, os.path.join(dest_path, "config.json"))
             self.nodes_dict[category].append(node)
 

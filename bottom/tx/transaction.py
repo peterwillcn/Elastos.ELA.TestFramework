@@ -3,17 +3,17 @@
 # date: 2019/1/24 2:33 PM
 # author: liteng
 
-from middle import util
-from top import constant
+from middle import util, constant
 from bottom.logs.log import Logger
 from bottom.tx.assist import Assist
-from bottom.service.jar import JarService
+from bottom.services.jar import JarService
 from bottom.wallet.keystore import KeyStore
 
 
 class Payload(object):
     def __init__(self, privatekey: str, owner_publickey: str, node_publickey: str,
                  nickname: str, url: str, location: int, address: str):
+        self.tag = "[bottom.tx.transaction.Payload]"
         self.privatekey = privatekey
         self.owner_publickey = owner_publickey
         self.node_publickey = node_publickey
@@ -26,14 +26,14 @@ class Payload(object):
 class Transaction(object):
 
     def __init__(self, jar_service: JarService, assist: Assist):
-        self.tag = '[bottom.tx.transaction.Transaction]'
+        self.tag = "[bottom.tx.transaction.Transaction]"
         self.jar_service = jar_service
         self.assist = assist
         self.fee = 100
         self.utxos_value = 0
         self.TO_SELA = 100000000
 
-    def ordinary_single_sign(self, input_keystore, output_addresses, amount, fee=100, mode='privatekey'):
+    def ordinary_single_sign(self, input_keystore, output_addresses, amount, fee=100, mode="privatekey"):
         inputs, utxos_value = self.assist.gen_inputs_utxos_value(input_keystore=input_keystore,
                                                                  amount=amount, fee=fee, mode=mode)
         outputs = self.assist.gen_single_sign_outputs(output_addresses, input_keystore.address, utxos_value, amount)
@@ -43,7 +43,7 @@ class Transaction(object):
         resp = self.assist.rpc.send_raw_transaction(data=raw_data)
         result = util.assert_equal(txid, resp)
         if not result:
-            Logger.error('{} Ordinary single sign transaction txid is not equal resp'.format(self.tag))
+            Logger.error("{} Ordinary single sign transaction txid is not equal resp".format(self.tag))
             return result
 
         self.assist.rpc.discrete_mining(1)
@@ -63,7 +63,7 @@ class Producer(Transaction):
 
     def __init__(self, keystore: KeyStore, payload: Payload, jar_service: JarService, assist: Assist):
         Transaction.__init__(self, jar_service=jar_service, assist=assist)
-        self.tag = 'Producer'
+        self.tag = "Producer"
         self.keystore = keystore
         self.owner_publickey = keystore.public_key.hex()
         self.owner_privatekey = keystore.private_key.hex()
@@ -78,7 +78,7 @@ class Producer(Transaction):
         self.privatekeysign = self.assist.gen_private_sign(self.owner_privatekey)
 
     def _inputs(self, category: str):
-        deposit_address = ''
+        deposit_address = ""
         amount = self.fee
         if category == constant.PRODUCER_REDEEM:
             deposit_address = self.deposit_address
@@ -88,7 +88,7 @@ class Producer(Transaction):
 
         inputs, utxos_value = self.assist.gen_inputs_utxos_value(self.keystore, amount, deposit_address=deposit_address)
         self.utxos_value = utxos_value
-        Logger.debug('{} inputs: {}'.format(category, inputs))
+        Logger.debug("{} inputs: {}".format(category, inputs))
         return inputs
 
     def _outputs(self, category: str):
@@ -119,7 +119,7 @@ class Producer(Transaction):
                 utxo_value=self.utxos_value,
                 fee=self.fee
             )
-        Logger.debug('{} outputs: {}'.format(category, outputs))
+        Logger.debug("{} outputs: {}".format(category, outputs))
         return outputs
 
     def _payload(self, category: str):
@@ -153,7 +153,7 @@ class Producer(Transaction):
                 publickey=self.payload.owner_publickey
             )
 
-        Logger.debug('{} payload: {}'.format(category, load))
+        Logger.debug("{} payload: {}".format(category, load))
         return load
 
     def register(self):
@@ -179,7 +179,7 @@ class Producer(Transaction):
         self.assist.rpc.discrete_mining(6)
 
         producer_status_resp = self.assist.rpc.producer_status(self.keystore.public_key.hex())
-        Logger.debug('{} producers status: {}'.format(constant.PRODUCER_REGISTER, producer_status_resp))
+        Logger.debug("{} producers status: {}".format(constant.PRODUCER_REGISTER, producer_status_resp))
 
         if producer_status_resp == 1:
             self.registered = True
@@ -203,8 +203,8 @@ class Producer(Transaction):
         tran_raw = update_resp["rawtx"]
         tran_txid = update_resp["txhash"].lower()
         sendraw_resp = self.assist.rpc.send_raw_transaction(tran_raw)
-        print('tran_txid =    ', tran_txid)
-        print('sendraw_resp = ', sendraw_resp)
+        print("tran_txid =    ", tran_txid)
+        print("sendraw_resp = ", sendraw_resp)
         compare = util.assert_equal(sendraw_resp, tran_txid)
         if not compare:
             return result
@@ -212,7 +212,7 @@ class Producer(Transaction):
         self.assist.rpc.discrete_mining(2)
 
         producer_status_resp = self.assist.rpc.producer_status(self.keystore.public_key.hex())
-        Logger.debug('{} producers status: {}'.format(category, producer_status_resp))
+        Logger.debug("{} producers status: {}".format(category, producer_status_resp))
         if producer_status_resp == 1:
             result = True
             self.updated = True
@@ -243,7 +243,7 @@ class Producer(Transaction):
         self.assist.rpc.discrete_mining(2)
         producer_status_resp = self.assist.rpc.producer_status(
             publickey=self.keystore.public_key.hex())
-        Logger.debug('{} producer status: {}'.format(category, producer_status_resp))
+        Logger.debug("{} producer status: {}".format(category, producer_status_resp))
 
         if producer_status_resp == 0:
             self.canceled = True
@@ -273,7 +273,7 @@ class Producer(Transaction):
         self.assist.rpc.discrete_mining(1)
         balance2 = self.get_deposit_balance()
         balance3 = self.assist.rpc.get_balance_by_address(self.keystore.address)
-        Logger.info('{} balance1 = {}, balance2 = {}, balance3 = {}'.format(constant.PRODUCER_REDEEM,
+        Logger.info("{} balance1 = {}, balance2 = {}, balance3 = {}".format(constant.PRODUCER_REDEEM,
                                                                             balance1, balance2, balance3))
         return result
 
@@ -281,14 +281,14 @@ class Producer(Transaction):
         balance = self.assist.rpc.get_balance_by_address(
             address=self.deposit_address
         )
-        Logger.debug('{} deposit balance: {}'.format(self.tag, balance))
+        Logger.debug("{} deposit balance: {}".format(self.tag, balance))
         return balance
 
 
 class Voter(Transaction):
     def __init__(self, keystore: KeyStore, candidates: [Producer], jar_service: JarService, assist: Assist):
         Transaction.__init__(self, jar_service=jar_service, assist=assist)
-        self.tag = 'Vote Producer'
+        self.tag = "Vote Producer"
         self.keystore = keystore
         self.candidates = candidates
         self.vote_amount = 1 * self.TO_SELA
@@ -301,7 +301,7 @@ class Voter(Transaction):
     def _inputs(self):
         inputs, utxos_value = self.assist.gen_inputs_utxos_value(self.keystore, self.vote_amount)
         self.utxos_value = utxos_value
-        Logger.debug('{} inputs: {}'.format(self.tag, inputs))
+        Logger.debug("{} inputs: {}".format(self.tag, inputs))
         return inputs
 
     def _outputs(self):
@@ -323,12 +323,12 @@ class Voter(Transaction):
             version=self.vote_version,
             contents=contents
         )
-        Logger.debug('{} inputs: {}'.format(self.tag, outputs))
+        Logger.debug("{} inputs: {}".format(self.tag, outputs))
         return outputs
 
     def _privatekeysign(self):
         privatekeysign = self.assist.gen_private_sign(self.keystore.private_key.hex())
-        Logger.debug('{} privatekeysign: {}'.format(self.tag, privatekeysign))
+        Logger.debug("{} privatekeysign: {}".format(self.tag, privatekeysign))
         print("[Vote Producer] privatekeysign: ", privatekeysign)
         return privatekeysign
 
@@ -356,7 +356,7 @@ class Voter(Transaction):
         self.assist.rpc.discrete_mining(2)
 
         vote_amount = self.get_vote_amount()
-        Logger.debug('{} vote amount: {} ELA'.format(self.tag, vote_amount))
+        Logger.debug("{} vote amount: {} ELA".format(self.tag, vote_amount))
         print("[Vote producer] vote_amount = ", vote_amount)
         if vote_amount == float(self.vote_amount):
             result = True
@@ -366,4 +366,4 @@ class Voter(Transaction):
         vote_status_resp = self.assist.rpc.vote_status(
             address=self.keystore.address
         )
-        return float(vote_status_resp['voting']) * self.TO_SELA
+        return float(vote_status_resp["voting"]) * self.TO_SELA

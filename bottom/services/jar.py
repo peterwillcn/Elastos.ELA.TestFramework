@@ -9,32 +9,32 @@
 import os
 import time
 import subprocess
-from top import constant
+from middle import constant
 from bottom.logs.log import Logger
-from bottom.service import net
+from bottom.services import net
 
-"""JarService is a class that support jar service
+"""JarService is a class that support jar services
 
-Jar service can create private key, public key, address, transactions and so on
+Jar services can create private key, public key, address, transactions and so on
 """
 
 
 class JarService(object):
     def __init__(self):
-        self.tag = '[bottom.service.jar.JarService]'
+        self.tag = "[bottom.services.jar.JarService]"
         self.process = None
         self.running = False
         self.rpc_port = 8989
-        self.url = 'http://127.0.0.1:8989'
+        self.url = "http://127.0.0.1:8989"
         self.command = "java -cp " + "./jars/" + constant.JAR_NAME + constant.JAR_HTTP_SERVICE
         self.start()
 
     def start(self):
-        self.process = subprocess.Popen(self.command, stdout=open(os.devnull, 'w'), shell=True)
+        self.process = subprocess.Popen(self.command, stdout=open(os.devnull, "w"), shell=True)
         self.running = True
         time.sleep(2)
         if self.process is not None:
-            Logger.debug("Jar service starts ")
+            Logger.debug("Jar services starts ")
 
     def stop(self):
         if not self.running:
@@ -43,8 +43,8 @@ class JarService(object):
         try:
             self.process.terminate()
         except subprocess.SubprocessError as e:
-            Logger.error("unable to stop jar service. %s" % e)
-        Logger.debug("Java service is stopped")
+            Logger.error("unable to stop jar services. %s" % e)
+        Logger.debug("Java services is stopped")
         self.running = False
 
     def create_transaction(self, inputs, outputs, memo=None):

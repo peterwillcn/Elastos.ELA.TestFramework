@@ -18,4 +18,6 @@ class Controller(object):
 
 if __name__ == "__main__":
     c = Controller()
-    c.middle.deploy_node()
+    ret = c.middle.deploy_node()
+    if not ret:
+        print("deploy node failed!")
