@@ -51,9 +51,12 @@ def encode_point(is_compressed, ecc_publick_key):
     return bytes(encoded_data)
 
 
-def save_to_json(k):
-    path = "../datas/keystore.json"
-    if os.path.exists(path):
+def save_to_json(k, first_time: bool):
+    print("path: ", os.path.abspath(os.path.dirname(__file__)))
+    path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../"))
+    path = os.path.join(path, "datas/keystore.json")
+    print(path)
+    if os.path.exists(path) and not first_time:
         with open(path, "r") as f:
             load_dict = json.load(f)
             length = len(load_dict)
@@ -66,7 +69,8 @@ def save_to_json(k):
 
 
 def save_to_dat(k, index: int):
-    dest_path = "../datas/keystores/"
+    path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../"))
+    dest_path = os.path.join(path, "datas/keystores")
     if not os.path.exists(dest_path):
         os.makedirs(dest_path)
     with open(os.path.join(dest_path, "keystore_" + str(index) + ".dat"), "w") as f:
@@ -95,8 +99,9 @@ def encrypt_private_key(master_key, private_key, public_key, iv):
         decrypted_private_key[i] = public_key_bytes[i + 1]
     for i in range(len(private_key)):
         decrypted_private_key[64 + i] = private_key[i]
-
+    # print("@@@ de: ", decrypted_private_key)
     decrypted_private_key_bytes = bytes(decrypted_private_key)
+    # print("@@@ be: ", decrypted_private_key_bytes)
     encrypted_private_key = aes_encrypt(decrypted_private_key_bytes, master_key, iv)
     return encrypted_private_key
 
@@ -123,7 +128,4 @@ def ripemd160_hash(data_bytes, times: int):
     return ripemd160_hash(hash_value_bytes, times)
 
 
-if __name__ == "__main__":
-    print(create_urandom(16).hex())
-    password_key_bytes = sha256_hash(str.encode("123"), 3)
-    print(password_key_bytes.hex())
+

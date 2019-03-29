@@ -3,15 +3,18 @@
 # date: 2019/3/28 2:48 PM
 # author: liteng
 
-from middle.nodemanager import NodeManager
+from bottom.nodes.nodemanager import NodeManager
 from middle.params import Parameter
 
 
 class Overall(object):
 
     def __init__(self, top_config):
+        self.tag = "[middle.overall.Overall]"
         self.params = Parameter(top_config)
-        self.node_manager = NodeManager()
+        self.check_params()
+        self.node_manager = NodeManager(self.params)
+
         pass
 
     def deploy_node(self):
@@ -33,3 +36,10 @@ class Overall(object):
 
     def stop_node(self):
         pass
+
+    def check_params(self):
+        if self.params.ela_node_num < self.params.crc_number:
+            print("{} Ela should have more nodes than crc, please check your config.json file...".format(self.tag))
+            exit(-1)
+        else:
+            print("{} Parameters Check Pass!".format(self.tag))

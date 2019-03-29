@@ -12,7 +12,7 @@ class Controller(object):
 
     def __init__(self):
         self.tag = "[top.control.Controller]"
-        self.config = util.read_config_file(os.path.join(os.getcwd(), "config.json"))
+        self.config = util.read_config_file("./config.json")
         self.middle = Overall(self.config["configuration"])
 
 

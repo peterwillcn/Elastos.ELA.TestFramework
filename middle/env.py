@@ -6,7 +6,7 @@
 import os
 import time
 
-from top import config
+from middle.params import Parameter
 
 
 class Environment(object):
@@ -17,6 +17,8 @@ class Environment(object):
         self.elastos_path = os.path.join(self.go_path, "src/github.com/elastos")
         self.test_path = os.path.join(self.home_path, "TestingWork")
         self.current_date_time = time.strftime('%Y-%m-%d_%H:%M:%S', time.localtime())
+        self.project_root_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "../.."))
+        print("self.rootpath = ", self.project_root_path)
         self.src_path_dict = {
             "ela": "Elastos.ELA",
             "arbiter": "Elastos.ELA.Arbiter",
@@ -26,11 +28,11 @@ class Environment(object):
         }
 
         self.config_dict = {
-            "ela": config.ela,
-            "arbiter": config.arbiter,
-            "did": config.did,
-            "token": config.token,
-            "neo": config.neo
+            "ela": Parameter.default_ela_config(),
+            "arbiter": Parameter.default_arbiter_config(),
+            "did": Parameter.default_did_config(),
+            "token": Parameter.default_token_config(),
+            "neo": Parameter.default_neo_config()
         }
 
     @staticmethod

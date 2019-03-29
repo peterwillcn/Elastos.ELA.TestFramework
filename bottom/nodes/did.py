@@ -13,5 +13,5 @@ class Did(Node):
         self.tag = "[bottom.nodes.did.Did]"
         self.index = index
 
-    def reset_config(self, num: int):
+    def reset_config(self, num: int, update_content: dict):
         Node.reset_config_common(self, self.index, "did", num)

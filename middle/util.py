@@ -8,11 +8,8 @@
 
 import os
 import json
-from middle import switch, constant
 from bottom.logs.log import Logger
-
-
-
+from middle import constant
 
 
 def get_go_path():
@@ -21,11 +18,6 @@ def get_go_path():
     if ":" in path:
         go_path = path.split(":")[0]
     return go_path
-
-
-def reset_config_ports(index, node_type: str, port_type: str):
-    port = (index + 100) * 100 + switch.switch_node_type()[node_type] + switch.switch_port_type()[port_type]
-    return port
 
 
 def arbiter_public_keys(key_stores):

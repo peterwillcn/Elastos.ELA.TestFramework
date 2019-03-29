@@ -4,34 +4,32 @@
 # author: liteng
 
 from bottom.wallet import keytool
-from bottom.logs.log import Logger
 from bottom.wallet.keystore import KeyStore
 
 
 class KeyStoreManager(object):
 
-    def __init__(self, password: str, count: int):
+    def __init__(self, num: int, password: str):
         self.tag = "[KeyStoreManager]"
-        if count < 10:
-            Logger.error("{} count should not be less than 10," 
-                         " here count is {}".format(self.tag, count))
-            exit(0)
-        self.count = count
+        self.num = num
         self.password = password
         self.key_stores = []
         self._save_keystore_files()
 
     def _save_keystore_files(self):
-        for i in range(self.count):
+        for i in range(self.num):
             k = KeyStore(self.password)
             self.key_stores.append(k)
-            keytool.save_to_json(k)
+            if i == 0:
+                keytool.save_to_json(k, True)
+            else:
+                keytool.save_to_json(k, False)
             keytool.save_to_dat(k, i)
             print("generate keystore {} on success!".format(i))
 
 
 if __name__ == "__main__":
-    m = KeyStoreManager("123", 10)
+    m = KeyStoreManager(10, "123")
 
 
 

@@ -13,6 +13,6 @@ class Arbiter(Node):
         self.tag = "[bottom.nodes.arbiter.Arbiter]"
         self.index = index
 
-    def reset_config(self, num: int):
+    def reset_config(self, num: int, update_content: dict):
         Node.reset_config_common(self, self.index, "arbiter", num)
         pass
