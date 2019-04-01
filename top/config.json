@@ -5,7 +5,7 @@
     "number": 5,
     "crc_number": 4,
     "auto_mining": false,
-    "instant_block": false,
+    "instant_block": true,
     "pre_connect_offset": 50,
     "foundation_address": "EWsVqpUKJyFJXdisD3ccdUg7VCDzwoKAaC",
     "miner_address": "EYQopnYhv41DdaBRHc8U1Sif1tVUw4ZG5W",
