@@ -3,6 +3,7 @@
 # date: 2019/3/28 4:44 PM
 # author: liteng
 
+import os
 from middle.common import constant
 
 
@@ -10,7 +11,9 @@ class Node(object):
 
     def __init__(self, config):
         self.tag = "[bottom.nodes.node.Node]"
-        self.config = config[constant.CONFIG_TITLE]
+        self.config = config
+        self.dev_null = open(os.devnull, 'w')
+
         self.node_type_dict = {
             "ela": 10,
             "arbiter": 20,
@@ -39,17 +42,17 @@ class Node(object):
         pass
 
     def reset_config_common(self, index, node_type: str, num):
-        self.config[constant.CONFIG_SEED_LIST] = []
+        self.config[constant.CONFIG_TITLE][constant.CONFIG_SEED_LIST] = []
         for i in range(num):
             if i == 10:
                 break
-            self.config[constant.CONFIG_SEED_LIST].append("127.0.0.1:" +
+            self.config[constant.CONFIG_TITLE][constant.CONFIG_SEED_LIST].append("127.0.0.1:" +
                                                           str(self.reset_port(i, node_type, "node_port")))
-        self.config[constant.CONFIG_PORT_INFO] = self.reset_port(index, node_type, "info_port")
-        self.config[constant.CONFIG_PORT_REST] = self.reset_port(index, node_type, "rest_port")
-        self.config[constant.CONFIG_PORT_WS] = self.reset_port(index, node_type, "ws_port")
-        self.config[constant.CONFIG_PORT_JSON] = self.reset_port(index, node_type, "json_port")
-        self.config[constant.CONFIG_PORT_NODE] = self.reset_port(index, node_type, "node_port")
+        self.config[constant.CONFIG_TITLE][constant.CONFIG_PORT_INFO] = self.reset_port(index, node_type, "info_port")
+        self.config[constant.CONFIG_TITLE][constant.CONFIG_PORT_REST] = self.reset_port(index, node_type, "rest_port")
+        self.config[constant.CONFIG_TITLE][constant.CONFIG_PORT_WS] = self.reset_port(index, node_type, "ws_port")
+        self.config[constant.CONFIG_TITLE][constant.CONFIG_PORT_JSON] = self.reset_port(index, node_type, "json_port")
+        self.config[constant.CONFIG_TITLE][constant.CONFIG_PORT_NODE] = self.reset_port(index, node_type, "node_port")
 
     def reset_port(self, index, node_type: str, port_type: str):
         port = (100 + index) * 100 + self.node_type_dict[node_type] + self.port_type_dict[port_type]

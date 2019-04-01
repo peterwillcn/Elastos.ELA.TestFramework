@@ -3,18 +3,22 @@
 # date: 2019/3/28 2:48 PM
 # author: liteng
 
-from bottom.nodes.node_manager import NodeManager
+import time
+
+from middle.common.log import Logger
 from middle.parameters.params import Parameter
+
+from bottom.nodes.node_manager import NodeManager
+from bottom.services.rpc import RPC
 
 
 class Overall(object):
 
-    def __init__(self, top_config):
+    def __init__(self, top_config, project_root_path: str):
         self.tag = "[middle.overall.Overall]"
         self.params = Parameter(top_config)
-        self.node_manager = NodeManager(self.params)
-
-        pass
+        self.rpc = RPC()
+        self.node_manager = NodeManager(self.rpc, self.params, project_root_path)
 
     def deploy_node(self):
         ret = False
@@ -39,9 +43,18 @@ class Overall(object):
         return ret
 
     def start_node(self):
-        pass
+        ret = False
+        if self.params.ela_params.enable:
+            ret = self.node_manager.start_nodes()
+        time.sleep(4)
+        self.rpc.discrete_mining(101)
+        Logger.debug("{} mining 101 blocks on success!".format(self.tag))
+        foundation_value = self.rpc.get_balance_by_address(self.params.ela_params.foundation_address)
+        Logger.debug("{} The value of foundation address is {}".format(self.tag, foundation_value))
+        return ret
 
     def stop_node(self):
-        pass
+        if self.params.ela_params.enable:
+            self.node_manager.stop_nodes()
 
 

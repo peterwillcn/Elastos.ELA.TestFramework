@@ -11,14 +11,14 @@ from middle.parameters.params import Parameter
 
 class Environment(object):
 
-    def __init__(self):
+    def __init__(self, project_root_path):
+        self.tag = "[middle.common.env.Environment]"
         self.home_path = self.get_env_path("HOME")
         self.go_path = self.get_env_path("GOPATH")
         self.elastos_path = os.path.join(self.go_path, "src/github.com/elastos")
         self.test_path = os.path.join(self.home_path, "TestingWork")
         self.current_date_time = time.strftime('%Y-%m-%d_%H:%M:%S', time.localtime())
-        self.project_root_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "../../.."))
-        print("self.rootpath = ", self.project_root_path)
+        self.project_root_path = project_root_path
         self.src_path_dict = {
             "ela": "Elastos.ELA",
             "arbiter": "Elastos.ELA.Arbiter",

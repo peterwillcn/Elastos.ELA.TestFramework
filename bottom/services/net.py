@@ -4,7 +4,7 @@
 # author: liteng
 
 import requests
-from bottom.logs.log import Logger
+from middle.common.log import Logger
 
 tag = "[bottom.services.net]"
 
@@ -25,9 +25,8 @@ def get_request(url):
 
 def post_request(url, method, params):
     try:
-        Logger.debug("{} post request url: {}".format(tag, url))
-        Logger.debug("{} post request method: {}".format(tag, method))
-        Logger.debug("{} post request params: {}".format(tag, params))
+        Logger.debug("{} method: {}".format(tag, method))
+        Logger.debug("{} params: {}".format(tag, params))
         response = requests.post(url, json={"method": method, "params": params},
                              headers={"content-type": "application/json"})
         resp = response.json()

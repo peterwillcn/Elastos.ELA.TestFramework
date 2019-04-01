@@ -8,6 +8,7 @@ class ElaParams(object):
 
     def __init__(self, config: dict):
         self.enable = config["enable"]
+        self.arbiter_enable = config["arbiter_enable"]
         self.number = config["number"]
         self.password = config["password"]
         self.crc_number = config["crc_number"]

@@ -52,10 +52,8 @@ def encode_point(is_compressed, ecc_publick_key):
 
 
 def save_to_json(k, first_time: bool):
-    print("path: ", os.path.abspath(os.path.dirname(__file__)))
     path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../"))
     path = os.path.join(path, "datas/keystore.json")
-    print(path)
     if os.path.exists(path) and not first_time:
         with open(path, "r") as f:
             load_dict = json.load(f)

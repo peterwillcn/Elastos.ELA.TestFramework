@@ -10,7 +10,7 @@ import os
 import time
 import subprocess
 from middle.common import constant
-from bottom.logs.log import Logger
+from middle.common.log import Logger
 from bottom.services import net
 
 """JarService is a class that support jar services

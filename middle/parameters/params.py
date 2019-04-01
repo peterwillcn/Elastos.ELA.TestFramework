@@ -9,6 +9,8 @@ from middle.parameters.did_params import DidParams
 from middle.parameters.token_params import TokenParams
 from middle.parameters.neo_params import NeoParams
 
+from middle.common.log import Logger
+
 
 class Parameter(object):
 
@@ -24,10 +26,8 @@ class Parameter(object):
 
     def check_params(self):
         if self.ela_params.number < self.ela_params.crc_number:
-            print("{} Ela should have more nodes than crc, please check your config.json file...".format(self.tag))
+            Logger.error("{} Ela should have more nodes than crc, please check your config.json file...".format(self.tag))
             exit(-1)
-        else:
-            print("{} Parameters Check Pass!".format(self.tag))
 
     @staticmethod
     def default_ela_config():

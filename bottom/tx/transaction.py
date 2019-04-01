@@ -4,7 +4,7 @@
 # author: liteng
 
 from middle.common import constant, util
-from bottom.logs.log import Logger
+from middle.common.log import Logger
 from bottom.tx.assist import Assist
 from bottom.services.jar import JarService
 from bottom.wallet.keystore import KeyStore

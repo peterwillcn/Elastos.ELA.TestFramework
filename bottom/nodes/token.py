@@ -8,10 +8,11 @@ from bottom.nodes.node import Node
 
 class Token(Node):
 
-    def __init__(self, config, index):
+    def __init__(self, config, index, cwd_dir: str):
         Node.__init__(self, config)
         self.tag = "[bottom.nodes.token.Token]"
         self.index = index
+        self.cwd_dir = cwd_dir
 
     def reset_config(self, num: int, update_content: dict):
         Node.reset_config_common(self, self.index, "token", num)

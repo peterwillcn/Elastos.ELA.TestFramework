@@ -11,12 +11,12 @@ class RPC(object):
 
     def __init__(self):
         self.tag = "[bottom.services.rpc.RPC]"
-        self.host = "http://" + constant.HOST_NAME
-        self.port = util.reset_config_ports(0, constant.NODE_TYPE_MAIN, constant.CONFIG_PORT_JSON)
-        self.url = self.host + ":" + str(self.ort)
+        self.host = "http://127.0.0.1"
+        self.port = 10014
 
     def post_request(self, method, params):
-        return net.post_request(self.url, method, params)
+        url = self.host + ":" + str(self.port)
+        return net.post_request(url, method, params)
 
     def get_info(self):
         return self.post_request("getinfo", params={})

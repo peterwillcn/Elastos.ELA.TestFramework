@@ -5,15 +5,15 @@
 
 from middle.common import constant, util
 from bottom.services import net
-from bottom.logs.log import Logger
+from middle.common.log import Logger
 
 
 class REST(object):
 
     def __init__(self):
         self.tag = "[bottom.services.rest.REST]"
-        self.host = "http://" + constant.HOST_NAME
-        self.port = util.reset_config_ports(0, constant.NODE_TYPE_MAIN, constant.CONFIG_PORT_REST)
+        self.host = "http://127.0.0.1"
+        self.port = 10012
 
     def get_request(self, url_path):
         url = self.host + ":" + str(self.port) + url_path

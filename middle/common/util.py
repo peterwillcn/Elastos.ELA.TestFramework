@@ -8,7 +8,7 @@
 
 import os
 import json
-from bottom.logs.log import Logger
+from middle.common.log import Logger
 from middle.common import constant
 
 
@@ -53,3 +53,5 @@ def read_config_file(config_file_path):
 def write_config_file(config_dict, config_file_path):
     with open(config_file_path, "w", encoding="utf8") as f:
         json.dump(config_dict, f, indent=4)
+
+

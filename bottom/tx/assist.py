@@ -3,7 +3,7 @@
 # date: 2019/1/24 2:31 PM
 # author: liteng
 
-from bottom.logs.log import Logger
+from middle.common.log import Logger
 from decimal import Decimal
 from bottom.services.rpc import RPC
 from bottom.services.rest import REST
