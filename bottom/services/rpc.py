@@ -3,7 +3,7 @@
 # date: 2019/1/18 7:35 PM
 # author: liteng
 
-from middle import util, constant
+from middle.common import constant, util
 from bottom.services import net
 
 

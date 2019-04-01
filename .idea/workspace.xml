@@ -2,34 +2,233 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7db57e3e-4e77-41b1-a414-9acd4e087548" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/middle/parameters/arbiter_params.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/middle/parameters/did_params.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/middle/parameters/ela_params.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/middle/parameters/neo_params.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/middle/parameters/token_params.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bottom/datas/keystore.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystore.json" beforeDir="false" afterPath="$PROJECT_DIR$/bottom/datas/keystore.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_0.dat" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_1.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_10.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_100.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_101.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_102.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_103.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_104.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_105.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_106.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_107.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_108.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_109.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_11.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_110.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_111.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_112.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_113.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_114.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_115.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_116.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_117.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_118.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_119.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_12.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_120.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_121.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_122.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_123.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_124.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_125.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_126.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_127.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_128.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_129.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_13.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_130.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_131.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_132.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_133.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_134.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_135.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_136.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_137.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_138.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_139.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_14.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_140.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_141.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_142.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_143.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_144.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_145.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_146.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_147.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_148.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_149.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_15.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_150.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_151.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_152.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_153.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_154.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_155.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_156.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_157.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_158.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_159.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_16.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_160.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_161.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_162.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_163.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_164.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_165.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_166.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_167.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_168.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_169.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_17.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_170.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_171.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_172.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_173.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_174.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_175.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_176.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_177.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_178.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_179.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_18.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_180.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_181.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_182.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_183.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_184.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_185.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_186.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_187.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_188.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_189.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_19.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_190.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_191.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_192.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_193.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_194.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_195.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_196.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_197.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_198.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_199.dat" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_2.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_20.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_21.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_22.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_23.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_24.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_25.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_26.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_27.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_28.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_29.dat" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_3.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_30.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_31.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_32.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_33.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_34.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_35.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_36.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_37.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_38.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_39.dat" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_4.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_40.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_41.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_42.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_43.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_44.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_45.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_46.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_47.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_48.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_49.dat" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_5.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_50.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_51.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_52.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_53.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_54.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_55.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_56.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_57.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_58.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_59.dat" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_6.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_60.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_61.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_62.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_63.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_64.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_65.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_66.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_67.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_68.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_69.dat" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_7.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_70.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_71.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_72.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_73.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_74.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_75.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_76.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_77.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_78.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_79.dat" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_8.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_80.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_81.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_82.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_83.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_84.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_85.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_86.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_87.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_88.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_89.dat" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_9.dat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bottom/nodes/arbiter.py" beforeDir="false" afterPath="$PROJECT_DIR$/bottom/nodes/arbiter.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bottom/nodes/did.py" beforeDir="false" afterPath="$PROJECT_DIR$/bottom/nodes/did.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bottom/nodes/mainnode.py" beforeDir="false" afterPath="$PROJECT_DIR$/bottom/nodes/mainnode.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bottom/nodes/neo.py" beforeDir="false" afterPath="$PROJECT_DIR$/bottom/nodes/neo.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bottom/nodes/token.py" beforeDir="false" afterPath="$PROJECT_DIR$/bottom/nodes/token.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bottom/wallet/keystoremanager.py" beforeDir="false" afterPath="$PROJECT_DIR$/bottom/wallet/keystoremanager.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bottom/wallet/keytool.py" beforeDir="false" afterPath="$PROJECT_DIR$/bottom/wallet/keytool.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/middle/constant.py" beforeDir="false" afterPath="$PROJECT_DIR$/middle/constant.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/middle/env.py" beforeDir="false" afterPath="$PROJECT_DIR$/middle/env.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/middle/nodemanager.py" beforeDir="false" afterPath="$PROJECT_DIR$/bottom/nodes/nodemanager.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_90.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_91.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_92.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_93.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_94.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_95.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_96.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_97.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_98.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/datas/keystores/keystore_99.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/logs/log.py" beforeDir="false" afterPath="$PROJECT_DIR$/bottom/logs/log.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/nodes/mainnode.py" beforeDir="false" afterPath="$PROJECT_DIR$/bottom/nodes/ela.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/nodes/node.py" beforeDir="false" afterPath="$PROJECT_DIR$/bottom/nodes/node.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/nodes/nodemanager.py" beforeDir="false" afterPath="$PROJECT_DIR$/bottom/nodes/node_manager.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/services/jar.py" beforeDir="false" afterPath="$PROJECT_DIR$/bottom/services/jar.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/services/rest.py" beforeDir="false" afterPath="$PROJECT_DIR$/bottom/services/rest.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/services/rpc.py" beforeDir="false" afterPath="$PROJECT_DIR$/bottom/services/rpc.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/tx/transaction.py" beforeDir="false" afterPath="$PROJECT_DIR$/bottom/tx/transaction.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bottom/wallet/keystoremanager.py" beforeDir="false" afterPath="$PROJECT_DIR$/bottom/wallet/keystore_manager.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/datas/keystores/keystore_0.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/datas/keystores/keystore_1.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/datas/keystores/keystore_2.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/datas/keystores/keystore_3.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/middle/constant.py" beforeDir="false" afterPath="$PROJECT_DIR$/middle/common/constant.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/middle/env.py" beforeDir="false" afterPath="$PROJECT_DIR$/middle/common/env.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/middle/overall.py" beforeDir="false" afterPath="$PROJECT_DIR$/middle/overall.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/middle/params.py" beforeDir="false" afterPath="$PROJECT_DIR$/middle/params.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/middle/switch.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/middle/util.py" beforeDir="false" afterPath="$PROJECT_DIR$/middle/util.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/middle/params.py" beforeDir="false" afterPath="$PROJECT_DIR$/middle/parameters/params.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/middle/util.py" beforeDir="false" afterPath="$PROJECT_DIR$/middle/common/util.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/top/config.json" beforeDir="false" afterPath="$PROJECT_DIR$/top/config.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/top/config.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/top/control.py" beforeDir="false" afterPath="$PROJECT_DIR$/top/control.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -41,7 +240,7 @@
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/Elastos_ELA_StandardTest$moniter_height.coverage" NAME="moniter_height Coverage Results" MODIFIED="1548321532398" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Elastos_ELA_StandardTest$main.coverage" NAME="main Coverage Results" MODIFIED="1548667085962" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/Elastos_ELA_TestingWork$control.coverage" NAME="control Coverage Results" MODIFIED="1553866752340" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/top" />
+    <SUITE FILE_PATH="coverage/Elastos_ELA_TestingWork$control.coverage" NAME="control Coverage Results" MODIFIED="1554089797749" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/top" />
     <SUITE FILE_PATH="coverage/Elastos_ELA_StandardTest$json_test.coverage" NAME="json_test Coverage Results" MODIFIED="1547808688592" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Elastos_ELA_StandardTest$log.coverage" NAME="log Coverage Results" MODIFIED="1547637223067" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/logs" />
     <SUITE FILE_PATH="coverage/Elastos_ELA_TestingWork$main.coverage" NAME="main Coverage Results" MODIFIED="1553693990389" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
@@ -112,37 +311,39 @@
     <session id="-710401533">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
+          <entry key="project.closed" value="1" />
           <entry key="project.open.time.5" value="1" />
-          <entry key="project.opened" value="1" />
+          <entry key="project.open.time.6" value="1" />
+          <entry key="project.opened" value="2" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="dat" value="17" />
-          <entry key="json" value="23" />
-          <entry key="py" value="125" />
+          <entry key="dat" value="18" />
+          <entry key="json" value="25" />
+          <entry key="py" value="141" />
           <entry key="txt" value="1" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="JSON" value="23" />
-          <entry key="PLAIN_TEXT" value="18" />
-          <entry key="Python" value="125" />
+          <entry key="JSON" value="25" />
+          <entry key="PLAIN_TEXT" value="19" />
+          <entry key="Python" value="141" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="dummy" value="20" />
-          <entry key="json" value="851" />
-          <entry key="py" value="14958" />
+          <entry key="dummy" value="25" />
+          <entry key="json" value="1268" />
+          <entry key="py" value="16770" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="JSON" value="851" />
-          <entry key="PLAIN_TEXT" value="20" />
-          <entry key="Python" value="14958" />
+          <entry key="JSON" value="1268" />
+          <entry key="PLAIN_TEXT" value="25" />
+          <entry key="Python" value="16770" />
         </counts>
       </usages-collector>
     </session>
@@ -153,76 +354,51 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/bottom/nodes/nodemanager.py">
+        <entry file="file://$PROJECT_DIR$/bottom/nodes/node_manager.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="354">
-              <caret line="58" column="35" selection-start-line="58" selection-start-column="35" selection-end-line="58" selection-end-column="35" />
+            <state relative-caret-position="513">
+              <caret line="79" column="41" selection-start-line="79" selection-start-column="41" selection-end-line="79" selection-end-column="41" />
               <folding>
                 <element signature="e#89#98#0" expanded="true" />
-                <marker date="1553866737674" expanded="true" signature="484:485" ph="..." />
-                <marker date="1553866737674" expanded="true" signature="484:490" ph="..." />
+                <marker date="1554089575005" expanded="true" signature="505:506" ph="..." />
+                <marker date="1554089575005" expanded="true" signature="505:511" ph="..." />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/bottom/nodes/neo.py">
+        <entry file="file://$PROJECT_DIR$/middle/common/env.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="405">
-              <caret line="15" column="8" selection-start-line="15" selection-start-column="8" selection-end-line="15" selection-end-column="8" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/bottom/nodes/token.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="189">
-              <caret line="7" lean-forward="true" selection-start-line="7" selection-end-line="7" />
+            <state relative-caret-position="513">
+              <caret line="19" column="98" selection-start-line="19" selection-start-column="98" selection-end-line="19" selection-end-column="98" />
               <folding>
-                <marker date="1553864397656" expanded="true" signature="144:422" ph="..." />
-                <marker date="1553864397656" expanded="true" signature="295:296" ph="..." />
+                <element signature="e#89#98#0" expanded="true" />
+                <marker date="1554089773359" expanded="true" signature="187:193" ph="..." />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/bottom/nodes/mainnode.py">
+        <entry file="file://$PROJECT_DIR$/bottom/wallet/keystore_manager.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="297">
-              <caret line="24" column="86" selection-start-line="24" selection-start-column="86" selection-end-line="24" selection-end-column="86" />
+              <caret line="11" column="8" selection-start-line="11" selection-start-column="8" selection-end-line="11" selection-end-column="8" />
               <folding>
-                <element signature="e#89#112#0" expanded="true" />
-                <marker date="1553866737668" expanded="true" signature="199:200" ph="..." />
-                <marker date="1553866737668" expanded="true" signature="199:205" ph="..." />
-                <marker date="1553866737668" expanded="true" signature="1870:1874" ph="..." />
+                <element signature="e#89#122#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/bottom/nodes/node.py">
+        <entry file="file://$PROJECT_DIR$/middle/parameters/ela_params.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1116">
-              <caret line="53" column="8" selection-start-line="53" selection-start-column="8" selection-end-line="53" selection-end-column="8" />
+            <state relative-caret-position="297">
+              <caret line="11" column="40" selection-start-line="11" selection-start-column="40" selection-end-line="11" selection-end-column="40" />
               <folding>
-                <marker date="1553831468395" expanded="true" signature="138:139" ph="..." />
-                <marker date="1553831468395" expanded="true" signature="683:702" ph="..." />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/bottom/nodes/did.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="432">
-              <caret line="16" column="62" lean-forward="true" selection-start-line="16" selection-start-column="62" selection-end-line="16" selection-end-column="62" />
-              <folding>
-                <marker date="1553864397659" expanded="true" signature="142:148" ph="..." />
+                <marker date="1554089575001" expanded="true" signature="114:115" ph="..." />
               </folding>
             </state>
           </provider>
@@ -231,35 +407,21 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/top/control.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="540">
-              <caret line="20" column="23" selection-start-line="20" selection-start-column="23" selection-end-line="20" selection-end-column="23" />
+            <state relative-caret-position="351">
+              <caret line="14" column="42" selection-start-line="14" selection-start-column="42" selection-end-line="14" selection-end-column="42" />
               <folding>
-                <element signature="e#89#98#0" expanded="true" />
-                <marker date="1553855097008" expanded="true" signature="185:186" ph="..." />
-                <marker date="1553855097008" expanded="true" signature="185:191" ph="..." />
+                <marker date="1554089642757" expanded="true" signature="182:183" ph="..." />
+                <marker date="1554089642757" expanded="true" signature="182:188" ph="..." />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/middle/constant.py">
+        <entry file="file://$PROJECT_DIR$/middle/parameters/token_params.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="500">
-              <caret line="40" column="4" lean-forward="true" selection-start-line="40" selection-start-column="4" selection-end-line="40" selection-end-column="4" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/middle/params.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="513">
-              <caret line="26" column="62" lean-forward="true" selection-start-line="26" selection-start-column="62" selection-end-line="26" selection-end-column="62" />
-              <folding>
-                <marker date="1553865920239" expanded="true" signature="114:115" ph="..." />
-                <marker date="1553865920239" expanded="true" signature="114:120" ph="..." />
-              </folding>
+            <state relative-caret-position="243">
+              <caret line="9" column="38" lean-forward="true" selection-start-line="9" selection-start-column="38" selection-end-line="9" selection-end-column="38" />
             </state>
           </provider>
         </entry>
@@ -267,8 +429,47 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/top/config.json">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="486">
-              <caret line="18" column="22" selection-start-line="18" selection-start-column="22" selection-end-line="18" selection-end-column="22" />
+            <state relative-caret-position="567">
+              <caret line="21" column="4" lean-forward="true" selection-start-line="21" selection-start-column="4" selection-end-line="21" selection-end-column="4" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/middle/parameters/neo_params.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="243">
+              <caret line="9" column="38" lean-forward="true" selection-start-line="9" selection-start-column="38" selection-end-line="9" selection-end-column="38" />
+              <folding>
+                <marker date="1554089575019" expanded="true" signature="114:119" ph="..." />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/middle/parameters/params.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="88">
+              <caret line="14" column="8" selection-start-line="14" selection-start-column="8" selection-end-line="14" selection-end-column="8" />
+              <folding>
+                <element signature="e#89#139#0" expanded="true" />
+                <marker date="1554089575011" expanded="true" signature="382:383" ph="..." />
+                <marker date="1554089575011" expanded="true" signature="382:388" ph="..." />
+                <marker date="1554089575011" expanded="true" signature="836:1121" ph="..." />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/middle/overall.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="351">
+              <caret line="18" column="8" selection-start-line="18" selection-start-column="8" selection-end-line="18" selection-end-column="8" />
+              <folding>
+                <element signature="e#89#138#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -305,15 +506,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/core/vote/vote.py" />
-        <option value="$PROJECT_DIR$/core/service/jar.py" />
-        <option value="$PROJECT_DIR$/core/wallet/keystore.py" />
-        <option value="$PROJECT_DIR$/core/deal/transaction.py" />
-        <option value="$PROJECT_DIR$/core/control/controller.py" />
-        <option value="$PROJECT_DIR$/core/deal/assist.py" />
-        <option value="$PROJECT_DIR$/core/deal/vote.py" />
-        <option value="$PROJECT_DIR$/configs/constant.py" />
-        <option value="$PROJECT_DIR$/core/wallet/keystoremanager.py" />
         <option value="$PROJECT_DIR$/utils/util.py" />
         <option value="$PROJECT_DIR$/main.py" />
         <option value="$PROJECT_DIR$/core/deploy/deploy.py" />
@@ -342,20 +534,29 @@
         <option value="$PROJECT_DIR$/bottom/nodes/node.py" />
         <option value="$PROJECT_DIR$/bottom/wallet/keystore.py" />
         <option value="$PROJECT_DIR$/middle/util.py" />
-        <option value="$PROJECT_DIR$/top/control.py" />
         <option value="$PROJECT_DIR$/bottom/wallet/keystoremanager.py" />
-        <option value="$PROJECT_DIR$/middle/overall.py" />
         <option value="$PROJECT_DIR$/middle/env.py" />
         <option value="$PROJECT_DIR$/bottom/wallet/keytool.py" />
         <option value="$PROJECT_DIR$/bottom/nodes/neo.py" />
         <option value="$PROJECT_DIR$/bottom/nodes/token.py" />
         <option value="$PROJECT_DIR$/bottom/nodes/did.py" />
         <option value="$PROJECT_DIR$/bottom/nodes/arbiter.py" />
-        <option value="$PROJECT_DIR$/top/config.json" />
         <option value="$PROJECT_DIR$/middle/params.py" />
         <option value="$PROJECT_DIR$/middle/constant.py" />
-        <option value="$PROJECT_DIR$/bottom/nodes/nodemanager.py" />
         <option value="$PROJECT_DIR$/bottom/nodes/mainnode.py" />
+        <option value="$PROJECT_DIR$/bottom/nodes/nodemanager.py" />
+        <option value="$PROJECT_DIR$/bottom/nodes/ela.py" />
+        <option value="$PROJECT_DIR$/middle/parameters/neo_params.py" />
+        <option value="$PROJECT_DIR$/middle/parameters/arbiter_params.py" />
+        <option value="$PROJECT_DIR$/middle/parameters/did_params.py" />
+        <option value="$PROJECT_DIR$/middle/parameters/token_params.py" />
+        <option value="$PROJECT_DIR$/middle/parameters/params.py" />
+        <option value="$PROJECT_DIR$/middle/overall.py" />
+        <option value="$PROJECT_DIR$/middle/parameters/ela_params.py" />
+        <option value="$PROJECT_DIR$/bottom/nodes/node_manager.py" />
+        <option value="$PROJECT_DIR$/top/control.py" />
+        <option value="$PROJECT_DIR$/middle/common/env.py" />
+        <option value="$PROJECT_DIR$/top/config.json" />
       </list>
     </option>
   </component>
@@ -365,60 +566,16 @@
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6" fullScreen="true">
+  <component name="ProjectFrameBounds" fullScreen="true">
     <option name="width" value="1274" />
     <option name="height" value="1440" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
-    <navigator currentView="Scope" currentSubView="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope" proportions="" version="1">
+    <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope">
-        <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
-          <expand>
-            <path>
-              <item name="Elastos.ELA.TestingWork" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-            </path>
-            <path>
-              <item name="Elastos.ELA.TestingWork" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="bottom" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-            <path>
-              <item name="Elastos.ELA.TestingWork" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="bottom" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="datas" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-            <path>
-              <item name="Elastos.ELA.TestingWork" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="bottom" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="nodes" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-            <path>
-              <item name="Elastos.ELA.TestingWork" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="bottom" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="wallet" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-            <path>
-              <item name="Elastos.ELA.TestingWork" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="middle" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-            <path>
-              <item name="Elastos.ELA.TestingWork" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="top" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -429,12 +586,29 @@
             <path>
               <item name="Elastos.ELA.TestingWork" type="b2602c69:ProjectViewProjectNode" />
               <item name="Elastos.ELA.TestingWork" type="462c0819:PsiDirectoryNode" />
-              <item name="bottom" type="462c0819:PsiDirectoryNode" />
+              <item name="middle" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="Elastos.ELA.TestingWork" type="b2602c69:ProjectViewProjectNode" />
               <item name="Elastos.ELA.TestingWork" type="462c0819:PsiDirectoryNode" />
               <item name="middle" type="462c0819:PsiDirectoryNode" />
+              <item name="parameters" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Elastos.ELA.TestingWork" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Elastos.ELA.TestingWork" type="462c0819:PsiDirectoryNode" />
+              <item name="top" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="Scope">
+        <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
+          <expand>
+            <path>
+              <item name="Elastos.ELA.TestingWork" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
             </path>
           </expand>
           <select />
@@ -450,17 +624,17 @@
     <property name="settings.editor.selected.configurable" value="RSettings" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/middle/common" />
+      <recent name="$PROJECT_DIR$/middle/parameters" />
+      <recent name="$PROJECT_DIR$/bottom/nodes" />
+      <recent name="$PROJECT_DIR$/middle" />
+      <recent name="$PROJECT_DIR$/top" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/bottom/node" />
       <recent name="$PROJECT_DIR$/jars" />
       <recent name="$PROJECT_DIR$" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/bottom/nodes" />
-      <recent name="$PROJECT_DIR$/middle" />
-      <recent name="$PROJECT_DIR$/top" />
-      <recent name="$PROJECT_DIR$/bottom" />
-      <recent name="$PROJECT_DIR$/core/deal" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -511,7 +685,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/middle/env.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/middle/common/env.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -533,7 +707,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/bottom/wallet/keystoremanager.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/bottom/wallet/keystore_manager.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -622,14 +796,13 @@
     <option name="totallyTimeSpent" value="24809000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="2560" height="1440" extended-state="6" />
-    <editor active="true" />
+    <frame x="0" y="0" width="2560" height="1440" extended-state="0" />
     <layout>
       <window_info id="Structure" order="0" sideWeight="0.5003701" side_tool="true" weight="0.16746412" />
       <window_info id="Favorites" order="1" sideWeight="0.5003701" side_tool="true" weight="0.16746412" />
-      <window_info active="true" content_ui="combo" id="Project" order="2" sideWeight="0.4996299" visible="true" weight="0.19059011" />
+      <window_info content_ui="combo" id="Project" order="2" sideWeight="0.4996299" visible="true" weight="0.1507177" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Run" order="1" weight="0.6772761" />
+      <window_info active="true" anchor="bottom" id="Run" order="1" visible="true" weight="0.6772761" />
       <window_info anchor="bottom" id="Find" order="2" weight="0.32790527" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39970392" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
@@ -657,66 +830,8 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/core/deal/vote.py" />
-    <entry file="file://$PROJECT_DIR$/bottom/logs/pony.log">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="162">
-          <caret line="6" column="97" selection-start-line="6" selection-start-column="97" selection-end-line="6" selection-end-column="97" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/requirements.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="4" column="18" selection-start-line="4" selection-start-column="18" selection-end-line="4" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///usr/local/Cellar/python/3.6.5/Frameworks/Python.framework/Versions/3.6/lib/python3.6/json/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="242">
-          <caret line="273" column="4" selection-start-line="273" selection-start-column="4" selection-end-line="273" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/top/controller_bak.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="351">
-          <caret line="25" column="34" selection-start-line="25" selection-start-column="34" selection-end-line="25" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="972">
-          <caret line="153" column="41" selection-start-line="153" selection-start-column="41" selection-end-line="153" selection-end-column="41" />
-          <folding>
-            <element signature="e#132#141#0" expanded="true" />
-            <marker date="1553828317405" expanded="true" signature="3927:4521" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bottom/node/node_bak.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="864">
-          <caret line="88" column="8" selection-start-line="88" selection-start-column="8" selection-end-line="88" selection-end-column="8" />
-          <folding>
-            <element signature="e#132#141#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bottom/node/deploy.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="503">
-          <caret line="78" column="31" selection-start-line="78" selection-start-column="31" selection-end-line="78" selection-end-column="31" />
-          <folding>
-            <element signature="e#89#98#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/bottom/node/node_bak.py" />
+    <entry file="file://$PROJECT_DIR$/bottom/node/deploy.py" />
     <entry file="file://$PROJECT_DIR$/bottom/logs/log.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="243">
@@ -772,83 +887,23 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/bottom/datas/config.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="756">
-          <caret line="28" column="27" selection-start-line="28" selection-start-column="27" selection-end-line="28" selection-end-column="27" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bottom/datas/keystores/keystore_12.dat">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bottom/datas/keystores/keystore_9.dat">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bottom/datas/keystores/keystore_15.dat">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bottom/datas/keystores/keystore_11.dat">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bottom/datas/keystores/keystore_17.dat">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bottom/datas/keystores/keystore_169.dat">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bottom/datas/keystores/keystore_181.dat">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bottom/datas/keystores/keystore_171.dat">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bottom/datas/keystores/keystore_176.dat">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bottom/datas/keystores/keystore_186.dat">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/middle/switch.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="405">
-          <caret line="34" column="34" selection-start-line="34" selection-start-column="34" selection-end-line="34" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/top/config.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="8667">
-          <caret line="321" selection-start-line="321" selection-end-line="321" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/middle/util.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-54">
-          <caret line="11" column="27" selection-start-line="11" selection-start-column="27" selection-end-line="11" selection-end-column="27" />
-          <folding>
-            <element signature="e#132#141#0" expanded="true" />
-            <marker date="1553853523346" expanded="true" signature="1239:1344" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/bottom/datas/config.json" />
+    <entry file="file://$PROJECT_DIR$/bottom/datas/keystores/keystore_12.dat" />
+    <entry file="file://$PROJECT_DIR$/bottom/datas/keystores/keystore_9.dat" />
+    <entry file="file://$PROJECT_DIR$/bottom/datas/keystores/keystore_15.dat" />
+    <entry file="file://$PROJECT_DIR$/bottom/datas/keystores/keystore_11.dat" />
+    <entry file="file://$PROJECT_DIR$/bottom/datas/keystores/keystore_17.dat" />
+    <entry file="file://$PROJECT_DIR$/bottom/datas/keystores/keystore_169.dat" />
+    <entry file="file://$PROJECT_DIR$/bottom/datas/keystores/keystore_181.dat" />
+    <entry file="file://$PROJECT_DIR$/bottom/datas/keystores/keystore_171.dat" />
+    <entry file="file://$PROJECT_DIR$/bottom/datas/keystores/keystore_176.dat" />
+    <entry file="file://$PROJECT_DIR$/bottom/datas/keystores/keystore_186.dat" />
+    <entry file="file://$PROJECT_DIR$/middle/switch.py" />
+    <entry file="file://$PROJECT_DIR$/top/config.py" />
     <entry file="file:///usr/local/Cellar/python/3.6.5/Frameworks/Python.framework/Versions/3.6/lib/python3.6/shutil.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="127">
           <caret line="240" selection-start-line="240" selection-end-line="240" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/middle/env.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="324">
-          <caret line="24" column="46" selection-start-line="24" selection-start-column="46" selection-end-line="24" selection-end-column="46" />
-          <folding>
-            <element signature="e#89#98#0" expanded="true" />
-            <marker date="1553860804554" expanded="true" signature="176:182" ph="..." />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -866,24 +921,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/bottom/datas/keystores/keystore_19.dat">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="10" column="76" selection-start-line="10" selection-start-column="76" selection-end-line="10" selection-end-column="76" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/bottom/datas/keystores/keystore_19.dat" />
     <entry file="file:///usr/local/lib/python3.6/site-packages/Crypto/Cipher/_mode_eax.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="108">
           <caret line="153" column="8" selection-start-line="153" selection-start-column="8" selection-end-line="153" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bottom/datas/keystore.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="189">
-          <caret line="7" column="5" selection-start-line="7" selection-start-column="5" selection-end-line="7" selection-end-column="5" />
         </state>
       </provider>
     </entry>
@@ -905,26 +947,6 @@
           <folding>
             <element signature="e#134#147#0" expanded="true" />
             <marker date="1553851015117" expanded="true" signature="2015:3165" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bottom/wallet/keystoremanager.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="297">
-          <caret line="11" column="8" selection-start-line="11" selection-start-column="8" selection-end-line="11" selection-end-column="8" />
-          <folding>
-            <element signature="e#89#122#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/middle/overall.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="594">
-          <caret line="22" column="39" selection-start-line="22" selection-start-column="39" selection-end-line="22" selection-end-column="39" />
-          <folding>
-            <element signature="e#89#131#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -953,11 +975,20 @@
     <entry file="file://$PROJECT_DIR$/bottom/nodes/token.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="189">
-          <caret line="7" lean-forward="true" selection-start-line="7" selection-end-line="7" />
+          <caret line="7" selection-start-line="7" selection-end-line="7" />
           <folding>
-            <marker date="1553864397656" expanded="true" signature="144:422" ph="..." />
             <marker date="1553864397656" expanded="true" signature="295:296" ph="..." />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bottom/datas/keystores/keystore_4.dat">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bottom/datas/keystore.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="189">
+          <caret line="7" column="5" selection-start-line="7" selection-start-column="5" selection-end-line="7" selection-end-column="5" />
         </state>
       </provider>
     </entry>
@@ -968,75 +999,163 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/middle/constant.py">
+    <entry file="file://$PROJECT_DIR$/middle/common/util.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="500">
-          <caret line="40" column="4" lean-forward="true" selection-start-line="40" selection-start-column="4" selection-end-line="40" selection-end-column="4" />
+        <state relative-caret-position="-54">
+          <caret line="11" selection-start-line="11" selection-end-line="11" />
+          <folding>
+            <element signature="e#132#141#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/middle/common/constant.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="40" column="4" selection-start-line="40" selection-start-column="4" selection-end-line="40" selection-end-column="4" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/bottom/nodes/node.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1116">
-          <caret line="53" column="8" selection-start-line="53" selection-start-column="8" selection-end-line="53" selection-end-column="8" />
+        <state relative-caret-position="778">
+          <caret line="40" column="8" selection-start-line="40" selection-start-column="8" selection-end-line="40" selection-end-column="8" />
           <folding>
-            <marker date="1553831468395" expanded="true" signature="138:139" ph="..." />
-            <marker date="1553831468395" expanded="true" signature="683:702" ph="..." />
+            <marker date="1554086854729" expanded="true" signature="145:146" ph="..." />
+            <marker date="1554086854729" expanded="true" signature="690:709" ph="..." />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/middle/params.py">
+    <entry file="file://$PROJECT_DIR$/bottom/nodes/ela.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="513">
-          <caret line="26" column="62" lean-forward="true" selection-start-line="26" selection-start-column="62" selection-end-line="26" selection-end-column="62" />
+        <state relative-caret-position="859">
+          <caret line="39" column="92" lean-forward="true" selection-start-line="39" selection-start-column="92" selection-end-line="39" selection-end-column="92" />
           <folding>
-            <marker date="1553865920239" expanded="true" signature="114:115" ph="..." />
-            <marker date="1553865920239" expanded="true" signature="114:120" ph="..." />
+            <marker date="1554086854758" expanded="true" signature="182:183" ph="..." />
+            <marker date="1554086854758" expanded="true" signature="182:188" ph="..." />
+            <marker date="1554086854758" expanded="true" signature="1853:1857" ph="..." />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/bottom/nodes/nodemanager.py">
+    <entry file="file://$PROJECT_DIR$/middle/parameters/arbiter_params.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="354">
-          <caret line="58" column="35" selection-start-line="58" selection-start-column="35" selection-end-line="58" selection-end-column="35" />
+        <state relative-caret-position="243">
+          <caret line="9" column="38" selection-start-line="9" selection-start-column="38" selection-end-line="9" selection-end-column="38" />
           <folding>
-            <element signature="e#89#98#0" expanded="true" />
-            <marker date="1553866737674" expanded="true" signature="484:485" ph="..." />
-            <marker date="1553866737674" expanded="true" signature="484:490" ph="..." />
+            <marker date="1554089575014" expanded="true" signature="118:123" ph="..." />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/bottom/nodes/mainnode.py">
+    <entry file="file://$PROJECT_DIR$/middle/parameters/did_params.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="243">
+          <caret line="9" column="38" lean-forward="true" selection-start-line="9" selection-start-column="38" selection-end-line="9" selection-end-column="38" />
+          <folding>
+            <marker date="1554089575017" expanded="true" signature="114:119" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/middle/parameters/neo_params.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="243">
+          <caret line="9" column="38" lean-forward="true" selection-start-line="9" selection-start-column="38" selection-end-line="9" selection-end-column="38" />
+          <folding>
+            <marker date="1554089575019" expanded="true" signature="114:119" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/middle/parameters/token_params.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="243">
+          <caret line="9" column="38" lean-forward="true" selection-start-line="9" selection-start-column="38" selection-end-line="9" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/middle/parameters/ela_params.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="297">
-          <caret line="24" column="86" selection-start-line="24" selection-start-column="86" selection-end-line="24" selection-end-column="86" />
+          <caret line="11" column="40" selection-start-line="11" selection-start-column="40" selection-end-line="11" selection-end-column="40" />
           <folding>
-            <element signature="e#89#112#0" expanded="true" />
-            <marker date="1553866737668" expanded="true" signature="199:200" ph="..." />
-            <marker date="1553866737668" expanded="true" signature="199:205" ph="..." />
-            <marker date="1553866737668" expanded="true" signature="1870:1874" ph="..." />
+            <marker date="1554089575001" expanded="true" signature="114:115" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/middle/parameters/params.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="88">
+          <caret line="14" column="8" selection-start-line="14" selection-start-column="8" selection-end-line="14" selection-end-column="8" />
+          <folding>
+            <element signature="e#89#139#0" expanded="true" />
+            <marker date="1554089575011" expanded="true" signature="382:383" ph="..." />
+            <marker date="1554089575011" expanded="true" signature="382:388" ph="..." />
+            <marker date="1554089575011" expanded="true" signature="836:1121" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/middle/overall.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="351">
+          <caret line="18" column="8" selection-start-line="18" selection-start-column="8" selection-end-line="18" selection-end-column="8" />
+          <folding>
+            <element signature="e#89#138#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/middle/common/env.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="513">
+          <caret line="19" column="98" selection-start-line="19" selection-start-column="98" selection-end-line="19" selection-end-column="98" />
+          <folding>
+            <element signature="e#89#98#0" expanded="true" />
+            <marker date="1554089773359" expanded="true" signature="187:193" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bottom/wallet/keystore_manager.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="297">
+          <caret line="11" column="8" selection-start-line="11" selection-start-column="8" selection-end-line="11" selection-end-column="8" />
+          <folding>
+            <element signature="e#89#122#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bottom/nodes/node_manager.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="513">
+          <caret line="79" column="41" selection-start-line="79" selection-start-column="41" selection-end-line="79" selection-end-column="41" />
+          <folding>
+            <element signature="e#89#98#0" expanded="true" />
+            <marker date="1554089575005" expanded="true" signature="505:506" ph="..." />
+            <marker date="1554089575005" expanded="true" signature="505:511" ph="..." />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/top/config.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="486">
-          <caret line="18" column="22" selection-start-line="18" selection-start-column="22" selection-end-line="18" selection-end-column="22" />
+        <state relative-caret-position="567">
+          <caret line="21" column="4" lean-forward="true" selection-start-line="21" selection-start-column="4" selection-end-line="21" selection-end-column="4" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/top/control.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="540">
-          <caret line="20" column="23" selection-start-line="20" selection-start-column="23" selection-end-line="20" selection-end-column="23" />
+        <state relative-caret-position="351">
+          <caret line="14" column="42" selection-start-line="14" selection-start-column="42" selection-end-line="14" selection-end-column="42" />
           <folding>
-            <element signature="e#89#98#0" expanded="true" />
-            <marker date="1553855097008" expanded="true" signature="185:186" ph="..." />
-            <marker date="1553855097008" expanded="true" signature="185:191" ph="..." />
+            <marker date="1554089642757" expanded="true" signature="182:183" ph="..." />
+            <marker date="1554089642757" expanded="true" signature="182:188" ph="..." />
           </folding>
         </state>
       </provider>

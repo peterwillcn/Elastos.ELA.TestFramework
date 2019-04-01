@@ -3,7 +3,7 @@
 # date: 2019/3/28 4:44 PM
 # author: liteng
 
-from middle import constant
+from middle.common import constant
 
 
 class Node(object):

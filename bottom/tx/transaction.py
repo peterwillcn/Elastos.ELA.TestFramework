@@ -3,7 +3,7 @@
 # date: 2019/1/24 2:33 PM
 # author: liteng
 
-from middle import util, constant
+from middle.common import constant, util
 from bottom.logs.log import Logger
 from bottom.tx.assist import Assist
 from bottom.services.jar import JarService

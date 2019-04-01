@@ -1,21 +1,31 @@
 {
-  "configuration" :{
-    "ela_node_enable": true,
-    "ela_node_num": 5,
-    "arbiter_node_enable": false,
-    "arbiter_node_num": 4,
-    "did_node_enable":  false,
-    "did_node_num": 3,
-    "token_node_enable": false,
-    "token_node_num": 3,
-    "neo_node_enable": false,
-    "neo_node_num": 4,
+  "ela": {
+    "enable": true,
     "password": "123",
+    "number": 5,
     "crc_number": 4,
     "pre_connect_offset": 50,
-    "check_address_height": 101,
-    "vote_start_height": 100,
-    "crc_only_dpos_height": 200,
-    "public_dpos_height": 300
+    "heights": [
+      101,
+      100,
+      200,
+      300
+    ]
+  },
+  "arbiter": {
+    "enable": false,
+    "number": 5
+  },
+  "did": {
+    "enable": false,
+    "number": 5
+  },
+  "token": {
+    "enable": false,
+    "number": 5
+  },
+  "neo": {
+    "enable": false,
+    "number": 5
   }
 }

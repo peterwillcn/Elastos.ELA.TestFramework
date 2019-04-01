@@ -3,8 +3,8 @@
 # date: 2019/3/28 2:48 PM
 # author: liteng
 
-from bottom.nodes.nodemanager import NodeManager
-from middle.params import Parameter
+from bottom.nodes.node_manager import NodeManager
+from middle.parameters.params import Parameter
 
 
 class Overall(object):
@@ -12,23 +12,30 @@ class Overall(object):
     def __init__(self, top_config):
         self.tag = "[middle.overall.Overall]"
         self.params = Parameter(top_config)
-        self.check_params()
         self.node_manager = NodeManager(self.params)
 
         pass
 
     def deploy_node(self):
         ret = False
-        if self.params.ela_node_enable:
-            ret = self.node_manager.deploy_node("ela",  self.params.ela_node_num)
-        if self.params.arbiter_node_enable:
-            ret = self.node_manager.deploy_node("arbiter", self.params.arbiter_node_num)
-        if self.params.did_node_enable:
-            ret = self.node_manager.deploy_node("did", self.params.did_node_num)
-        if self.params.token_node_enable:
-            ret = self.node_manager.deploy_node("token", self.params.token_node_num)
-        if self.params.neo_node_enable:
-            ret = self.node_manager.deploy_node("neo", self.params.neo_node_num)
+
+        config_update_content = dict()
+        config_update_content["ela"] = dict()
+        config_update_content["arbiter"] = dict()
+        config_update_content["did"] = dict()
+        config_update_content["token"] = dict()
+        config_update_content["neo"] = dict()
+
+        if self.params.ela_params.enable:
+            ret = self.node_manager.deploy_node("ela",  self.params.ela_params.number, config_update_content)
+        if self.params.arbiter_params.enable:
+            ret = self.node_manager.deploy_node("arbiter", self.params.arbiter_params.number, config_update_content)
+        if self.params.did_params.enable:
+            ret = self.node_manager.deploy_node("did", self.params.did_params.number, config_update_content)
+        if self.params.token_params.enable:
+            ret = self.node_manager.deploy_node("token", self.params.token_params.number, config_update_content)
+        if self.params.neo_params.enable:
+            ret = self.node_manager.deploy_node("neo", self.params.neo_params.number, config_update_content)
         return ret
 
     def start_node(self):
@@ -37,9 +44,4 @@ class Overall(object):
     def stop_node(self):
         pass
 
-    def check_params(self):
-        if self.params.ela_node_num < self.params.crc_number:
-            print("{} Ela should have more nodes than crc, please check your config.json file...".format(self.tag))
-            exit(-1)
-        else:
-            print("{} Parameters Check Pass!".format(self.tag))
+

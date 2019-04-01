@@ -9,7 +9,7 @@
 import os
 import time
 import subprocess
-from middle import constant
+from middle.common import constant
 from bottom.logs.log import Logger
 from bottom.services import net
 

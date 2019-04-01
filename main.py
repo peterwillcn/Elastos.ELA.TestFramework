@@ -8,7 +8,7 @@
 
 import os
 import json
-from middle import util, constant
+from middle.common import constant, util
 from bottom.logs.log import Logger
 from top.controller_bak import Controller
 

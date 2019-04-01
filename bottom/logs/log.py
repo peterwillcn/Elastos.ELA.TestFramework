@@ -7,7 +7,7 @@
 # file: log.py
 
 import time
-from middle import constant
+from middle.common import constant
 
 
 class Logger:
