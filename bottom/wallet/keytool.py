@@ -70,7 +70,7 @@ def save_to_json(k, first_time: bool):
 
 def save_to_dat(k, index: int):
     path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../"))
-    dest_path = os.path.join(path, "datas/keystores")
+    dest_path = os.path.join(path, "datas/general")
     if not os.path.exists(dest_path):
         os.makedirs(dest_path)
     with open(os.path.join(dest_path, "keystore_" + str(index) + ".dat"), "w") as f:

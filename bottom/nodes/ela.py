@@ -18,6 +18,10 @@ class MainNode(Node):
     def reset_config(self, num: int, update_content: dict):
         Node.reset_config_common(self, self.index, "ela", num)
 
+        self.config[constant.CONFIG_FOUNDATION_ADDRESS] = update_content["foundation_address"]
+        self.config[constant.CONFIG_POW][constant.CONFIG_PAY_TO_MINER] = update_content["miner_address"]
+        self.config[constant.CONFIG_POW][constant.CONFIG_AUTO_MINING] = update_content["auto_mining"]
+        self.config[constant.CONFIG_POW][constant.CONFIG_INSTANT_BLOCK] = update_content["instant_block"]
         self.config[constant.CONFIG_CHECK_ADDRESS_HEIGHT] = update_content["heights"][0]
         self.config[constant.CONFIG_VOTE_START_HEIGHT] = update_content["heights"][1]
         self.config[constant.CONFIG_ONLY_DPOS_HEIGHT] = update_content["heights"][2]

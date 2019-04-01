@@ -51,16 +51,7 @@ class NodeManager(object):
         else:
             config_dict = self.env.config_dict[category]
 
-        config_update_content["ela"]["crc_public_keys"] = list()
-        for i in range(self.params.ela_params.crc_number):
-            config_update_content["ela"]["crc_public_keys"].append(self.keystore_manager.key_stores[i].public_key.hex())
-
-        config_update_content["ela"]["pre_connect_offset"] = self.params.ela_params.pre_connect_offset
-        config_update_content["ela"]["heights"] = list()
-        config_update_content["ela"]["heights"].append(self.params.ela_params.config_heights[0])
-        config_update_content["ela"]["heights"].append(self.params.ela_params.config_heights[1])
-        config_update_content["ela"]["heights"].append(self.params.ela_params.config_heights[2])
-        config_update_content["ela"]["heights"].append(self.params.ela_params.config_heights[3])
+        self.update_ela_config(config_update_content["ela"])
 
         for i in range(num):
             dest_path = os.path.join(self.env.test_path, category + "_nodes", self.env.current_date_time,
@@ -76,11 +67,39 @@ class NodeManager(object):
             self.nodes_dict[category].append(node)
 
             if category == "ela":
-                shutil.copy(os.path.join(
-                    self.env.project_root_path, "bottom/datas/keystores", "keystore_" + str(i) + ".dat"),
-                    os.path.join(dest_path, "keystore.dat"))
+                shutil.copy(
+                    os.path.join(self.env.project_root_path, "bottom/datas/general", "keystore_" + str(i) + ".dat"),
+                    os.path.join(dest_path, "keystore.dat")
+                )
+
+            if i == 0 and category == "ela":
+                shutil.copy(
+                    os.path.join(self.env.project_root_path, "bottom/datas/special/foundation.dat"),
+                    os.path.join(os.path.join(dest_path, "foundation.dat"))
+                )
+
+                shutil.copy(
+                    os.path.join(self.env.project_root_path, "bottom/datas/special/miner.dat"),
+                    os.path.join(os.path.join(dest_path, "miner.dat"))
+                )
 
         return True
+
+    def update_ela_config(self, update_content: dict):
+        update_content["crc_public_keys"] = list()
+        for i in range(self.params.ela_params.crc_number):
+            update_content["crc_public_keys"].append(self.keystore_manager.key_stores[i].public_key.hex())
+
+        update_content["auto_mining"] = self.params.ela_params.auto_mining
+        update_content["instant_block"] = self.params.ela_params.instant_block
+        update_content["foundation_address"] = self.params.ela_params.foundation_address
+        update_content["miner_address"] = self.params.ela_params.miner_address
+        update_content["pre_connect_offset"] = self.params.ela_params.pre_connect_offset
+        update_content["heights"] = list()
+        update_content["heights"].append(self.params.ela_params.check_address_height)
+        update_content["heights"].append(self.params.ela_params.vote_start_height)
+        update_content["heights"].append(self.params.ela_params.crc_dpos_height)
+        update_content["heights"].append(self.params.ela_params.public_dpos_height)
 
     @staticmethod
     def init_node(category: str, config, index: int, node_public_key):

@@ -29,6 +29,8 @@ CONFIG_PORT_JSON = "HttpJsonPort"
 CONFIG_PORT_OPEN = "NodeOpenPort"
 CONFIG_FOUNDATION_ADDRESS = "FoundationAddress"
 CONFIG_PAY_TO_MINER = "PayToAddr"
+CONFIG_AUTO_MINING = "AutoMining"
+CONFIG_INSTANT_BLOCK = "InstantBlock"
 CONFIG_POW = "PowConfiguration"
 CONFIG_ARBITERS = "Arbiters"
 
