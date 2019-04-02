@@ -10,6 +10,7 @@ from Crypto.Hash import RIPEMD160
 from Crypto.PublicKey import ECC
 from Crypto.Cipher import AES
 
+bottom_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../"))
 
 def create_ecc_pair(curve_type: str):
     ecc_key_pair = ECC.generate(curve=curve_type)
@@ -51,27 +52,26 @@ def encode_point(is_compressed, ecc_publick_key):
     return bytes(encoded_data)
 
 
-def save_to_json(k, first_time: bool):
-    path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../"))
-    path = os.path.join(path, "datas/keystore.json")
+def save_to_json(k, prefix: str, dest_path: str, first_time: bool):
+
+    path = os.path.join(bottom_path, dest_path)
     if os.path.exists(path) and not first_time:
         with open(path, "r") as f:
             load_dict = json.load(f)
-            length = len(load_dict)
-            load_dict["Addr #" + str(length)] = k.to_dict()
+          #  length = len(load_dict)
+            load_dict[prefix] = k.to_dict()
         with open(path, "w") as f:
             json.dump(load_dict, f, indent=4)
     else:
         with open(path, "w") as f:
-            json.dump({"Addr #" + "0": k.to_dict()}, f, indent=4)
+            json.dump({prefix : k.to_dict()}, f, indent=4)
 
 
-def save_to_dat(k, index: int):
-    path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../"))
-    dest_path = os.path.join(path, "datas/general")
+def save_to_dat(k, index: int, dest_dir: str, dat_name: str):
+    dest_path = os.path.join(bottom_path, dest_dir)
     if not os.path.exists(dest_path):
         os.makedirs(dest_path)
-    with open(os.path.join(dest_path, "keystore_" + str(index) + ".dat"), "w") as f:
+    with open(os.path.join(dest_path, dat_name), "w") as f:
         json.dump(k.keystore_dat, f, sort_keys=False, indent=4, separators=(',', ':'))
 
 

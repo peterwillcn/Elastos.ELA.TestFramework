@@ -20,13 +20,13 @@ Jar services can create private key, public key, address, transactions and so on
 
 
 class JarService(object):
-    def __init__(self):
+    def __init__(self, project_root_path):
         self.tag = "[bottom.services.jar.JarService]"
         self.process = None
         self.running = False
         self.rpc_port = 8989
         self.url = "http://127.0.0.1:8989"
-        self.command = "java -cp " + "./jars/" + constant.JAR_NAME + constant.JAR_HTTP_SERVICE
+        self.command = "java -cp " + project_root_path + "/bottom/jars/" + constant.JAR_ELA_TOOL + constant.JAR_HTTP_SERVICE
         self.start()
 
     def start(self):

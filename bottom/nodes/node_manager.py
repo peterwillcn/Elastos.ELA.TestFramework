@@ -34,7 +34,9 @@ class NodeManager(object):
         self.params = params
         self.env = Environment(project_root_path)
         self.keystore_manager = KeyStoreManager(self.params.ela_params.number, self.params.ela_params.password)
-
+        self.foundation_address = self.keystore_manager.special_key_stores[0].address
+        self.miner_address = self.keystore_manager.special_key_stores[1].address
+        self.tap_address = self.keystore_manager.special_key_stores[2].address
         self.nodes_dict = {
             "ela": self.ela_nodes,
             "arbiter": self.arbiter_nodes,
@@ -46,14 +48,14 @@ class NodeManager(object):
     def update_ela_config(self, update_content: dict):
         update_content["crc_public_keys"] = list()
         for i in range(self.params.ela_params.crc_number):
-            update_content["crc_public_keys"].append(self.keystore_manager.key_stores[i].public_key.hex())
+            update_content["crc_public_keys"].append(self.keystore_manager.general_key_stores[i].public_key.hex())
 
         update_content["arbiter_enable"] = self.params.ela_params.arbiter_enable
         update_content["password"] = self.params.ela_params.password
         update_content["auto_mining"] = self.params.ela_params.auto_mining
         update_content["instant_block"] = self.params.ela_params.instant_block
-        update_content["foundation_address"] = self.params.ela_params.foundation_address
-        update_content["miner_address"] = self.params.ela_params.miner_address
+        update_content["foundation_address"] = self.foundation_address
+        update_content["miner_address"] = self.miner_address
         update_content["pre_connect_offset"] = self.params.ela_params.pre_connect_offset
         update_content["heights"] = list()
         update_content["heights"].append(self.params.ela_params.check_address_height)
@@ -103,7 +105,7 @@ class NodeManager(object):
 
             shutil.copy(os.path.join(src_path, category), os.path.join(dest_path, category))
             node = self.init_node(category, config_dict, i,
-                                  self.keystore_manager.key_stores[i].public_key.hex(), dest_path)
+                                  self.keystore_manager.general_key_stores[i].public_key.hex(), dest_path)
             node.reset_config(num, config_update_content[category])
             util.write_config_file(node.config, os.path.join(dest_path, "config.json"))
             self.nodes_dict[category].append(node)

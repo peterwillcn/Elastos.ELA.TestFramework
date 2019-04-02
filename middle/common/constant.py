@@ -11,6 +11,8 @@ import time
 
 
 JAR_NAME = "Elastos.ELA.AutoTest.Java.jar"
+JAR_ELA_TOOL = "ela_tool.jar"
+JAR_NEW_NAME = "Elastos.ELA.AutoTest.New.Java.jar"
 JAR_HTTP_SERVICE = " org.elastos.elaweb.HttpServer"
 
 NODE_BINARY_MAIN = "ela"
@@ -74,6 +76,8 @@ MAIN_CHAIN_DEFAULT_PORT = "MainChainDefaultPort"
 SIDE_CHAIN_FOUNDATION_ADDRESS = "SideChainFoundationAddress"
 MINER_ADDRESS = "MinerAddress"
 SPV_SEED_LIST = "SpvSeedList"
+
+TO_SELA = 100000000
 
 
 

@@ -37,6 +37,8 @@ class Transaction(object):
         inputs, utxos_value = self.assist.gen_inputs_utxos_value(input_keystore=input_keystore,
                                                                  amount=amount, fee=fee, mode=mode)
         outputs = self.assist.gen_single_sign_outputs(output_addresses, input_keystore.address, utxos_value, amount)
+        print("inputs: {}".format(inputs))
+        print("outputs: {}".format(outputs))
         jar_response = self.jar_service.create_transaction(inputs, outputs)
         raw_data = jar_response["rawtx"]
         txid = jar_response["txhash"].lower()

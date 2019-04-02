@@ -9,5 +9,5 @@ from top.control import Controller
 
 if __name__ == "__main__":
     controller = Controller()
-    time.sleep(60)
+    time.sleep(30)
     controller.terminate_all_process()

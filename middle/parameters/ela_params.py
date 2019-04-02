@@ -14,8 +14,6 @@ class ElaParams(object):
         self.crc_number = config["crc_number"]
         self.auto_mining = config["auto_mining"]
         self.instant_block = config["instant_block"]
-        self.foundation_address = config["foundation_address"]
-        self.miner_address = config["miner_address"]
         self.pre_connect_offset = config["pre_connect_offset"]
         self.check_address_height = config["check_address_height"]
         self.vote_start_height = config["vote_start_height"]
