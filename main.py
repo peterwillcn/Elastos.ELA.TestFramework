@@ -3,11 +3,7 @@
 # date: 2019/4/1 3:22 PM
 # author: liteng
 
-import time
-from top.control import Controller
-
+from tests import vote_test
 
 if __name__ == "__main__":
-    controller = Controller()
-    time.sleep(30)
-    controller.terminate_all_process()
+   vote_test.vote_normal_test()

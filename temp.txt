@@ -1,1 +1,0 @@
-{"transaction": {"inputs": [{"txid": "f469a9ed0cfebdc81e5764f0913752ef872bfd49fedb2baf136ab34b795d8ee3", "vout": 0, "privatekey": "e90df68dc6f52c8120c82b81008d4cb337af2f60b614c58d0bc62f45d0902494"}], "outputs": [{"address": "EcVSVghRXBiNhnHV37UbX4den168cZaBGt", "amount": "1000"}, {"address": "EUrJpdbmK4YtoA1qGPc7PNpiZsMjzjDG2d", "amount": "32998999.999999"}]}}
