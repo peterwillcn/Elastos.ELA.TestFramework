@@ -37,10 +37,10 @@ class Producer(object):
             private_key=self.node.owner_keystore.private_key.hex(),
             owner_public_key=self.node.owner_keystore.public_key.hex(),
             node_public_key=self.node.node_keystore.public_key.hex(),
-            nickname="Producer-" + self.node.index,
+            nickname="Producer-" + str(self.node.index),
             url="https://elastos.org",
             location=0,
-            net_address="127.0.0.1:" + self.node.reset_port(self.node.index, "ela", "arbiter_node_port")
+            net_address="127.0.0.1:" + str(self.node.reset_port(self.node.index, "ela", "arbiter_node_port"))
         )
         return payload
 
@@ -152,7 +152,7 @@ class Producer(object):
         producer_status_resp = self.assist.rpc.producer_status(self.node.owner_keystore.public_key.hex())
         Logger.debug("{} producers status: {}".format(constant.PRODUCER_REGISTER, producer_status_resp))
 
-        if producer_status_resp == 1:
+        if producer_status_resp == "Activate":
             self.registered = True
             result = True
 

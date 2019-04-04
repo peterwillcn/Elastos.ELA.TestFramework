@@ -6,7 +6,7 @@
 import requests
 from src.middle.common.log import Logger
 
-tag = "[bottom.services.net]"
+tag = "[src.bottom.services.net]"
 
 
 def get_request(url):

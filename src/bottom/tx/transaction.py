@@ -16,10 +16,11 @@ from src.bottom.services.jar import JarService
 
 class Transaction(object):
 
-    def __init__(self, jar_service: JarService, assist: Assist):
+    def __init__(self, jar_service: JarService, assist: Assist, number: int):
         self.tag = "[src.bottom.tx.transaction.Transaction]"
         self.jar_service = jar_service
         self.assist = assist
+        self.ela_number = number
         self.fee = 100
         self.register_producers_list = list()
         self.update_producers_list = list()
@@ -58,6 +59,7 @@ class Transaction(object):
         ret = producer.register()
         if ret:
             self.register_producers_list.append(producer)
+            Logger.debug("{} node {} has registered a producer!".format(self.tag, node.index))
 
         return ret
 
@@ -80,14 +82,16 @@ class Transaction(object):
         pass
 
     def vote_a_producer(self, vote_node: ElaNode, producer: Producer):
-        voter = Voter(vote_node, [producer], self.jar_service, self.assist)
+        voter = Voter(vote_node, [producer], self.jar_service, self.assist, self.ela_number)
         self.voter_list.append(voter)
 
         ret = voter.vote()
         if ret:
             self.vote_producers_list.append({"voter": voter, "producer": producer})
-
+        Logger.debug("{} vote result: {}".format(self.tag, ret))
         return ret
+
+
 
 
 

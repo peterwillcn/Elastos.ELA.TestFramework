@@ -7,11 +7,11 @@
     "crc_number": 4,
     "auto_mining": false,
     "instant_block": true,
-    "pre_connect_offset": 50,
+    "pre_connect_offset": 30,
     "check_address_height": 101,
     "vote_start_height": 100,
     "crc_dpos_height": 200,
-    "public_dpos_height": 400
+    "public_dpos_height": 250
   },
   "arbiter": {
     "enable": false,

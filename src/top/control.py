@@ -22,9 +22,15 @@ class Controller(object):
         self.middle.deploy_node()
         self.middle.start_node()
         self.middle.recharge_tap_wallet(20000000 * constant.TO_SELA)
+        self.middle.recharge_producer_wallet(10000 * constant.TO_SELA)
+        self.middle.register_producers_candidates()
+        self.middle.vote_producers_candidates()
 
     def discrete_mining_blocks(self, num: int):
         self.middle.rpc.discrete_mining(num)
+
+    def get_current_height(self):
+        return self.middle.rpc.get_block_count()
 
     def terminate_all_process(self):
         self.middle.jar_server.stop()
