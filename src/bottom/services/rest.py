@@ -3,14 +3,15 @@
 # date: 2019/1/18 7:35 PM
 # author: liteng
 
+from src.middle.tools import util
+from src.middle.tools.log import Logger
 from src.bottom.services import net
-from src.middle.common.log import Logger
 
 
 class REST(object):
 
     def __init__(self):
-        self.tag = "[src.bottom.services.rest.REST]"
+        self.tag = util.tag_from_path(__file__, self.__class__.__name__)
         self.host = "http://127.0.0.1"
         self.port = 10012
 

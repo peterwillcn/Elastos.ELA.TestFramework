@@ -4,13 +4,15 @@
 # author: liteng
 
 import os
-from src.middle.common import constant
+
+from src.middle.tools import util
+from src.middle.tools import constant
 
 
 class Node(object):
 
     def __init__(self, config):
-        self.tag = "[src.bottom.nodes.node.Node]"
+        self.tag = util.tag_from_path(__file__, self.__class__.__name__)
         self.config = config
         self.dev_null = open(os.devnull, 'w')
 

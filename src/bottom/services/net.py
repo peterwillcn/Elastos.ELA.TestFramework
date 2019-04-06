@@ -4,9 +4,10 @@
 # author: liteng
 
 import requests
-from src.middle.common.log import Logger
+from src.middle.tools import util
+from src.middle.tools.log import Logger
 
-tag = "[src.bottom.services.net]"
+tag = util.tag_from_path(__file__, "")
 
 
 def get_request(url):
@@ -37,3 +38,6 @@ def post_request(url, method, params):
     except requests.exceptions.RequestException as e:
         Logger.error("{} post request error: {}".format(tag, e))
         return False
+
+if __name__ == "__main__":
+    print(tag)

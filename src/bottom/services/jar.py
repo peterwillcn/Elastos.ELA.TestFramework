@@ -10,8 +10,9 @@ import os
 import time
 import subprocess
 
-from src.middle.common import constant
-from src.middle.common.log import Logger
+from src.middle.tools import util
+from src.middle.tools import constant
+from src.middle.tools.log import Logger
 from src.bottom.services import net
 
 """JarService is a class that support jar services
@@ -21,13 +22,13 @@ Jar services can create private key, public key, address, transactions and so on
 
 
 class JarService(object):
-    def __init__(self, project_root_path):
-        self.tag = "[src.bottom.services.jar.JarService]"
+    def __init__(self, root_path):
+        self.tag = util.tag_from_path(__file__, self.__class__.__name__)
         self.process = None
         self.running = False
         self.rpc_port = 8989
         self.url = "http://127.0.0.1:8989"
-        self.command = "java -cp " + project_root_path + "/datas/jars/" + constant.JAR_ELA_TOOL + constant.JAR_HTTP_SERVICE
+        self.command = "java -cp " + root_path + "/datas/jars/" + constant.JAR_ELA_TOOL + constant.JAR_HTTP_SERVICE
         self.start()
 
     def start(self):

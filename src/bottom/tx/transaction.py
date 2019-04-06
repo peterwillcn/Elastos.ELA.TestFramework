@@ -3,24 +3,24 @@
 # date: 2019/1/24 2:33 PM
 # author: liteng
 
-from src.middle.common import util
-from src.middle.common.log import Logger
+from src.middle.tools import util
+from src.middle.tools.log import Logger
+from src.middle.managers.service_manager import ServiceManager
 
 from src.bottom.nodes.ela import ElaNode
 from src.bottom.tx.assist import Assist
-from src.bottom.tx.vote.payload import Payload
-from src.bottom.tx.vote.voter import Voter
-from src.bottom.tx.vote.producer import Producer
-from src.bottom.services.jar import JarService
+from src.bottom.tx.register_vote.payload import Payload
+from src.bottom.tx.register_vote.voter import Voter
+from src.bottom.tx.register_vote.producer import Producer
+from src.bottom.wallet.keystore import KeyStore
 
 
 class Transaction(object):
 
-    def __init__(self, jar_service: JarService, assist: Assist, number: int):
-        self.tag = "[src.bottom.tx.transaction.Transaction]"
-        self.jar_service = jar_service
-        self.assist = assist
-        self.ela_number = number
+    def __init__(self, service_manager: ServiceManager):
+        self.tag = util.tag_from_path(__file__, self.__class__.__name__)
+        self.jar_service = service_manager.jar_service
+        self.assist = Assist(service_manager.rpc, service_manager.rest)
         self.fee = 100
         self.register_producers_list = list()
         self.update_producers_list = list()
@@ -81,14 +81,14 @@ class Transaction(object):
     def redeem_a_producer(self, producer: Producer):
         pass
 
-    def vote_a_producer(self, vote_node: ElaNode, producer: Producer):
-        voter = Voter(vote_node, [producer], self.jar_service, self.assist, self.ela_number)
+    def vote_a_producer(self, vote_keystore: KeyStore, producer: Producer, vote_amount: int):
+        voter = Voter(vote_keystore, self.jar_service, self.assist)
         self.voter_list.append(voter)
 
-        ret = voter.vote()
+        ret = voter.vote([producer], vote_amount)
         if ret:
             self.vote_producers_list.append({"voter": voter, "producer": producer})
-        Logger.debug("{} vote result: {}".format(self.tag, ret))
+        Logger.debug("{} register_vote result: {}".format(self.tag, ret))
         return ret
 
 

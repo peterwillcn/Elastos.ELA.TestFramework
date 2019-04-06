@@ -3,13 +3,14 @@
 # date: 2019/1/18 7:35 PM
 # author: liteng
 
+from src.middle.tools import util
 from src.bottom.services import net
 
 
 class RPC(object):
 
     def __init__(self):
-        self.tag = "[src.bottom.services.rpc.RPC]"
+        self.tag = util.tag_from_path(__file__, self.__class__.__name__)
         self.host = "http://127.0.0.1"
         self.port = 10014
 

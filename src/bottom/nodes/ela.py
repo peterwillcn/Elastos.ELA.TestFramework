@@ -5,58 +5,61 @@
 
 import subprocess
 
-from src.middle.common import constant
-from src.middle.common.log import Logger
+from src.middle.tools import util
+from src.middle.tools import constant
+from src.middle.tools.log import Logger
+
+from src.middle.managers.keystore_manager import KeyStoreManager
 
 from src.bottom.nodes.node import Node
+from src.bottom.parameters.ela_params import ElaParams
 
 
 class ElaNode(Node):
 
-    def __init__(self, config, index: int, owner_keystore, node_keystore, cwd_dir: str):
+    def __init__(self, index: int, config, params: ElaParams, keystore_manager: KeyStoreManager, cwd_dir: str):
         Node.__init__(self, config)
-        self.tag = "[src.bottom.nodes.ela.MainNode]"
+        self.tag = util.tag_from_path(__file__, self.__class__.__name__)
         self.index = index
-        self.owner_keystore = owner_keystore
-        self.node_keystore = node_keystore
+        self.params = params
+        self.keystore_manager = keystore_manager
+        self.owner_keystore = keystore_manager.owner_key_stores[index]
+        self.node_keystore = keystore_manager.node_key_stores[index]
         self.cwd_dir = cwd_dir
-        self.password = ""
+        self.password = self.params.password
         self.process = None
         self.running = False
 
-    def reset_config(self, num: int, update_content: dict):
-        Node.reset_config_common(self, self.index, "ela", num)
-        self.password = update_content["password"]
+    def reset_config(self):
+        Node.reset_config_common(self, self.index, "ela", self.params.number)
         _config = self.config[constant.CONFIG_TITLE]
-        _config[constant.CONFIG_ARBITER_ENABLE] = update_content["arbiter_enable"]
-        _config[constant.CONFIG_FOUNDATION_ADDRESS] = update_content["foundation_address"]
-        _config[constant.CONFIG_POW][constant.CONFIG_PAY_TO_MINER] = update_content["miner_address"]
-        _config[constant.CONFIG_POW][constant.CONFIG_AUTO_MINING] = update_content["auto_mining"]
-        _config[constant.CONFIG_POW][constant.CONFIG_INSTANT_BLOCK] = update_content["instant_block"]
-        _config[constant.CONFIG_CHECK_ADDRESS_HEIGHT] = update_content["heights"][0]
-        _config[constant.CONFIG_VOTE_START_HEIGHT] = update_content["heights"][1]
-        _config[constant.CONFIG_ONLY_DPOS_HEIGHT] = update_content["heights"][2]
-        _config[constant.CONFIG_PUBLIC_DPOS_HEIGHT] = update_content["heights"][3]
-
+        _config[constant.CONFIG_ARBITER_ENABLE] = self.params.arbiter_enable
+        _config[constant.CONFIG_FOUNDATION_ADDRESS] = self.keystore_manager.special_key_stores[0].address
+        _config[constant.CONFIG_POW][constant.CONFIG_PAY_TO_MINER] = self.keystore_manager.special_key_stores[1].address
+        _config[constant.CONFIG_POW][constant.CONFIG_AUTO_MINING] = self.params.auto_mining
+        _config[constant.CONFIG_POW][constant.CONFIG_INSTANT_BLOCK] = self.params.instant_block
+        _config[constant.CONFIG_CHECK_ADDRESS_HEIGHT] = self.params.check_address_height
+        _config[constant.CONFIG_VOTE_START_HEIGHT] = self.params.vote_start_height
+        _config[constant.CONFIG_ONLY_DPOS_HEIGHT] = self.params.crc_dpos_height
+        _config[constant.CONFIG_PUBLIC_DPOS_HEIGHT] = self.params.public_dpos_height
         # rpc accept set
         _config[constant.CONFIG_RPC][constant.CONFIG_RPC_USER] = ""
         _config[constant.CONFIG_RPC][constant.CONFIG_RPC_PASS] = ""
         _config[constant.CONFIG_RPC][constant.CONFIG_RPC_WHITE_LIST] = ["0.0.0.0"]
+
+        _config[constant.CONFIG_ARBITER_CONFIGURATION][constant.CONFIG_PUBLIC_KEY] = self.node_keystore.public_key.hex()
         _config[constant.CONFIG_ARBITER_CONFIGURATION][constant.CONFIG_PORT_NODE] = self.reset_port(
             self.index,
             "ela",
             "arbiter_node_port"
         )
-        _config[constant.CONFIG_ARBITER_CONFIGURATION][constant.CONFIG_PUBLIC_KEY] = self.node_keystore.public_key.hex()
-
-        crc_number = len(update_content["crc_public_keys"])
-        _config[constant.CONFIG_ARBITER_CONFIGURATION][constant.CONFIG_CRC_ARBITERS] = self.gen_crc_config(
-            crc_public_keys=update_content["crc_public_keys"]
-        )
-        _config[constant.CONFIG_ARBITER_CONFIGURATION][constant.CONFIG_NORMAL_ARBITERS_COUNT] = crc_number * 2
-        _config[constant.CONFIG_ARBITER_CONFIGURATION][constant.CONFIG_CANDIDATES_COUNT] = crc_number * 6
+        _config[constant.CONFIG_ARBITER_CONFIGURATION][constant.CONFIG_ORIGIN_ARBITERS] = self.gen_original_arbiter()
+        _config[constant.CONFIG_ARBITER_CONFIGURATION][constant.CONFIG_CRC_ARBITERS] = self.gen_crc_config()
+        _config[constant.CONFIG_ARBITER_CONFIGURATION][constant.CONFIG_NORMAL_ARBITERS_COUNT] = \
+            self.params.crc_number * 2
+        _config[constant.CONFIG_ARBITER_CONFIGURATION][constant.CONFIG_CANDIDATES_COUNT] = self.params.crc_number * 6
         _config[constant.CONFIG_ARBITER_CONFIGURATION][constant.CONFIG_PRE_CONNECT_OFFSET] = \
-                                                                update_content["pre_connect_offset"]
+            self.params.pre_connect_offset
 
     def start(self):
         self.process = subprocess.Popen('./ela -p ' + self.password, stdout=self.dev_null, shell=True, cwd=self.cwd_dir)
@@ -75,12 +78,18 @@ class ElaNode(Node):
         self.running = False
         Logger.debug('{} ela{} has stopped on success!'.format(self.tag, self.index))
 
-    def gen_crc_config(self, crc_public_keys: list):
+    def gen_crc_config(self):
         crc_arbiters = list()
-        for index in range(len(crc_public_keys)):
+        for index in range(self.params.crc_number):
             crc_element = dict()
-            crc_element[constant.CONFIG_PUBLIC_KEY] = crc_public_keys[index]
+            crc_element[constant.CONFIG_PUBLIC_KEY] = self.keystore_manager.node_key_stores[index].public_key.hex()
             crc_element[constant.CONFIG_NET_ADDRESS] = "127.0.0.1:" \
                                                        + str(Node.reset_port(self, index, "ela", "arbiter_node_port"))
             crc_arbiters.append(crc_element)
         return crc_arbiters
+
+    def gen_original_arbiter(self):
+        origin_arbiters = []
+        for keystore in self.keystore_manager.original_arbiter_stores:
+            origin_arbiters.append(keystore.public_key.hex())
+        return origin_arbiters

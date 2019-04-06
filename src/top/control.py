@@ -5,33 +5,25 @@
 
 import os
 
-from src.middle.common import constant
-from src.middle.common import util
-from src.middle.overall import Overall
+from src.middle.tools import util
+from src.middle.distribute import Distribution
 
 
 class Controller(object):
 
     def __init__(self):
-        self.tag = "[src.top.control.Controller]"
-        self.project_root_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "../../.."))
-        print(self.project_root_path)
-        self.config = util.read_config_file(os.path.join(self.project_root_path, "config.json"))
-        self.middle = Overall(self.config, self.project_root_path)
-
-        self.middle.deploy_node()
-        self.middle.start_node()
-        self.middle.recharge_tap_wallet(20000000 * constant.TO_SELA)
-        self.middle.recharge_producer_wallet(10000 * constant.TO_SELA)
-        self.middle.register_producers_candidates()
-        self.middle.vote_producers_candidates()
+        self.tag = util.tag_from_path(__file__, self.__class__.__name__)
+        self.root_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "../../.."))
+        print(self.root_path)
+        self.config = util.read_config_file(os.path.join(self.root_path, "config.json"))
+        self.middle = Distribution(self.config, self.root_path)
 
     def discrete_mining_blocks(self, num: int):
-        self.middle.rpc.discrete_mining(num)
+        self.middle.service_manager.rpc.discrete_mining(num)
 
     def get_current_height(self):
-        return self.middle.rpc.get_block_count()
+        return self.middle.service_manager.rpc.get_block_count()
 
     def terminate_all_process(self):
-        self.middle.jar_server.stop()
-        self.middle.stop_node()
+        self.middle.service_manager.jar_service.stop()
+        self.middle.node_manager.stop_nodes()

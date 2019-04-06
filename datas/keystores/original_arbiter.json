@@ -1,0 +1,37 @@
+{
+    "Original Arbiter #0:": {
+        "private_key": "c1f4ecc6046aae0afa692e24fcd08007dbe4e415f4c51aac2d27a382adacdf38",
+        "public_key": "03c5e70c499a55a66d711fe8e04dd94191a2f88627facfc5e05cf151b402f084f9",
+        "sign_script": "2103c5e70c499a55a66d711fe8e04dd94191a2f88627facfc5e05cf151b402f084f9ac",
+        "program_hash": "21d19c63e77f7e5b873515667a945c7ed0561adafd",
+        "address": "EcGE4rwhf8fk6ZSv3zZVK3gYSdrLxpVpNv"
+    },
+    "Original Arbiter #1:": {
+        "private_key": "fddd01b08bcbd936d350f03ef56dd6ab9b10d91143679251cd888ff56a690077",
+        "public_key": "034078aea50f097e75f2ee0b1b2cb75ef6c6abfe1ebc4f78dea55a2bf97f7746e1",
+        "sign_script": "21034078aea50f097e75f2ee0b1b2cb75ef6c6abfe1ebc4f78dea55a2bf97f7746e1ac",
+        "program_hash": "213b4a0f64fdeadb0f7faf0e8e1b0c8d3c600e4312",
+        "address": "ENZQ5h1LU4SHkaFeKuzFyijGZd8hz5Zf4J"
+    },
+    "Original Arbiter #2:": {
+        "private_key": "98d404e301c3e1c3230bc8071ef066c261ed74b187e88705336500f90d0a7e00",
+        "public_key": "032bc3ef3c29ce43d97eecf0856a5f7079d9d40eec8ea01236a7ff143fc89a6b30",
+        "sign_script": "21032bc3ef3c29ce43d97eecf0856a5f7079d9d40eec8ea01236a7ff143fc89a6b30ac",
+        "program_hash": "212a36cbdc44816f4a0c2a70710cf12b4b2d084073",
+        "address": "EM17WxSzPhBMyqs8Gj8ckxG4Cu5nVLHikJ"
+    },
+    "Original Arbiter #3:": {
+        "private_key": "5f2c23a1b833db533116bf4fcb0a5e1d1fda8f3d55a7a8b0febcb8662e4b81b4",
+        "public_key": "02f30150fb43875f5d5efe8a6296eda42a9a9495b3d7ded6ca9f9ac9d90edfdeee",
+        "sign_script": "2102f30150fb43875f5d5efe8a6296eda42a9a9495b3d7ded6ca9f9ac9d90edfdeeeac",
+        "program_hash": "215739023484effeb75e42a8d8a23ad0c48f7707da",
+        "address": "ER76aJS6wNH5Y9Jaoy5RS5LTFymESTDFdp"
+    },
+    "Original Arbiter #4:": {
+        "private_key": "678d8dffa13521d704653fc57960a45a23fd85ec0e4f2b15979992a05942f23e",
+        "public_key": "03a3ada33c9827347ebdf25383683481acc8dca86795cb24b92d198412c321dd81",
+        "sign_script": "2103a3ada33c9827347ebdf25383683481acc8dca86795cb24b92d198412c321dd81ac",
+        "program_hash": "21aae8e242db998a7aa34b1ec8b1b432c0214c6b6f",
+        "address": "EYjbMFKegDRNDxXJ5aKwHcjq666rjp59fw"
+    }
+}

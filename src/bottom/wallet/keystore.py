@@ -7,13 +7,15 @@
 # file: wallet.py
 
 import base58
+
+from src.middle.tools import util
 from src.bottom.wallet import keytool
 
 
 class KeyStore(object):
 
     def __init__(self, password: str):
-        self.tag = "[src.bottom.wallet.keystore.KeyStore]"
+        self.tag = util.tag_from_path(__file__, self.__class__.__name__)
         self.private_key = None
         self.ecc_public_key = None
         self.public_key = None

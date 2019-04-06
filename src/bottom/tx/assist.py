@@ -3,8 +3,11 @@
 # date: 2019/1/24 2:31 PM
 # author: liteng
 
-from src.middle.common.log import Logger
 from decimal import Decimal
+
+from src.middle.tools import util
+from src.middle.tools.log import Logger
+
 from src.bottom.services.rpc import RPC
 from src.bottom.services.rest import REST
 
@@ -12,7 +15,7 @@ from src.bottom.services.rest import REST
 class Assist(object):
 
     def __init__(self, rpc: RPC, rest: REST):
-        self.tag = "[src.bottom.tx.assist.Assist]"
+        self.tag = util.tag_from_path(__file__, self.__class__.__name__)
         self.rpc = rpc
         self.rest = rest
 
