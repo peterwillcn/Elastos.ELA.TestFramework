@@ -58,11 +58,21 @@ class KeyStoreManager(object):
 
     def create_special_stores(self):
         self.special_key_stores.append(
-            self.create_a_keystore("Foundation: ", "special", "special.json", "foundation.dat", True)
+            self.create_a_keystore("MainFoundation: ", "special", "special.json", "main_foundation.dat", True)
         )
+
         self.special_key_stores.append(
-            self.create_a_keystore("Miner:", "special", "special.json", "miner.dat", False)
+            self.create_a_keystore("SideFoundation: ", "special", "special.json", "side_foundation.dat", False)
         )
+
+        self.special_key_stores.append(
+            self.create_a_keystore("MainMiner:", "special", "special.json", "main_miner.dat", False)
+        )
+
+        self.special_key_stores.append(
+            self.create_a_keystore("SideMiner:", "special", "special.json", "side_miner.dat", False)
+        )
+
         self.special_key_stores.append(
             self.create_a_keystore("Tap:", "special", "special.json", "tap.dat", False)
         )

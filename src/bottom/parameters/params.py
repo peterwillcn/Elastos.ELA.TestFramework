@@ -123,47 +123,84 @@ class Parameter(object):
     def default_arbiter_config():
         arbiter_config = {
             "Configuration": {
-                "Magic": 7530402,
+                "Magic": 7630402,
                 "Version": 0,
-                "SeedList": [
-                    "127.0.0.1:10025",
-                    "127.0.0.1:10125",
-                    "127.0.0.1:10225",
-                    "127.0.0.1:10325"
-                ],
+                "NodePort": 11538,
                 "PrintLevel": 1,
                 "SpvPrintLevel": 4,
-                "HttpInfoPort": 10021,
-                "HttpInfoStart": True,
-                "HttpRestPort": 10022,
-                "HttpWsPort": 10023,
-                "NodePort": 10025,
-                "HttpJsonPort": 10024,
-                "NodeOpenPort": 10056,
-                "OpenService": False,
+                "HttpJsonPort": 11536,
                 "MainNode": {
                     "Rpc": {
                         "IpAddress": "127.0.0.1",
-                        "HttpJsonPort": 10014
+                        "HttpJsonPort": 11336,
+                        "User": "",
+                        "Pass": ""
                     },
-                    "SpvSeedList": ["127.0.0.1:10016"],
+                    "SpvSeedList": [
+                        "127.0.0.1:20338"
+                    ],
                     "Magic": 7630401,
                     "MinOutbound": 1,
                     "MaxConnections": 3,
                     "FoundationAddress": "8VYXVxKKSAxkmRrfmGpQR2Kc66XhG6m3ta",
-                    "DefaultPort": 10015
+                    "DefaultPort": 20338
                 },
                 "SideNodeList": [
-                    {"Rpc": {
-                        "IpAddress": "127.0.0.1",
-                        "HttpJsonPort": 10034
-                    },
+                    {
+                        "Rpc": {
+                            "IpAddress": "127.0.0.1",
+                            "HttpJsonPort": 13336,
+                            "User": "",
+                            "Pass": ""
+                        },
                         "ExchangeRate": 1.0,
                         "GenesisBlock": "56be936978c261b2e649d58dbfaf3f23d4a868274f5522cd2adb4308a955c4a3",
-                        "KeystoreFile": "keystore1.dat",
-                        "PayToAddr": "ERtJFJaEfmABKDy3Afbrpwb6nDrRUGkZ6k"
+                        "MiningAddr": "EQr9qjiXGF2y7YMtDCHtHNewZynakbDzF7",
+                        "PayToAddr": "ERtJFJaEfmABKDy3Afbrpwb6nDrRUGkZ6k",
+                        "PowChain": True
                     }
                 ],
+                "OriginCrossChainArbiters": [
+                    {
+                        "PublicKey": "024babfecea0300971a6f0ad13b27519faff0ef595faf9490dc1f5f4d6e6d7f3fb",
+                        "NetAddress": "127.0.0.1:11538"
+                    },
+                    {
+                        "PublicKey": "0243ff13f1417c69686bfefc35227ad4f5f4ca03ccb3d3a635ae8ed67d57c20b97",
+                        "NetAddress": "127.0.0.1:12538"
+                    },
+                    {
+                        "PublicKey": "024ac1cdf73e3cbe88843b2d7279e6afdc26fc71d221f28cfbecbefb2a48d48304",
+                        "NetAddress": "127.0.0.1:13538"
+                    },
+                    {
+                        "PublicKey": "0274fe9f165574791f74d5c4358415596e408b704be9003f51a25e90fd527660b5",
+                        "NetAddress": "127.0.0.1:14538"
+                    },
+                    {
+                        "PublicKey": "03e24ce742a18bea0c54e0348c5d78a5f2b928565a9e8fb2ef4f00e66820038ba1",
+                        "NetAddress": "127.0.0.1:15538"
+                    }
+                ],
+                "CRCCrossChainArbiters": [
+                    {
+                        "PublicKey": "024babfecea0300971a6f0ad13b27519faff0ef595faf9490dc1f5f4d6e6d7f3fb",
+                        "NetAddress": "127.0.0.1:21538"
+                    },
+                    {
+                        "PublicKey": "0243ff13f1417c69686bfefc35227ad4f5f4ca03ccb3d3a635ae8ed67d57c20b97",
+                        "NetAddress": "127.0.0.1:22538"
+                    },
+                    {
+                        "PublicKey": "024ac1cdf73e3cbe88843b2d7279e6afdc26fc71d221f28cfbecbefb2a48d48304",
+                        "NetAddress": "127.0.0.1:23538"
+                    },
+                    {
+                        "PublicKey": "0274fe9f165574791f74d5c4358415596e408b704be9003f51a25e90fd527660b5",
+                        "NetAddress": "127.0.0.1:24538"
+                    }
+                ],
+                "CRCOnlyDPOSHeight": 100,
                 "MinThreshold": 10000000,
                 "DepositAmount": 10000000,
                 "SyncInterval": 1000,
@@ -172,120 +209,116 @@ class Parameter(object):
                 "MinReceivedUsedUtxoMsgNumber": 1,
                 "MinOutbound": 3,
                 "MaxConnections": 8,
-                "SideAuxPowFee": 50000
+                "SideAuxPowFee": 50000,
+                "MaxLogsSize": 0,
+                "MaxPerLogSize": 0,
+                "RpcConfiguration": {
+                    "User": "",
+                    "Pass": "",
+                    "WhiteIPList": [
+                        "0.0.0.0"
+                    ]
+                }
             }
         }
+
         return arbiter_config
 
     @staticmethod
     def default_did_config():
         did_config = {
             "Configuration": {
-                "Magic": 7630403,
-                "SpvMagic": 7630401,
-                "Version": 23,
+                "Magic": 2018102,
+                "SpvMagic": 2018101,
                 "SeedList": [
-                    "127.0.0.1:10035",
-                    "127.0.0.1:10135",
-                    "127.0.0.1:10235",
-                    "127.0.0.1:10335"
+                    "node-testnet-011.elastos.org:21608",
+                    "node-testnet-012.elastos.org:21608",
+                    "node-testnet-013.elastos.org:21608",
+                    "node-testnet-014.elastos.org:21608",
+                    "node-testnet-015.elastos.org:21608"
                 ],
-                "SpvSeedList": ["127.0.0.1:10015"],
-                "MainChainFoundationAddress": "EM8DhdWEFmuLff9fH7fZssK7h5ayUzKcV7",
-                "FoundationAddress": "8VYXVxKKSAxkmRrfmGpQR2Kc66XhG6m3ta",
-                "SpvMinOutbound": 3,
-                "SpvMaxConnections": 10,
-                "SpvPrintLevel": 1,
+                "SpvSeedList": [
+                    "node-testnet-002.elastos.org:21338",
+                    "node-testnet-003.elastos.org:21338",
+                    "node-testnet-004.elastos.org:21338"
+                ],
                 "ExchangeRate": 1.0,
                 "MinCrossChainTxFee": 10000,
-                "HttpInfoPort": 10031,
-                "HttpInfoStart": True,
-                "HttpRestPort": 10032,
-                "HttpWsPort": 10033,
-                "WsHeartbeatInterval": 60,
-                "HttpJsonPort": 10034,
-                "NoticeServerUrl": "",
-                "OauthServerUrl": "",
-                "NodePort": 10035,
-                "NodeOpenPort": 10036,
-                "OpenService": True,
+                "HttpRestPort": 21604,
+                "HttpWsPort": 21605,
+                "HttpJsonPort": 21606,
+                "NodePort": 21608,
                 "PrintLevel": 1,
-                "MaxLogsSize": 1000,
+                "MaxLogsSize": 0,
                 "MaxPerLogSize": 0,
-                "IsTLS": False,
-                "CertPath": "./sampleDestroyAddr-cert.pem",
-                "KeyPath": "./sample-cert-key.pem",
-                "CAPath": "./sample-ca.pem",
-                "MultiCoreNum": 4,
-                "MaxTransactionInBlock": 10000,
-                "MaxBlockSize": 8000000,
-                "ConsensusType": "pow",
+                "DisableTxFilters": True,
+                "MainChainFoundationAddress": "8ZNizBf4KhhPjeJRGpox6rPcHE5Np6tFx3",
+                "FoundationAddress": "8NRxtbMKScEWzW8gmPDGUZ8LSzm688nkZZ",
                 "PowConfiguration": {
-                    "PayToAddr": "EgB9HTpRxbboSTSLcT2SLcQPXqiJyEZfM7",
+                    "PayToAddr": "ESHtMtd4v4247fBn3KcDG4pfoCtz51Q6nZ",
                     "AutoMining": False,
-                    "MinerInfo": "ELA",
+                    "MinerInfo": "DID",
                     "MinTxFee": 100,
-                    "InstantBlock": True
+                    "InstantBlock": False
+                },
+                "RpcConfiguration": {
+                    "User": "",
+                    "Pass": "",
+                    "WhiteIPList": [
+                        "0.0.0.0"
+                    ]
                 }
             }
         }
+
         return did_config
 
     @staticmethod
     def default_token_config():
         token_config = {
             "Configuration": {
-                "Magic": 7630404,
-                "SpvMagic": 7630401,
-                "Version": 23,
+                "Magic": 2019104,
+                "SpvMagic": 2018101,
                 "SeedList": [
-                    "127.0.0.1:10045",
-                    "127.0.0.1:10145",
-                    "127.0.0.1:10245",
-                    "127.0.0.1:10345"
+                    "node-testnet-011.elastos.org:21618",
+                    "node-testnet-012.elastos.org:21618",
+                    "node-testnet-013.elastos.org:21618",
+                    "node-testnet-014.elastos.org:21618",
+                    "node-testnet-015.elastos.org:21618"
                 ],
                 "SpvSeedList": [
-                    "127.0.0.1:10015"
+                    "node-testnet-002.elastos.org:21338",
+                    "node-testnet-003.elastos.org:21338",
+                    "node-testnet-004.elastos.org:21338"
                 ],
-                "SpvMinOutbound": 3,
-                "SpvMaxConnections": 10,
                 "ExchangeRate": 1.0,
                 "MinCrossChainTxFee": 10000,
-                "HttpInfoPort": 10041,
-                "HttpInfoStart": True,
-                "HttpRestPort": 10042,
-                "HttpWsPort": 10043,
-                "WsHeartbeatInterval": 60,
-                "HttpJsonPort": 10044,
-                "NoticeServerUrl": "",
-                "OauthServerUrl": "",
-                "NodePort": 10045,
-                "NodeOpenPort": 10046,
-                "OpenService": True,
+                "HttpWsPort": 21615,
+                "HttpJsonPort": 21616,
+                "NodePort": 21618,
                 "PrintLevel": 1,
                 "MaxLogsSize": 0,
                 "MaxPerLogSize": 0,
-                "IsTLS": False,
-                "CertPath": "./sample-cert.pem",
-                "KeyPath": "./sample-cert-key.pem",
-                "CAPath": "./sample-ca.pem",
-                "MultiCoreNum": 4,
-                "MaxTransactionInBlock": 10000,
-                "MaxBlockSize": 8000000,
-                "ConsensusType": "pow",
-                "PrintSyncState": True,
-                "MainChainDefaultPort": 10015,
+                "DisableTxFilters": True,
                 "MainChainFoundationAddress": "8ZNizBf4KhhPjeJRGpox6rPcHE5Np6tFx3",
                 "FoundationAddress": "8NRxtbMKScEWzW8gmPDGUZ8LSzm688nkZZ",
                 "PowConfiguration": {
-                    "PayToAddr": "EPCQFq9buN6RGHdVDxZn7sEZxAnV6dQpcV",
+                    "PayToAddr": "ESHtMtd4v4247fBn3KcDG4pfoCtz51Q6nZ",
                     "AutoMining": False,
-                    "MinerInfo": "ELA",
+                    "MinerInfo": "TOKEN",
                     "MinTxFee": 100,
-                    "InstantBlock": True
+                    "InstantBlock": False
+                },
+                "RpcConfiguration": {
+                    "User": "",
+                    "Pass": "",
+                    "WhiteIPList": [
+                        "0.0.0.0"
+                    ]
                 }
             }
         }
+
         return token_config
 
     @staticmethod

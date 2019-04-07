@@ -33,9 +33,10 @@ class ElaNode(Node):
     def reset_config(self):
         Node.reset_config_common(self, self.index, "ela", self.params.number)
         _config = self.config[constant.CONFIG_TITLE]
+        _config[constant.CONFIG_MAGIC] = self.params.magic
         _config[constant.CONFIG_ARBITER_ENABLE] = self.params.arbiter_enable
         _config[constant.CONFIG_FOUNDATION_ADDRESS] = self.keystore_manager.special_key_stores[0].address
-        _config[constant.CONFIG_POW][constant.CONFIG_PAY_TO_MINER] = self.keystore_manager.special_key_stores[1].address
+        _config[constant.CONFIG_POW][constant.CONFIG_PAY_TO_ADDR] = self.keystore_manager.special_key_stores[1].address
         _config[constant.CONFIG_POW][constant.CONFIG_AUTO_MINING] = self.params.auto_mining
         _config[constant.CONFIG_POW][constant.CONFIG_INSTANT_BLOCK] = self.params.instant_block
         _config[constant.CONFIG_CHECK_ADDRESS_HEIGHT] = self.params.check_address_height
@@ -43,9 +44,6 @@ class ElaNode(Node):
         _config[constant.CONFIG_ONLY_DPOS_HEIGHT] = self.params.crc_dpos_height
         _config[constant.CONFIG_PUBLIC_DPOS_HEIGHT] = self.params.public_dpos_height
         # rpc accept set
-        _config[constant.CONFIG_RPC][constant.CONFIG_RPC_USER] = ""
-        _config[constant.CONFIG_RPC][constant.CONFIG_RPC_PASS] = ""
-        _config[constant.CONFIG_RPC][constant.CONFIG_RPC_WHITE_LIST] = ["0.0.0.0"]
 
         _config[constant.CONFIG_ARBITER_CONFIGURATION][constant.CONFIG_PUBLIC_KEY] = self.node_keystore.public_key.hex()
         _config[constant.CONFIG_ARBITER_CONFIGURATION][constant.CONFIG_PORT_NODE] = self.reset_port(

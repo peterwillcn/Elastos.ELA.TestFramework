@@ -42,7 +42,7 @@ class Distribution(object):
         self.node_manager.deploy_nodes()
         self.node_manager.start_nodes()
         self.service_manager.wait_rpc_ready()
-        self.service_manager.mining_blocks_ready(self.node_manager.foundation_address)
+        self.service_manager.mining_blocks_ready(self.node_manager.main_foundation_address)
         self.tx_manager.recharge_tap_wallet(20000000 * constant.TO_SELA)
         self.tx_manager.recharge_producer_wallet(10000 * constant.TO_SELA)
         self.tx_manager.register_producers_candidates()

@@ -44,17 +44,20 @@ class Node(object):
         pass
 
     def reset_config_common(self, index, node_type: str, num):
-        self.config[constant.CONFIG_TITLE][constant.CONFIG_SEED_LIST] = []
+        _config = self.config[constant.CONFIG_TITLE]
+        _config[constant.CONFIG_SEED_LIST] = []
         for i in range(num):
             if i == 10:
                 break
-            self.config[constant.CONFIG_TITLE][constant.CONFIG_SEED_LIST].append("127.0.0.1:" +
-                                                          str(self.reset_port(i, node_type, "node_port")))
-        self.config[constant.CONFIG_TITLE][constant.CONFIG_PORT_INFO] = self.reset_port(index, node_type, "info_port")
-        self.config[constant.CONFIG_TITLE][constant.CONFIG_PORT_REST] = self.reset_port(index, node_type, "rest_port")
-        self.config[constant.CONFIG_TITLE][constant.CONFIG_PORT_WS] = self.reset_port(index, node_type, "ws_port")
-        self.config[constant.CONFIG_TITLE][constant.CONFIG_PORT_JSON] = self.reset_port(index, node_type, "json_port")
-        self.config[constant.CONFIG_TITLE][constant.CONFIG_PORT_NODE] = self.reset_port(index, node_type, "node_port")
+            _config[constant.CONFIG_SEED_LIST].append("127.0.0.1:" + str(self.reset_port(i, node_type, "node_port")))
+        _config[constant.CONFIG_PORT_INFO] = self.reset_port(index, node_type, "info_port")
+        _config[constant.CONFIG_PORT_REST] = self.reset_port(index, node_type, "rest_port")
+        _config[constant.CONFIG_PORT_WS] = self.reset_port(index, node_type, "ws_port")
+        _config[constant.CONFIG_PORT_JSON] = self.reset_port(index, node_type, "json_port")
+        _config[constant.CONFIG_PORT_NODE] = self.reset_port(index, node_type, "node_port")
+        _config[constant.CONFIG_RPC][constant.CONFIG_RPC_USER] = ""
+        _config[constant.CONFIG_RPC][constant.CONFIG_RPC_PASS] = ""
+        _config[constant.CONFIG_RPC][constant.CONFIG_RPC_WHITE_LIST] = ["0.0.0.0"]
 
     def reset_port(self, index, node_type: str, port_type: str):
         port = (100 + index) * 100 + self.node_type_dict[node_type] + self.port_type_dict[port_type]

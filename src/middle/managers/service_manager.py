@@ -24,7 +24,7 @@ class ServiceManager(object):
         self.ela_number = params.ela_params.number
 
     def wait_rpc_ready(self, content=1, timeout=60):
-
+        time.sleep(3)
         stop_time = time.time() + timeout
         while time.time() <= stop_time:
             result = []

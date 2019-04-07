@@ -3,7 +3,7 @@
 # date: 2019/4/1 3:22 PM
 # author: liteng
 
-from tests import vote_test
+from tests import dpos_test
 
 if __name__ == "__main__":
-   vote_test.vote_normal_test()
+   dpos_test.dpos_normal_test()

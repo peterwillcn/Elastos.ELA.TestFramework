@@ -37,9 +37,11 @@ class NodeManager(object):
         self.token_nodes = []
         self.neo_nodes = []
 
-        self.foundation_address = self.keystore_manager.special_key_stores[0].address
-        self.miner_address = self.keystore_manager.special_key_stores[1].address
-        self.tap_address = self.keystore_manager.special_key_stores[2].address
+        self.main_foundation_address = self.keystore_manager.special_key_stores[0].address
+        self.side_foundation_address = self.keystore_manager.special_key_stores[1].address
+        self.main_miner_address = self.keystore_manager.special_key_stores[2].address
+        self.side_miner_address = self.keystore_manager.special_key_stores[3].address
+        self.tap_address = self.keystore_manager.special_key_stores[4].address
         self.nodes_dict = {
             "ela": self.ela_nodes,
             "arbiter": self.arbiter_nodes,
@@ -82,7 +84,7 @@ class NodeManager(object):
         elif category == "arbiter":
             node = ArbiterNode(index, config, self.params.arbiter_params, cwd_dir)
         elif category == "did":
-            node = DidNode(index, config, self.params.did_params, cwd_dir)
+            node = DidNode(index, config, self.params.did_params, self.keystore_manager, cwd_dir)
         elif category == "token":
             node = TokenNode(index, config, self.params.token_params, cwd_dir)
         elif category == "neo":
@@ -139,12 +141,12 @@ class NodeManager(object):
 
             if i == 0 and category == "ela":
                 shutil.copy(
-                    os.path.join(self.params.root_path, "datas/keystores/special/foundation.dat"),
+                    os.path.join(self.params.root_path, "datas/keystores/special/main_foundation.dat"),
                     os.path.join(os.path.join(dest_path, "foundation.dat"))
                 )
 
                 shutil.copy(
-                    os.path.join(self.params.root_path, "datas/keystores/special/miner.dat"),
+                    os.path.join(self.params.root_path, "datas/keystores/special/main_miner.dat"),
                     os.path.join(os.path.join(dest_path, "miner.dat"))
                 )
 

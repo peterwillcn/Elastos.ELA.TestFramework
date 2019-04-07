@@ -4,6 +4,7 @@
 # author: liteng
 
 from src.middle.tools import util
+from src.middle.tools import constant
 from src.middle.tools.log import Logger
 from src.middle.managers.node_manager import NodeManager
 
@@ -53,7 +54,7 @@ class TransactionManager(object):
             ret = self.tx.vote_a_producer(
                 self.node_manager.keystore_manager.owner_key_stores[i],
                 self.tx.register_producers_list[i - self.params.ela_params.crc_number],
-                self.params.ela_params.number - i
+                (self.params.ela_params.number - i) * constant.TO_SELA
             )
             if not ret:
                 return False
@@ -61,7 +62,7 @@ class TransactionManager(object):
 
     def transfer_money(self, addresses: list, amount: int):
         ret = self.tx.ordinary_single_sign(
-            input_keystore=self.node_manager.keystore_manager.special_key_stores[2],
+            input_keystore=self.node_manager.keystore_manager.special_key_stores[4],
             output_addresses=addresses,
             amount=amount,
             fee=100,
