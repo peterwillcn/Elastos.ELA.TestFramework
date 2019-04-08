@@ -3,8 +3,11 @@
 # date: 2019/3/28 6:01 PM
 # author: liteng
 
+import subprocess
+
 from src.middle.tools import util
 from src.middle.tools import constant
+from src.middle.tools.log import Logger
 from src.middle.managers.keystore_manager import KeyStoreManager
 
 from src.bottom.nodes.node import Node
@@ -20,6 +23,26 @@ class DidNode(Node):
         self.params = params
         self.keystore_manager = keystore_manager
         self.cwd_dir = cwd_dir
+        self.rpc_port = self.reset_port(index, "did", "json_port")
+        self.process = None
+        self.running = False
+
+    def start(self):
+        self.process = subprocess.Popen('./did ', stdout=self.dev_null, shell=True, cwd=self.cwd_dir)
+        self.running = True
+        Logger.debug('{} ./did{} started on success.'.format(self.tag, self.index))
+        return True
+
+    def stop(self):
+        if not self.running:
+            Logger.error('{} did{} has already stopped'.format(self.tag, self.index))
+            return
+        try:
+            self.process.terminate()
+        except subprocess.SubprocessError as e:
+            Logger.error('{} Unable to stop ela{}, error: {}'.format(self.tag, self.index, e))
+        self.running = False
+        Logger.debug('{} did{} has stopped on success!'.format(self.tag, self.index))
 
     def reset_config(self):
         Node.reset_config_common(self, self.index, "did", self.params.number)

@@ -107,3 +107,16 @@ class JarService(object):
     def gen_deposit_address(self, publickey: str):
         return net.post_request(self.url, "genpledgeaddress", params={"publickey": publickey})
 
+    def gen_cross_chain_tx(self, inputs, outputs, privatekeysign, crosschainasset):
+        resp = util.post_request(self.url, "gencrosschaintx",
+                                 params=
+                                     {"transaction": {"inputs": inputs,
+                                                        "outputs": outputs,
+                                                        "privatekeysign": privatekeysign,
+                                                        "crosschainasset": crosschainasset}}
+                                 )
+        if resp["error"] == None:
+            return resp["result"]
+        else:
+            return None
+

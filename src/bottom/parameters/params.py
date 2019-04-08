@@ -20,10 +20,11 @@ class Parameter(object):
         self.top_config = config
         self.root_path = root_path
         self.ela_params = ElaParams(config["ela"])
-        self.arbiter_params = ArbiterParams(config["arbiter"])
+        self.arbiter_params = ArbiterParams(config["arbiter"], self.ela_params)
         self.did_params = DidParams(config["did"])
         self.token_params = TokenParams(config["token"])
         self.neo_params = NeoParams(config["neo"])
+
         self.check_params()
 
     def check_params(self):

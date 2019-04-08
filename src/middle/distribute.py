@@ -36,21 +36,33 @@ class Distribution(object):
             self.params,
             self.node_manager
         )
-        self.init_for_testing()
 
     def init_for_testing(self):
         self.node_manager.deploy_nodes()
+        Logger.info("{} deploying nodes on success!".format(self.tag))
         self.node_manager.start_nodes()
-        self.service_manager.wait_rpc_ready()
+        Logger.info("{} starting nodes on success!".format(self.tag))
         self.service_manager.mining_blocks_ready(self.node_manager.main_foundation_address)
-        self.tx_manager.recharge_tap_wallet(20000000 * constant.TO_SELA)
-        self.tx_manager.recharge_producer_wallet(10000 * constant.TO_SELA)
+        Logger.info("{} mining 101 blocks on success!".format(self.tag))
+        self.tx_manager.recharge_tap_keystore(20000000 * constant.TO_SELA)
+        Logger.info("{} recharge tap keystore {} on success!".format(self.tag, 20000000 * constant.TO_SELA))
+
+    def ready_for_dpos(self):
+        self.tx_manager.recharge_producer_keystore(10000 * constant.TO_SELA)
+        Logger.info("{} recharge producer on success!".format(self.tag))
         self.tx_manager.register_producers_candidates()
+        Logger.info("{} register producer on success!".format(self.tag))
         self.tx_manager.vote_producers_candidates()
+        Logger.info("{} vote producer on success!".format(self.tag))
 
     def check_params(self):
         if self.params.ela_params.number < 3 * self.params.ela_params.crc_number:
             Logger.error("{} ela node number should be >= 3 * crc number, please check your config.json, exit...")
+            time.sleep(1)
+            exit(-1)
+
+        if self.params.arbiter_params.number != (5 + self.params.ela_params.crc_number):
+            Logger.error("{} arbiter number should be == 5 + crc number, please check your config.json, exit...")
             time.sleep(1)
             exit(-1)
 

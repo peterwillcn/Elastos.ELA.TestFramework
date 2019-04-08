@@ -23,13 +23,13 @@ class ServiceManager(object):
         self.jar_service = JarService(params.root_path)
         self.ela_number = params.ela_params.number
 
-    def wait_rpc_ready(self, content=1, timeout=60):
-        time.sleep(3)
+    def wait_rpc_ready(self, port: int, content=1, timeout=60):
+        time.sleep(1)
         stop_time = time.time() + timeout
         while time.time() <= stop_time:
             result = []
             for i in range(self.ela_number):
-                count = self.rpc.get_connection_count()
+                count = self.rpc.get_connection_count(port)
                 Logger.debug('{} wait for rpc service ready, connection count: {}'.format(self.tag, count))
                 if count and count >= content:
                     result.append(True)

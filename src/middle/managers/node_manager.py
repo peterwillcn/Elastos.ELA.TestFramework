@@ -54,8 +54,6 @@ class NodeManager(object):
         ret = False
         if self.params.ela_params.enable:
             ret = self._deploy_nodes("ela", self.params.ela_params.number)
-        if self.params.arbiter_params.enable:
-            ret = self._deploy_nodes("arbiter", self.params.arbiter_params.number)
         if self.params.did_params.enable:
             ret = self._deploy_nodes("did", self.params.did_params.number)
         if self.params.token_params.enable:
@@ -70,6 +68,20 @@ class NodeManager(object):
             for i in range(len(self.ela_nodes)):
                 self.ela_nodes[i].start()
                 time.sleep(0.5)
+            self.service_manager.wait_rpc_ready(self.ela_nodes[0].rpc_port)
+
+        if self.params.did_params.enable:
+            for i in range(len(self.did_nodes)):
+                self.did_nodes[i].start()
+                time.sleep(0.5)
+            ret = self.service_manager.wait_rpc_ready(self.did_nodes[0].rpc_port)
+            if ret:
+                self.params.arbiter_params.side_chain_genesis_hash = \
+                    self.service_manager.rpc.get_block_hash_by_height(0, self.did_nodes[0].rpc_port)
+                Logger.debug("{} did genesis hash: {}".format(self.tag, self.params.arbiter_params.side_chain_genesis_hash))
+                self.params.arbiter_params.side_info = "did"
+                if self.params.arbiter_params.enable:
+                    self._deploy_nodes("arbiter", self.params.arbiter_params.number)
 
     def stop_nodes(self):
         if self.params.ela_params.enable:
@@ -77,12 +89,17 @@ class NodeManager(object):
                 self.ela_nodes[i].stop()
                 time.sleep(0.5)
 
+        if self.params.did_params.enable:
+            for i in range(len(self.did_nodes)):
+                self.did_nodes[i].stop()
+                time.sleep(0.5)
+
     def _init_nodes(self, category: str, config, index: int, cwd_dir: str):
 
         if category == "ela":
             node = ElaNode(index, config, self.params.ela_params, self.keystore_manager, cwd_dir)
         elif category == "arbiter":
-            node = ArbiterNode(index, config, self.params.arbiter_params, cwd_dir)
+            node = ArbiterNode(index, config, self.params.arbiter_params, self.keystore_manager, cwd_dir)
         elif category == "did":
             node = DidNode(index, config, self.params.did_params, self.keystore_manager, cwd_dir)
         elif category == "token":
@@ -142,18 +159,34 @@ class NodeManager(object):
             if i == 0 and category == "ela":
                 shutil.copy(
                     os.path.join(self.params.root_path, "datas/keystores/special/main_foundation.dat"),
-                    os.path.join(os.path.join(dest_path, "foundation.dat"))
+                    os.path.join(dest_path, "foundation.dat")
                 )
 
                 shutil.copy(
                     os.path.join(self.params.root_path, "datas/keystores/special/main_miner.dat"),
-                    os.path.join(os.path.join(dest_path, "miner.dat"))
+                    os.path.join(dest_path, "miner.dat")
                 )
 
                 shutil.copy(
                     os.path.join(self.params.root_path, "datas/keystores/special/tap.dat"),
-                    os.path.join(os.path.join(dest_path, "tap.dat"))
+                    os.path.join(dest_path, "tap.dat")
                 )
+
+            if category == "arbiter":
+                if i <= 4:
+                    shutil.copy(
+                        os.path.join(
+                            self.params.root_path,
+                            "datas/keystores/arbiter_keystores/origin_arbiter_" + str(i) +".dat"),
+                        os.path.join(dest_path, "keystore.dat")
+                    )
+                else:
+                    shutil.copy(
+                        os.path.join(
+                            self.params.root_path,
+                            "datas/keystores/arbiter_keystores/crc_arbiter_" + str(i - 5) + ".dat"),
+                        os.path.join(dest_path, "keystore.dat")
+                    )
 
         return True
 

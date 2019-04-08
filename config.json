@@ -15,12 +15,13 @@
   },
   "arbiter": {
     "enable": false,
-    "number": 5
+    "number": 9,
+    "pow_chain": true
   },
   "did": {
-    "enable": true,
+    "enable": false,
     "number": 5,
-    "instant_block": false
+    "instant_block": true
   },
   "token": {
     "enable": false,

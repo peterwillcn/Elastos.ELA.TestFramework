@@ -1,0 +1,22 @@
+{
+    "Version":"1.0.0",
+    "PasswordHash":"3180b4071170db0ae9f666167ed379f53468463f152e3c3cfb57d1de45fd01d6",
+    "IV":"4884badb5ed6741479ed2263b007473f",
+    "MasterKey":"98792f03ab9567c50265288cb76fe25b640d178be6bf1965d4f3f9238c1f5592",
+    "Account":[
+        {
+            "Address":"ET3jMZZXpviPofufMTiKr8csEUursb1ej5",
+            "ProgramHash":"216c864c8d5abbbcb43ade68e74685656841415e01",
+            "RedeemScript":"2103e25b77b33e7699e22fb8efc83465c8a26a8da8d9e940a55276b3d8ede5e619eeac",
+            "PrivateKeyEncrypted":"753f28b84be1035acfe4a2788889bbc9c30d7264c4640b05b15cd74f5f9960bdd9e3492bc912d05298271d8dfe416b07f83a7e85193d3defc3f8343f25f0c24f00789a7d01000a8754318686e28e019d3abbc6bbd5c7773efd91bcf0045ba499",
+            "Type":"main-account"
+        },
+        {
+            "Address":"EUyPLKPXg4ZAuifxhqBbTD1hxp8tMWq2yj",
+            "ProgramHash":"2181a42c768bab0bf854f3f913a1978abc65e938b1",
+            "RedeemScript":"210392374f6c9e56f27b14d840f82ed3a8a4626cd26819865c0c41293be37d04f034ac",
+            "PrivateKeyEncrypted":"a7ea73ed78b4d514e46314559d401e5e9beab0a42ac02e13d11c0bea3db009b6260d81b40cc4537610eebd849d4f98f3dc659228a1d4f3df5b93d33c176db5ef6c960eb1a0f20d9f1d239f7d7a01669d1ad8fdd16186a653fdb3019dd45d1cf1",
+            "Type":"sub-account"
+        }
+    ]
+}

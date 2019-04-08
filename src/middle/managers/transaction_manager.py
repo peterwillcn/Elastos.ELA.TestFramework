@@ -19,7 +19,7 @@ class TransactionManager(object):
         self.node_manager = node_manager
         self.tx = Transaction(self.node_manager.service_manager)
 
-    def recharge_tap_wallet(self, amount):
+    def recharge_tap_keystore(self, amount):
         ret = self.tx.ordinary_single_sign(
             input_keystore=self.node_manager.keystore_manager.special_key_stores[0],
             output_addresses=[self.node_manager.tap_address],
@@ -30,7 +30,19 @@ class TransactionManager(object):
         Logger.debug("{} tap address value: {} ELAs".format(self.tag, tap_value))
         return ret
 
-    def recharge_producer_wallet(self, amount):
+    def recharge_arbiter_keystore(self, amount):
+        addresses = list()
+        for keystore in self.node_manager.keystore_manager.arbiter_stores:
+            addresses.append(keystore.address)
+
+        ret = self.transfer_money(addresses, amount)
+
+        for i in range(len(addresses)):
+            value = self.node_manager.service_manager.rpc.get_balance_by_address(addresses[i])
+            Logger.debug("{} arbiter {} wallet balance {}".format(self.tag, i, value))
+        return ret
+
+    def recharge_producer_keystore(self, amount):
         addresses = list()
         for keystore in self.node_manager.keystore_manager.owner_key_stores:
             addresses.append(keystore.address)

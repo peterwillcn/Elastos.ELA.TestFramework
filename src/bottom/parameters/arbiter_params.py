@@ -6,10 +6,18 @@
 from src.middle.tools import util
 from src.middle.tools import constant
 
+from src.bottom.parameters.ela_params import ElaParams
+
 
 class ArbiterParams(object):
-    def __init__(self, config: dict):
+    def __init__(self, config: dict, ela_params: ElaParams):
         self.tag = util.tag_from_path(__file__, self.__class__.__name__)
         self.magic = constant.CONFIG_MAGIC_ARBITER
+        self.spv_magic = constant.CONFIG_MAGIC_ELA
         self.enable = config["enable"]
         self.number = config["number"]
+        self.pow_chain = config["pow_chain"]
+        self.crc_number = ela_params.crc_number
+        self.crc_dpos_only_height = ela_params.crc_dpos_height
+        self.side_chain_genesis_hash = ""
+        self.side_info = ""

@@ -27,6 +27,7 @@ class ElaNode(Node):
         self.node_keystore = keystore_manager.node_key_stores[index]
         self.cwd_dir = cwd_dir
         self.password = self.params.password
+        self.rpc_port = self.reset_port(self.index, "ela", "json_port")
         self.process = None
         self.running = False
 
@@ -60,7 +61,11 @@ class ElaNode(Node):
             self.params.pre_connect_offset
 
     def start(self):
-        self.process = subprocess.Popen('./ela -p ' + self.password, stdout=self.dev_null, shell=True, cwd=self.cwd_dir)
+        if self.params.arbiter_enable:
+            self.process = subprocess.Popen('./ela -p ' + self.password, stdout=self.dev_null, shell=True, cwd=self.cwd_dir)
+        else:
+            self.process = subprocess.Popen('./ela', stdout=self.dev_null, shell=True, cwd=self.cwd_dir)
+
         self.running = True
         Logger.debug('{} ela{} -p {} started on success.'.format(self.tag, self.index, self.password))
         return True
@@ -88,6 +93,6 @@ class ElaNode(Node):
 
     def gen_original_arbiter(self):
         origin_arbiters = []
-        for keystore in self.keystore_manager.original_arbiter_stores:
+        for keystore in self.keystore_manager.arbiter_stores[:5]:
             origin_arbiters.append(keystore.public_key.hex())
         return origin_arbiters

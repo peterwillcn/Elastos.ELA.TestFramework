@@ -16,6 +16,7 @@ class KeyStore(object):
 
     def __init__(self, password: str):
         self.tag = util.tag_from_path(__file__, self.__class__.__name__)
+        self.password = password
         self.private_key = None
         self.ecc_public_key = None
         self.public_key = None
@@ -23,7 +24,7 @@ class KeyStore(object):
         self.program_hash = None
         self.address = None
         self._create_keystore()
-        self.keystore_dat = self.gen_keystore_dat(password)
+        self.keystore_dat = self.gen_keystore_dat(self.password)
 
     def _create_keystore(self):
         ecc_key_pair = keytool.create_ecc_pair("P-256")
@@ -70,7 +71,7 @@ class KeyStore(object):
 
         private_key_encrypted_bytes = keytool.encrypt_private_key(
             master_key_bytes,
-            self.private_key,
+            bytearray(self.private_key),
             self.ecc_public_key,
             iv_bytes
         )

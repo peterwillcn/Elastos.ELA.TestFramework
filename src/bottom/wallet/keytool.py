@@ -64,9 +64,9 @@ def save_to_json(k, prefix: str, dest_path: str, first_time: bool):
             json.dump({prefix: k.to_dict()}, f, indent=4)
 
 
-def save_to_dat(k, dat_file_path: str):
+def save_to_dat(keystore_dat: dict, dat_file_path: str):
     with open(dat_file_path, "w") as f:
-        json.dump(k.keystore_dat, f, sort_keys=False, indent=4, separators=(',', ':'))
+        json.dump(keystore_dat, f, sort_keys=False, indent=4, separators=(',', ':'))
 
 
 def aes_encrypt(plaintext, key, iv):

@@ -10,6 +10,13 @@
             "RedeemScript":"2103f4e5b5d067f63e19d3e98dd1d164b7eb2bf4ed79413bf89949cd8d12d75554d3ac",
             "PrivateKeyEncrypted":"c020b24756b9e4116a9ecf3e33c9b8cc9f1b2917b05f4f6e9341b78fa96b40e3d6d9a6d31ec6375c461934f4ce74a37aa17873b31b013f4ebce4d4d3366e5eb53ec48d79ba407ca1a1b6997ea51ceca578df3d9927d9d1b31482b7a267f1cbef",
             "Type":"main-account"
+        },
+        {
+            "Address":"EXrf88ZDM8YPvwW9zbdQxtjAnAzhTmdyyg",
+            "ProgramHash":"21a146d1edb4ca0d845ac1377af5f5dda3b1595db4",
+            "RedeemScript":"21022e84a006a5cae688ecd6ce5268b741ff5176074a45b03a2c521021c8ab2f7a53ac",
+            "PrivateKeyEncrypted":"583698a1b7f1dc4df3b5103bb60bced97aff5540f5f0f2ab7c0dd9c9a25138a07d437d003d7873081bf11f72cd465922340face63124daa90e04a7500a5ec71944d6aea13f2e4cab8a3df80c9b084c2e1ce09c69b9d2ac14c3d03ae8b296a3dc",
+            "Type":"sub-account"
         }
     ]
 }

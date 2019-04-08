@@ -34,9 +34,6 @@ class Node(object):
         }
         pass
 
-    def deploy(self):
-        pass
-
     def start(self):
         pass
 
