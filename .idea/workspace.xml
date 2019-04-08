@@ -278,7 +278,7 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/middle/distribute.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="543">
+            <state relative-caret-position="121">
               <caret line="40" column="40" lean-forward="true" selection-start-line="40" selection-start-column="40" selection-end-line="40" selection-end-column="40" />
               <folding>
                 <element signature="e#89#100#0" expanded="true" />
@@ -668,11 +668,10 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="2560" height="1440" extended-state="0" />
-    <editor active="true" />
     <layout>
       <window_info id="Structure" order="0" sideWeight="0.5003701" side_tool="true" weight="0.16746412" />
       <window_info id="Favorites" order="1" sideWeight="0.5003701" side_tool="true" weight="0.16746412" />
-      <window_info active="true" content_ui="combo" id="Project" order="2" sideWeight="0.4996299" visible="true" weight="0.12599681" />
+      <window_info content_ui="combo" id="Project" order="2" sideWeight="0.4996299" visible="true" weight="0.12599681" />
       <window_info anchor="bottom" id="Concurrent Activities Diagram" weight="0.3292232" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Run" order="1" weight="0.7949667" />
@@ -685,7 +684,7 @@
       <window_info anchor="bottom" id="Version Control" order="8" weight="0.32919708" />
       <window_info anchor="bottom" id="Database Changes" order="9" show_stripe_button="false" />
       <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.50079745" side_tool="true" weight="0.6898594" />
-      <window_info anchor="bottom" id="Terminal" order="11" sideWeight="0.49920255" weight="0.6898594" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="11" sideWeight="0.49920255" visible="true" weight="0.6898594" />
       <window_info anchor="bottom" id="Python Console" order="12" weight="0.32938564" />
       <window_info anchor="right" id="R Packages" order="0" />
       <window_info anchor="right" id="R Graphics" order="1" weight="0.32974482" />
@@ -1085,7 +1084,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/middle/distribute.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="543">
+        <state relative-caret-position="121">
           <caret line="40" column="40" lean-forward="true" selection-start-line="40" selection-start-column="40" selection-end-line="40" selection-end-column="40" />
           <folding>
             <element signature="e#89#100#0" expanded="true" />
