@@ -3,6 +3,8 @@
 # date: 2019/1/24 2:33 PM
 # author: liteng
 
+import time
+
 from src.middle.tools import util
 from src.middle.tools.log import Logger
 from src.middle.managers.service_manager import ServiceManager
@@ -29,11 +31,21 @@ class Transaction(object):
         self.voter_list = list()
         self.vote_producers_list = list()
 
-    def ordinary_single_sign(self, input_keystore, output_addresses, amount, fee=100, mode="privatekey"):
-        inputs, utxos_value = self.assist.gen_inputs_utxos_value(input_keystore=input_keystore,
-                                                                 amount=amount, fee=fee, mode=mode)
-        outputs = self.assist.gen_single_sign_outputs(output_addresses, input_keystore.address, utxos_value, amount)
-        jar_response = self.jar_service.create_transaction(inputs, outputs)
+    def ordinary_single_sign(self, input_keystore, output_addresses: list, amount: int, mode="privatekey"):
+        inputs, utxos_value = self.assist.gen_inputs_utxo_value(
+            input_keystore=input_keystore,
+            amount=amount,
+            mode=mode
+        )
+
+        outputs = self.assist.gen_usual_outputs(
+            output_addresses=output_addresses,
+            change_address=input_keystore.address,
+            utxo_value=utxos_value,
+            amount=amount
+        )
+
+        jar_response = self.jar_service.gen_tx(inputs, outputs)
         raw_data = jar_response["rawtx"]
         txid = jar_response["txhash"].lower()
         resp = self.assist.rpc.send_raw_transaction(data=raw_data)
@@ -48,11 +60,109 @@ class Transaction(object):
     def ordinary_multi_sign(self):
         pass
 
-    def recharge_coin(self):
-        pass
+    def cross_chain_transaction(self, input_keystore: KeyStore, lock_address, output_address, amount, port: int):
 
-    def withdraw_coin(self):
-        pass
+        Logger.info("{} port: {}".format(self.tag, port))
+
+        if port == self.assist.rpc.DEFAULT_PORT:
+            Logger.info("{} before cross transaction input address address: {} ELAs".format(
+                self.tag,
+                self.assist.rpc.get_balance_by_address(input_keystore.address, port)
+            ))
+
+            Logger.info("{} before cross transaction output address address: {} ELAs".format(
+                self.tag,
+                self.assist.rpc.get_balance_by_address(output_address, port + 20)
+            ))
+        else:
+            Logger.info("{} before cross transaction input address address: {} ELAs".format(
+                self.tag,
+                self.assist.rpc.get_balance_by_address(input_keystore.address, port)
+            ))
+
+            Logger.info("{} before cross transaction output address address: {} ELAs".format(
+                self.tag,
+                self.assist.rpc.get_balance_by_address(output_address, port - 20)
+            ))
+
+
+        inputs, utxo_value = self.assist.gen_inputs_utxo_value(
+            input_keystore=input_keystore,
+            amount=amount,
+            deposit_address="",
+            port=port
+        )
+
+        outputs = self.assist.gen_usual_outputs(
+            output_addresses=[lock_address],
+            amount=amount,
+            change_address=input_keystore.address,
+            utxo_value=utxo_value
+        )
+
+        private_key_sign = self.assist.gen_private_sign(input_keystore.private_key.hex())
+
+        cross_chain_asset = self.assist.gen_cross_chain_asset(
+            address=output_address,
+            amount=amount,
+            utxo_value=utxo_value
+        )
+
+        jar_response = self.jar_service.gen_cross_chain_transaction(
+            inputs=inputs,
+            outputs=outputs,
+            privatekeysign=private_key_sign,
+            crosschainasset=cross_chain_asset
+        )
+
+        raw_data = jar_response["rawtx"]
+        txid = jar_response["txhash"].lower()
+        resp = self.assist.rpc.send_raw_transaction(data=raw_data, port=port)
+        Logger.info("{} jar txid = {}".format(self.tag, txid))
+        Logger.info("{} rpc resp = {}".format(self.tag, resp))
+        result = util.assert_equal(txid, resp)
+        if not result:
+            Logger.error("{} Ordinary single sign transaction txid is not equal resp".format(self.tag))
+            return result
+
+        if port == self.assist.rpc.DEFAULT_PORT:
+            for i in range(15):
+                self.assist.rpc.discrete_mining(1)
+                if i > 7:
+                    time.sleep(8)
+                time.sleep(1)
+
+        else:
+            for i in range(30):
+                self.assist.rpc.discrete_mining(1)
+                Logger.info("{} side chain height: {}".format(
+                    self.tag,
+                    self.assist.rpc.get_block_count(port)
+                ))
+                time.sleep(10)
+
+        if port == self.assist.rpc.DEFAULT_PORT:
+            Logger.info("{} after cross transaction input address address: {} ELAs".format(
+                self.tag,
+                self.assist.rpc.get_balance_by_address(input_keystore.address, port)
+            ))
+
+            Logger.info("{} after cross transaction output address address: {} ELAs".format(
+                self.tag,
+                self.assist.rpc.get_balance_by_address(output_address, port + 20)
+            ))
+        else:
+            Logger.info("{} after cross transaction input address address: {} ELAs".format(
+                self.tag,
+                self.assist.rpc.get_balance_by_address(input_keystore.address, port)
+            ))
+
+            Logger.info("{} after cross transaction output address address: {} ELAs".format(
+                self.tag,
+                self.assist.rpc.get_balance_by_address(output_address, port - 20)
+            ))
+
+        return True
 
     def register_a_producer(self, node: ElaNode):
         producer = Producer(node, self.jar_service, self.assist)
@@ -68,6 +178,7 @@ class Transaction(object):
         ret = producer.update()
         if ret:
             self.update_producers_list.append(producer)
+            Logger.debug("{} node {} has update a producer!".format(self.tag, producer.node.index))
 
         return ret
 
@@ -75,11 +186,16 @@ class Transaction(object):
         ret = producer.cancel()
         if ret:
             self.cancel_producers_list.append(producer)
+            Logger.debug("{} node {} has registered a producer!".format(self.tag, producer.node.index))
 
         return ret
 
     def redeem_a_producer(self, producer: Producer):
-        pass
+        ret = producer.redeem()
+        if ret:
+            self.redeem_producers_list.append(producer)
+            Logger.debug("{} node {} has redeem a producer!".format(self.tag, producer.node.index))
+        return ret
 
     def vote_a_producer(self, vote_keystore: KeyStore, producer: Producer, vote_amount: int):
         voter = Voter(vote_keystore, self.jar_service, self.assist)

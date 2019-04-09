@@ -17,7 +17,11 @@ class ArbiterParams(object):
         self.enable = config["enable"]
         self.number = config["number"]
         self.pow_chain = config["pow_chain"]
+        self.print_level = config["print_level"]
         self.crc_number = ela_params.crc_number
         self.crc_dpos_only_height = ela_params.crc_dpos_height
         self.side_chain_genesis_hash = ""
+        self.recharge_address = ""
+        self.withdraw_address = ""
         self.side_info = ""
+        self.password = ela_params.password

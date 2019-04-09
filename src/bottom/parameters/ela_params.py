@@ -17,6 +17,7 @@ class ElaParams(object):
         self.number = config["number"]
         self.password = config["password"]
         self.crc_number = config["crc_number"]
+        self.print_level = config["print_level"]
         self.auto_mining = config["auto_mining"]
         self.instant_block = config["instant_block"]
         self.pre_connect_offset = config["pre_connect_offset"]

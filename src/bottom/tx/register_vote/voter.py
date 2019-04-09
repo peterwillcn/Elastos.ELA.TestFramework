@@ -22,12 +22,12 @@ class Voter(object):
         self.vote_type = 0
         self.vote_version = 0
         self.vote_output_type = 1
-        self.utxos_value = 0
+        self.utxo_value = 0
         self.output_address = self.keystore.address
 
     def _inputs(self, vote_amount: int):
-        inputs, utxos_value = self.assist.gen_inputs_utxos_value(self.keystore, vote_amount)
-        self.utxos_value = utxos_value
+        inputs, utxos_value = self.assist.gen_inputs_utxo_value(self.keystore, vote_amount)
+        self.utxo_value = utxos_value
         Logger.debug("{} inputs: {}".format(self.tag, inputs))
         return inputs
 
@@ -44,7 +44,7 @@ class Voter(object):
         outputs = self.assist.gen_vote_outputs(
             vote_address=self.output_address,
             change_address=self.output_address,
-            utxos_value=self.utxos_value,
+            utxo_value=self.utxo_value,
             vote_amount=vote_amount,
             outputtype=self.vote_output_type,
             version=self.vote_version,
@@ -65,7 +65,7 @@ class Voter(object):
         outputs = self._outputs(producers, vote_amount)
         privatekeysign = self._privatekeysign()
 
-        vote_resp = self.jar_service.vote_transaction(
+        vote_resp = self.jar_service.gen_vote_tx(
             inputs=inputs,
             outputs=outputs,
             privatekeysign=privatekeysign

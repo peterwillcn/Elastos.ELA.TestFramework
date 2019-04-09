@@ -13,25 +13,28 @@ from src.middle.tools import constant
 class Logger:
 
     level = 0
-    current_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
     @staticmethod
     def debug(msg):
         if Logger.level == 0:
-            print(Logger.current_time + constant.COLOR_BLUE + " [DEBUG] " + constant.COLOR_END + msg)
+            current_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+            print(current_time + constant.COLOR_BLUE + " [DEBUG] " + constant.COLOR_END + msg)
 
     @staticmethod
     def info(msg):
         if Logger.level <= 1:
-            print(Logger.current_time + constant.COLOR_GREEN + " [INFO] " + constant.COLOR_END + msg)
+            current_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+            print(current_time + constant.COLOR_GREEN + " [INFO] " + constant.COLOR_END + msg)
 
     @staticmethod
     def warn(msg):
         if Logger.level <= 2:
-            print(Logger.current_time + constant.COLOR_YELLOW + " [WARN] " + constant.COLOR_END + msg)
+            current_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+            print(current_time + constant.COLOR_YELLOW + " [WARN] " + constant.COLOR_END + msg)
 
     @staticmethod
     def error(msg):
         if Logger.level <= 3:
-            print(Logger.current_time + constant.COLOR_RED + " [ERROR] " + constant.COLOR_END + msg)
+            current_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+            print(current_time + constant.COLOR_RED + " [ERROR] " + constant.COLOR_END + msg)
 

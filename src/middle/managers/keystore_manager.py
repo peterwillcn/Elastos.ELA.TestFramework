@@ -33,18 +33,22 @@ class KeyStoreManager(object):
         self.keystore_saved_dir = os.path.join(self.params.root_path, "datas/keystores")
         if not os.path.exists(self.keystore_saved_dir):
             os.mkdir(self.keystore_saved_dir)
+        else:
+            os.system("rm -fr " + self.keystore_saved_dir + "/*")
 
         # generate special keystore such as foundation, miner and tap(水龙头地址)
         self.create_special_stores("main_foundation", True)
         self.create_special_stores("side_foundation", False)
         self.create_special_stores("main_miner", False)
         self.create_special_stores("side_miner", False)
-        self.create_special_stores("tap", False)
+        self.create_special_stores("main_tap", False)
+        self.create_special_stores("side_tap", False)
         # generate general keystore such as owner and node
         self.create_general_stores("owner", self.owner_key_stores)
         self.create_general_stores("node", self.node_key_stores)
         # generate original arbiters key stores
-        self.create_arbiter_stores()
+        if self.params.arbiter_params.enable:
+            self.create_arbiter_stores()
 
     def add_sub_account(self, main_dat: dict, sub_keystore: KeyStore):
         iv = main_dat['IV']
@@ -73,7 +77,8 @@ class KeyStoreManager(object):
     def create_special_stores(self, category: str, first_time: bool):
         special_dat_dir = os.path.join(self.keystore_saved_dir, "special")
         if os.path.exists(special_dat_dir) and first_time:
-            os.system("rm " + special_dat_dir + "/*.dat")
+            print("exists {}".format(special_dat_dir))
+            # os.system("rm " + special_dat_dir + "/*.dat")
         elif not os.path.exists(special_dat_dir):
             os.makedirs(special_dat_dir)
         k = KeyStore(self.password)
@@ -84,7 +89,8 @@ class KeyStoreManager(object):
     def create_general_stores(self, category: str, category_list: list):
         category_dat_dir = os.path.join(self.keystore_saved_dir, category + "_keystores")
         if os.path.exists(category_dat_dir):
-            os.system("rm " + category_dat_dir + "/*.dat")
+            print("exists {}".format(category_dat_dir))
+            # os.system("rm " + category_dat_dir + "/*.dat")
         else:
             os.makedirs(category_dat_dir)
 
@@ -112,7 +118,8 @@ class KeyStoreManager(object):
     def create_arbiter_stores(self):
         arbiter_dat_dir = os.path.join(self.keystore_saved_dir, "arbiter_keystores")
         if os.path.exists(arbiter_dat_dir):
-            os.system("rm " + arbiter_dat_dir + "/*.dat")
+            # os.system("rm " + arbiter_dat_dir + "/*.dat")
+            print("exists {} ".format(arbiter_dat_dir))
         else:
             os.makedirs(arbiter_dat_dir)
 

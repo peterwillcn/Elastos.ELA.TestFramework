@@ -32,7 +32,6 @@ class Node(object):
             "node_port": 5,
             "arbiter_node_port": 6
         }
-        pass
 
     def start(self):
         pass
@@ -42,16 +41,19 @@ class Node(object):
 
     def reset_config_common(self, index, node_type: str, num):
         _config = self.config[constant.CONFIG_TITLE]
-        _config[constant.CONFIG_SEED_LIST] = []
-        for i in range(num):
-            if i == 10:
-                break
-            _config[constant.CONFIG_SEED_LIST].append("127.0.0.1:" + str(self.reset_port(i, node_type, "node_port")))
-        _config[constant.CONFIG_PORT_INFO] = self.reset_port(index, node_type, "info_port")
-        _config[constant.CONFIG_PORT_REST] = self.reset_port(index, node_type, "rest_port")
-        _config[constant.CONFIG_PORT_WS] = self.reset_port(index, node_type, "ws_port")
         _config[constant.CONFIG_PORT_JSON] = self.reset_port(index, node_type, "json_port")
         _config[constant.CONFIG_PORT_NODE] = self.reset_port(index, node_type, "node_port")
+
+        if node_type is not "arbiter":
+            _config[constant.CONFIG_SEED_LIST] = []
+            for i in range(num):
+                if i == 10:
+                    break
+                _config[constant.CONFIG_SEED_LIST].append("127.0.0.1:" + str(self.reset_port(i, node_type, "node_port")))
+            _config[constant.CONFIG_PORT_INFO] = self.reset_port(index, node_type, "info_port")
+            _config[constant.CONFIG_PORT_REST] = self.reset_port(index, node_type, "rest_port")
+            _config[constant.CONFIG_PORT_WS] = self.reset_port(index, node_type, "ws_port")
+
         _config[constant.CONFIG_RPC][constant.CONFIG_RPC_USER] = ""
         _config[constant.CONFIG_RPC][constant.CONFIG_RPC_PASS] = ""
         _config[constant.CONFIG_RPC][constant.CONFIG_RPC_WHITE_LIST] = ["0.0.0.0"]

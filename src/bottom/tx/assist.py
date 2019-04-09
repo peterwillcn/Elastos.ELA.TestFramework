@@ -6,10 +6,12 @@
 from decimal import Decimal
 
 from src.middle.tools import util
+from src.middle.tools import constant
 from src.middle.tools.log import Logger
 
 from src.bottom.services.rpc import RPC
 from src.bottom.services.rest import REST
+from src.bottom.wallet.keystore import KeyStore
 
 
 class Assist(object):
@@ -19,77 +21,68 @@ class Assist(object):
         self.rpc = rpc
         self.rest = rest
 
-    def _collect_utxos_by_keystore(self, input_keystore, deposit_address: str):
-        if deposit_address != "":
-            utxos_resp = self.rpc.list_unspent_utxos(addresses=deposit_address, assetid="None")
-        else:
-            utxos_resp = self.rpc.list_unspent_utxos(addresses=input_keystore.address, assetid="None")
-        if not utxos_resp:
-            Logger.error("{} gen unspent utxos response: {}".format(self.tag, utxos_resp))
+    def collect_unspent_utxos(self, address: str, private_key: str, port: int):
+        utxos_response = self.rpc.list_unspent_utxos(addresses=address, assetid="None", port=port)
+
+        if not utxos_response:
+            Logger.error("{} gen unspent utxos response: {}".format(self.tag, utxos_response))
             exit(-1)
 
-        utxos = []
-        for utxo in utxos_resp:
-            utxos.append({"txid": utxo["txid"], "index": utxo["vout"], "amount": utxo["amount"],
-                          "address": utxo["address"], "privatekey": input_keystore.private_key.hex()})
-        return utxos
+        unspend_utxos = list()
+        for utxo in utxos_response:
+            unspend_utxos.append(
+                {
+                    "txid": utxo["txid"],
+                    "index": utxo["vout"],
+                    "amount": utxo["amount"],
+                    "address": utxo["address"],
+                    "privatekey": private_key
+                }
+            )
+        return unspend_utxos
 
-    @staticmethod
-    def _get_utxos_amount(utxos):
-        amount = 0
-        if not isinstance(utxos, list):
-            utxos = [utxos]
-        for utxo in utxos:
-            amount += float(utxo["amount"]) * 100000000
-        return int(amount)
-
-    def _get_enough_value_for_amount(self, utxos, amount, fee, utxo_value=0, index=-1, quantity=0):
-        if amount < 0:
-            Logger.error("{} Invalid argument amount: {}".format(self.tag, amount))
+    def collect_enough_utxos(self, unspect_utxos, amount, fee):
+        if amount < 0 or fee < 0:
+            Logger.error("{} Invalid argument amount: {} {}".format(self.tag, amount, fee))
             exit(-1)
 
-        if utxo_value <= amount + fee and amount >= 0:
+        utxo_value = 0
+        index = 0
+        while utxo_value <= (amount + fee):
+            utxo_value += int(float(unspect_utxos[index]["amount"]) * constant.TO_SELA)
             index += 1
-            utxo_value += self._get_utxos_amount(utxos[index])
-            quantity += 1
-            return self._get_enough_value_for_amount(utxos, amount, fee, utxo_value, index, quantity)
+        return {"value": utxo_value, "quantity": index + 1}
 
+    def gen_inputs_utxo_value(self, input_keystore: KeyStore, amount: int, deposit_address="",
+                              fee=10000, mode="address", port=RPC.DEFAULT_PORT):
+        if deposit_address != "":
+            unspent_utxos = self.collect_unspent_utxos(deposit_address, "", port)
         else:
-            return {"value": utxo_value, "quantity": quantity}
-
-    def gen_inputs_utxos_value(self, input_keystore, amount: int, deposit_address="", fee=100, mode="address"):
-        invalid_utxos = self._collect_utxos_by_keystore(input_keystore, deposit_address)
-        value_quantity = self._get_enough_value_for_amount(utxos=invalid_utxos, amount=amount, fee=fee)
-        utxos_value = value_quantity["value"]
+            unspent_utxos = self.collect_unspent_utxos(input_keystore.address, input_keystore.private_key.hex(), port)
+        # value_quantity = self._get_enough_value_for_amount(utxos=invalid_utxos, amount=amount, fee=fee)
+        value_quantity = self.collect_enough_utxos(unspent_utxos, amount, fee)
+        utxo_value = value_quantity["value"]
         utxos_quantitiy = value_quantity["quantity"]
         inputs = []
-        for utxo in invalid_utxos[0:utxos_quantitiy]:
+        for utxo in unspent_utxos[0:utxos_quantitiy]:
             inputs.append({"txid": utxo["txid"], "vout": utxo["index"], mode: utxo[mode]})
-        return inputs, utxos_value
+        return inputs, utxo_value
 
-    def _gen_normal_outputs(self, addresses: list, amount: int, change_address: str, utxo_value: int, fee=100):
-        if utxo_value < ((amount + fee) * len(addresses) + 1):
+    def gen_usual_outputs(self, output_addresses: list, amount: int, change_address: str, utxo_value: int, fee=10000):
+        if utxo_value < amount * len(output_addresses) + fee + 1:
             Logger.error("{} utxo is not enough!".format(self.tag))
             return None
         else:
-            change_value = utxo_value - (amount + fee) * len(addresses)
-            change_value = str(Decimal(str(change_value)) / Decimal(100000000))
-            amount = str(Decimal(str(amount)) / Decimal(100000000))
+            change_value = utxo_value - amount * len(output_addresses) - fee
+            change_value = str(Decimal(str(change_value)) / Decimal(constant.TO_SELA))
+            amount = str(Decimal(str(amount)) / Decimal(constant.TO_SELA))
             output = list()
-            for addr in addresses:
-                output.append({"address": addr, "amount": amount})
-            if not float(change_value) == 0:
+            if float(amount):
+                for addr in output_addresses:
+                    output.append({"address": addr, "amount": amount})
+            if float(change_value):
                 output.append({"address": change_address, "amount": change_value})
             return output
-
-    def gen_single_sign_outputs(self, output_addresses, change_address, utxos_value: int, amount: int):
-        outputs = self._gen_normal_outputs(
-            addresses=output_addresses,
-            amount=amount,
-            change_address=change_address,
-            utxo_value=utxos_value,
-        )
-        return outputs
 
     @staticmethod
     def gen_private_sign(privatekey):
@@ -97,58 +90,15 @@ class Assist(object):
         output.append({"privatekey": privatekey})
         return output
 
-    def gen_register_producer_output(self, deposit_address: str, amount: int, change_address: str, utxo_value: int,
-                                     fee=10000):
+    def gen_cross_chain_asset(self, address: str, amount: int, utxo_value: int, fee=10000):
         if utxo_value < amount + fee + 1:
-            Logger.error("{} utxo value is not enough!".format(self.tag))
+            Logger.error("{} utxo is not enough!".format(self.tag))
             return None
-
-        else:
-            change_value = utxo_value - fee - amount
-            change_value = str(Decimal(str(change_value)) / Decimal(100000000))
-            amount = str(Decimal(str(amount)) / Decimal(100000000))
-            output = list()
-            output.append({"address": deposit_address, "amount": amount})
-            if change_value != 0:
-                output.append({"address": change_address, "amount": change_value})
-        return output
-
-    def gen_update_producer_output(self, address: str, utxo_value: int, fee=100):
-        if utxo_value < fee + 1:
-            Logger.error("{} utxo value is not enough?!".format(self.tag))
-            return None
-
-        else:
-            change_value = utxo_value - fee
-            change_value = str(Decimal(str(change_value)) / Decimal(100000000))
-            outputs = list()
-            outputs.append({"address": address, "amount": change_value})
-        return outputs
-
-    def gen_cancel_producer_output(self, address: str, utxo_value: int, fee=100):
-        if utxo_value < fee + 1:
-            Logger.error("{} utxo value is not enough!".format(self.tag))
-            return None
-
-        else:
-            change_value = utxo_value - fee
-            change_value = str(Decimal(str(change_value)) / Decimal(100000000))
-            outputs = list()
-            outputs.append({"address": address, "amount": change_value})
-        return outputs
-
-    def gen_redeem_producer_output(self, address: str, utxo_value: int, fee=10000):
-        if utxo_value < fee + 1:
-            Logger.error("{} utxo value is not enough!".format(self.tag))
-            return None
-
-        else:
-            change_value = utxo_value - fee
-            change_value = str(Decimal(str(change_value)) / Decimal(100000000))
-            outputs = list()
-            outputs.append({"address": address, "amount": change_value})
-        return outputs
-
+        asset = list()
+        amount = str(Decimal(amount - 10000) / Decimal(constant.TO_SELA))
+        asset.append({"address": address, "amount": amount})
+        return asset
+            
     @staticmethod
     def gen_vote_outputs_contents_candidates(candidate_publickeys):
         candidates = list()
@@ -165,16 +115,16 @@ class Assist(object):
         contents.append({"votetype": votetype, "candidates": candidates})
         return contents
 
-    def gen_vote_outputs(self, vote_address: str, change_address: str, utxos_value: int, vote_amount: int, outputtype: int,
+    def gen_vote_outputs(self, vote_address: str, change_address: str, utxo_value: int, vote_amount: int, outputtype: int,
                          version: int, contents, fee=100):
-        if utxos_value < fee + 1 + vote_amount:
+        if utxo_value < fee + 1 + vote_amount:
             Logger.error("{} utxo value is not enough!".format(self.tag))
             return None
 
         else:
-            change_value = utxos_value - fee - vote_amount
-            change_value = str(Decimal(str(change_value)) / Decimal(100000000))
-            amount = str(Decimal(str(vote_amount)) / Decimal(100000000))
+            change_value = utxo_value - fee - vote_amount
+            change_value = str(Decimal(str(change_value)) / Decimal(constant.TO_SELA))
+            amount = str(Decimal(str(vote_amount)) / Decimal(constant.TO_SELA))
             output = list()
             output.append({"address": vote_address, "amount": amount, "outputtype": outputtype,
                            "version": version, "contents": contents})
@@ -210,5 +160,5 @@ class Assist(object):
             }
 
     @staticmethod
-    def gen_cancel_producer_payload(privatekey, publickey):
-        return {"privatekey": privatekey, "publickey": publickey}
+    def gen_cancel_producer_payload(privatekey, owner_publickey):
+        return {"privatekey": privatekey, "ownerpublickey": owner_publickey}

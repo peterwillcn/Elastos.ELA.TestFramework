@@ -3,8 +3,12 @@
 # date: 2019/3/28 5:59 PM
 # author: liteng
 
+import time
+import subprocess
+
 from src.middle.tools import util
 from src.middle.tools import constant
+from src.middle.tools.log import Logger
 from src.middle.managers.keystore_manager import KeyStoreManager
 
 from src.bottom.nodes.node import Node
@@ -20,12 +24,39 @@ class ArbiterNode(Node):
         self.params = params
         self.keystore_manager = keystore_manager
         self.cwd_dir = cwd_dir
+        self.rpc_port = self.reset_port(index, "arbiter", "json_port")
+        self.process = None
+        self.running = False
+
+    def start(self):
+        self.process = subprocess.Popen(
+            './arbiter -p ' + str(self.params.password),
+            stdout=self.dev_null,
+            shell=True,
+            cwd=self.cwd_dir
+        )
+        time.sleep(0.5)
+        self.running = True
+        Logger.debug('{} ./arbiter{} started on success.'.format(self.tag, self.index))
+        return True
+
+    def stop(self):
+        if not self.running:
+            Logger.error('{} arbiter{} has already stopped'.format(self.tag, self.index))
+            return
+        try:
+            self.process.terminate()
+        except subprocess.SubprocessError as e:
+            Logger.error('{} Unable to stop ela{}, error: {}'.format(self.tag, self.index, e))
+        self.running = False
+        Logger.debug('{} arbiter{} has stopped on success!'.format(self.tag, self.index))
 
     def reset_config(self):
 
         Node.reset_config_common(self, self.index, "arbiter", self.params.number)
         _config = self.config[constant.CONFIG_TITLE]
         _config[constant.CONFIG_MAGIC] = self.params.magic
+        _config[constant.CONFIG_PRINT_LEVEL] = self.params.print_level
         _config[constant.CONFIG_ARBITER_MAIN_NODE] = self.gen_main_node()
         _config[constant.CONFIG_SIDE_NODE_LIST] = self.gen_side_node_list()
         _config[constant.CONFIG_ORIGIN_CROSS_CHAIN_ARBITERS] = self.gen_arbiters_list(0, 5)

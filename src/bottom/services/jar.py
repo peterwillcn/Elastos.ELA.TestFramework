@@ -49,74 +49,129 @@ class JarService(object):
         Logger.debug("Java services is stopped")
         self.running = False
 
-    def create_transaction(self, inputs, outputs, memo=None):
+    def gen_tx(self, inputs, outputs, memo=None):
         if memo is None:
-            return net.post_request(self.url, "gentx", params={"transaction": {"inputs": inputs, "outputs": outputs}})
+            return net.post_request(
+                self.url,
+                method="gentx",
+                params={"transaction": {"inputs": inputs, "outputs": outputs}}
+            )
         else:
-            return net.post_request(self.url, "gentx",
-                                    params={"transaction": {"inputs": inputs, "outputs": outputs, "memo": memo}})
+            return net.post_request(
+                self.url,
+                method="gentx",
+                params={"transaction": {"inputs": inputs, "outputs": outputs, "memo": memo}}
+            )
 
-    def register_producer_transaction(self, inputs, outputs, privatekeysign, payload):
-        return net.post_request(self.url, "genregisterproducertx",
-                                params={
-                                    "transaction": {
-                                        "inputs": inputs,
-                                        "outputs": outputs,
-                                        "privatekeysign": privatekeysign,
-                                        "payload": payload}
-                                })
+    def gen_register_producer_tx(self, inputs, outputs, privatekeysign, payload):
+        return net.post_request(
+            self.url,
+            method="genregisterproducertx",
+            params={
+                "transaction": {
+                    "inputs": inputs,
+                    "outputs": outputs,
+                    "privatekeysign": privatekeysign,
+                    "payload": payload
+                }
+            }
+        )
 
-    def update_producer_transaction(self, inputs, outputs, privatekeysign, payload):
-        return net.post_request(self.url, "genupdateproducertx",
-                                params={
-                                    "transaction": {
-                                        "inputs": inputs,
-                                        "outputs": outputs,
-                                        "privatekeysign": privatekeysign,
-                                        "payload": payload}
-                                })
+    def gen_update_producer_tx(self, inputs, outputs, privatekeysign, payload):
+        return net.post_request(
+            self.url,
+            method="genupdateproducertx",
+            params={
+                "transaction": {
+                    "inputs": inputs,
+                    "outputs": outputs,
+                    "privatekeysign": privatekeysign,
+                    "payload": payload
+                }
+            }
+        )
 
-    def cancel_producer_transaction(self, inputs, outputs, privatekeysign, payload):
-        return net.post_request(self.url, "gencancelproducertx",
-                                params={
-                                    "transaction": {
-                                        "inputs": inputs,
-                                        "outputs": outputs,
-                                        "privatekeysign": privatekeysign,
-                                        "payload": payload}
-                                })
+    def gen_cancel_producer_tx(self, inputs, outputs, privatekeysign, payload):
+        return net.post_request(
+            self.url,
+            method="gencancelproducertx",
+            params={
+                "transaction": {
+                    "inputs": inputs,
+                    "outputs": outputs,
+                    "privatekeysign": privatekeysign,
+                    "payload": payload
+                }
+            }
+        )
 
-    def redemption_producer_transaction(self, inputs, outputs, privatekeysign):
-        return net.post_request(self.url, "genreturndepositcointx",
-                                params={
-                                    "transaction": {
-                                        "inputs": inputs,
-                                        "outputs": outputs,
-                                        "privatekeysign": privatekeysign}
-                                })
+    def gen_return_deposit_coint_tx(self, inputs, outputs, privatekeysign):
+        return net.post_request(
+            self.url,
+            method="genreturndepositcointx",
+            params={
+                "transaction": {
+                    "inputs": inputs,
+                    "outputs": outputs,
+                    "privatekeysign": privatekeysign
+                }
+            }
+        )
 
-    def vote_transaction(self, inputs, outputs, privatekeysign):
-        return net.post_request(self.url, "genvotetx",
-                                params={
-                                    "transaction": {
-                                        "inputs": inputs,
-                                        "outputs": outputs,
-                                        "privatekeysign": privatekeysign}
-                                })
+    def gen_activate_producer_tx(self, inputs, outputs, privatekeysign, payload):
+        return net.post_request(
+            self.url,
+            method="genactivateproducertx",
+            params={
+                "transaction": {
+                    "inputs": inputs,
+                    "outputs": outputs,
+                    "privatekeysign": privatekeysign,
+                    "payload": payload
+                }
+            }
+        )
 
-    def gen_deposit_address(self, publickey: str):
-        return net.post_request(self.url, "genpledgeaddress", params={"publickey": publickey})
+    def gen_vote_tx(self, inputs, outputs, privatekeysign):
+        return net.post_request(
+            self.url,
+            method="genvotetx",
+            params={
+                "transaction": {
+                    "inputs": inputs,
+                    "outputs": outputs,
+                    "privatekeysign": privatekeysign
+                }
+            }
+        )
 
-    def gen_cross_chain_tx(self, inputs, outputs, privatekeysign, crosschainasset):
-        resp = util.post_request(self.url, "gencrosschaintx",
-                                 params=
-                                     {"transaction": {"inputs": inputs,
-                                                        "outputs": outputs,
-                                                        "privatekeysign": privatekeysign,
-                                                        "crosschainasset": crosschainasset}}
-                                 )
-        if resp["error"] == None:
-            return resp["result"]
-        else:
-            return None
+    def gen_pledge_address(self, publickey: str):
+        return net.post_request(
+            self.url,
+            method="genpledgeaddress",
+            params={"publickey": publickey}
+        )
+
+    def gen_cross_chain_transaction(self, inputs, outputs, privatekeysign, crosschainasset):
+        return net.post_request(
+            self.url,
+            method="gencrosschaintx",
+            params={
+                "transaction": {
+                    "inputs": inputs,
+                    "outputs": outputs,
+                    "privatekeysign": privatekeysign,
+                    "crosschainasset": crosschainasset
+                }
+            }
+        )
+
+    def gen_genesis_address(self, block_hash):
+        return net.post_request(
+            self.url,
+            method="gengenesisaddress",
+            params={"blockhash": block_hash}
+        )
+
+
 

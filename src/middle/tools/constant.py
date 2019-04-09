@@ -9,6 +9,7 @@
 
 JAR_NAME = "Elastos.ELA.AutoTest.Java.jar"
 JAR_ELA_TOOL = "ela_tool.jar"
+JAR_ELA_OLD = "old.jar"
 JAR_NEW_NAME = "Elastos.ELA.AutoTest.New.Java.jar"
 JAR_HTTP_SERVICE = " org.elastos.elaweb.HttpServer"
 
@@ -43,6 +44,8 @@ CONFIG_PORT_OPEN = "NodeOpenPort"
 CONFIG_PORT_MAIN_CHAIN_DEFAULT = "MainChainDefaultPort"
 CONFIG_PORT_ARBITER_MAIN_DEFAULT = "DefaultPort"
 
+CONFIG_PRINT_LEVEL = "PrintLevel"
+
 CONFIG_PAY_TO_ADDR = "PayToAddr"
 CONFIG_AUTO_MINING = "AutoMining"
 CONFIG_INSTANT_BLOCK = "InstantBlock"
@@ -75,7 +78,7 @@ CONFIG_MIN_OUTBOUND = "MinOutbound"
 CONFIG_MAX_CONNECTION = "MaxConnections"
 CONFIG_EXCHANGE_RATE = "ExchangeRate"
 CONFIG_GENESIS_BLOCK = "GenesisBlock"
-CONFIG_MINER_ADDRESS = "MinerAddress"
+CONFIG_MINER_ADDRESS = "MiningAddr"
 CONFIG_SIDE_NODE_LIST = "SideNodeList"
 
 CONFIG_ORIGIN_CROSS_CHAIN_ARBITERS = "OriginCrossChainArbiters"

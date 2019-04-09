@@ -3,20 +3,22 @@
     "enable": true,
     "arbiter_enable": true,
     "password": "123",
-    "number": 12,
+    "number": 13,
     "crc_number": 4,
+    "print_level": 0,
     "auto_mining": false,
     "instant_block": true,
     "pre_connect_offset": 30,
     "check_address_height": 101,
     "vote_start_height": 100,
     "crc_dpos_height": 200,
-    "public_dpos_height": 250
+    "public_dpos_height": 220
   },
   "arbiter": {
     "enable": false,
     "number": 9,
-    "pow_chain": true
+    "pow_chain": true,
+    "print_level": 0
   },
   "did": {
     "enable": false,

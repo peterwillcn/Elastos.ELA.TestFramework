@@ -21,6 +21,7 @@ class Producer(object):
         self.node = node
         self.jar_service = jar_service
         self.assist = assist
+        self.utxo_value = 0
         self.fee = 10000
         self.registered = False
         self.canceled = False
@@ -29,7 +30,7 @@ class Producer(object):
         self.output_address = self.node.owner_keystore.address
         self.deposit_amount = 5000 * constant.TO_SELA
         self.payload = self._init_payload()
-        self.deposit_address = jar_service.gen_deposit_address(self.node.owner_keystore.public_key.hex())
+        self.deposit_address = jar_service.gen_pledge_address(self.node.owner_keystore.public_key.hex())
         self.privatekeysign = self.assist.gen_private_sign(self.node.owner_keystore.private_key.hex())
 
     def _init_payload(self):
@@ -53,43 +54,33 @@ class Producer(object):
         elif category == constant.PRODUCER_REGISTER:
             amount = self.deposit_amount
 
-        inputs, utxos_value = self.assist.gen_inputs_utxos_value(
+        inputs, utxos_value = self.assist.gen_inputs_utxo_value(
             self.node.owner_keystore,
             amount,
             deposit_address=deposit_address
         )
-        self.utxos_value = utxos_value
+        self.utxo_value = utxos_value
         Logger.debug("{} {} inputs: {}".format(self.tag, category, inputs))
         return inputs
 
     def _outputs(self, category: str):
-        outputs = None
+
         if category == constant.PRODUCER_REGISTER:
-            outputs = self.assist.gen_register_producer_output(
-                deposit_address=self.deposit_address,
+            outputs = self.assist.gen_usual_outputs(
+                output_addresses=[self.deposit_address],
                 amount=self.deposit_amount,
                 change_address=self.output_address,
-                utxo_value=self.utxos_value,
-                fee=self.fee
+                utxo_value=self.utxo_value
             )
-        elif category == constant.PRODUCER_UPDATE:
-            outputs = self.assist.gen_update_producer_output(
-                address=self.output_address,
-                utxo_value=self.utxos_value,
-                fee=self.fee
+
+        else:
+            outputs = self.assist.gen_usual_outputs(
+                output_addresses=[self.output_address],
+                amount=0,
+                change_address=self.output_address,
+                utxo_value=self.utxo_value
             )
-        elif category == constant.PRODUCER_CANCEL:
-            outputs = self.assist.gen_cancel_producer_output(
-                address=self.output_address,
-                utxo_value=self.utxos_value,
-                fee=self.fee
-            )
-        elif category == constant.PRODUCER_REDEEM:
-            outputs = self.assist.gen_redeem_producer_output(
-                address=self.output_address,
-                utxo_value=self.utxos_value,
-                fee=self.fee
-            )
+
         Logger.debug("{} outputs: {}".format(category, outputs))
         return outputs
 
@@ -121,7 +112,7 @@ class Producer(object):
         elif category == constant.PRODUCER_CANCEL:
             load = self.assist.gen_cancel_producer_payload(
                 privatekey=self.payload.private_key,
-                publickey=self.payload.owner_public_key
+                owner_publickey=self.payload.owner_public_key
             )
 
         Logger.debug("{} payload: {}".format(category, load))
@@ -133,7 +124,7 @@ class Producer(object):
         inputs = self._inputs(category)
         outputs = self._outputs(category)
         load = self._payload(category)
-        register_resp = self.jar_service.register_producer_transaction(
+        register_resp = self.jar_service.gen_register_producer_tx(
             inputs=inputs,
             outputs=outputs,
             privatekeysign=self.privatekeysign,
@@ -165,7 +156,7 @@ class Producer(object):
         outputs = self._outputs(category)
         load = self._payload(category)
 
-        update_resp = self.jar_service.update_producer_transaction(
+        update_resp = self.jar_service.gen_update_producer_tx(
             inputs=inputs,
             outputs=outputs,
             privatekeysign=self.privatekeysign,
@@ -174,8 +165,6 @@ class Producer(object):
         tran_raw = update_resp["rawtx"]
         tran_txid = update_resp["txhash"].lower()
         sendraw_resp = self.assist.rpc.send_raw_transaction(tran_raw)
-        print("tran_txid =    ", tran_txid)
-        print("sendraw_resp = ", sendraw_resp)
         compare = util.assert_equal(sendraw_resp, tran_txid)
         if not compare:
             return result
@@ -184,7 +173,7 @@ class Producer(object):
 
         producer_status_resp = self.assist.rpc.producer_status(self.node.owner_keystore.public_key.hex())
         Logger.debug("{} producers status: {}".format(category, producer_status_resp))
-        if producer_status_resp == 1:
+        if producer_status_resp == "Activate":
             result = True
             self.updated = True
 
@@ -198,11 +187,12 @@ class Producer(object):
         outputs = self._outputs(category)
         load = self._payload(category)
 
-        cancel_resp = self.jar_service.cancel_producer_transaction(
+        cancel_resp = self.jar_service.gen_cancel_producer_tx(
             inputs=inputs,
             outputs=outputs,
             privatekeysign=self.privatekeysign,
-            payload=load)
+            payload=load
+        )
 
         tran_raw = cancel_resp["rawtx"]
         tran_txid = cancel_resp["txhash"].lower()
@@ -218,7 +208,7 @@ class Producer(object):
         )
         Logger.debug("{} producer status: {}".format(category, producer_status_resp))
 
-        if producer_status_resp == 0:
+        if producer_status_resp == "Canceled":
             self.canceled = True
 
         return result
@@ -230,7 +220,7 @@ class Producer(object):
         inputs = self._inputs(category)
         outputs = self._outputs(category)
 
-        redeem_resp = self.jar_service.redemption_producer_transaction(
+        redeem_resp = self.jar_service.gen_return_deposit_coint_tx(
             inputs=inputs,
             outputs=outputs,
             privatekeysign=self.privatekeysign
@@ -246,7 +236,7 @@ class Producer(object):
         self.assist.rpc.discrete_mining(1)
         balance2 = self.get_deposit_balance()
         balance3 = self.assist.rpc.get_balance_by_address(self.node.owner_keystore.address)
-        Logger.info("{} balance1 = {}, balance2 = {}, balance3 = {}".format(constant.PRODUCER_REDEEM,
+        Logger.debug("{} balance1 = {}, balance2 = {}, balance3 = {}".format(constant.PRODUCER_REDEEM,
                                                                             balance1, balance2, balance3))
         return result
 

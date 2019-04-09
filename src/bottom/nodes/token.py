@@ -17,6 +17,7 @@ class TokenNode(Node):
         self.index = index
         self.params = params
         self.cwd_dir = cwd_dir
+        self.rpc_port = self.reset_port(index, "token", "json_port")
 
     def reset_config(self, num: int, update_content: dict):
         Node.reset_config_common(self, self.index, "token", num)

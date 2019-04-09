@@ -18,7 +18,6 @@ class Controller(object):
         self.config = util.read_config_file(os.path.join(self.root_path, "config.json"))
         self.middle = Distribution(self.config, self.root_path)
         self.middle.init_for_testing()
-        self.middle.ready_for_dpos()
 
     def discrete_mining_blocks(self, num: int):
         self.middle.service_manager.rpc.discrete_mining(num)

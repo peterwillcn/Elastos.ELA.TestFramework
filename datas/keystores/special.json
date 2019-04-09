@@ -1,0 +1,44 @@
+{
+    "main_foundation:": {
+        "private_key": "80a91fba58bf23e2d50faf73fef134f0e6da59b18b716dc736d73667c5313cb6",
+        "public_key": "03667db316f3719e9368bdfc271083e5db334dc7fca18a26ccb68f8b8a0d1a704a",
+        "sign_script": "2103667db316f3719e9368bdfc271083e5db334dc7fca18a26ccb68f8b8a0d1a704aac",
+        "program_hash": "21fc523483faeca2feb7e6e12ee783f0ab897c2fba",
+        "address": "EgA4Fdzfd5EtpENwRSi7KjoKnZUW9vo7br"
+    },
+    "side_foundation:": {
+        "private_key": "330b53b8affad90f5072f049a2f9b2b8d3018646207ef8f67b9cb8a37a5e822e",
+        "public_key": "036de346673b5ca211a8e3377e77b3179046edede71e271c4007ca72fa424a3d15",
+        "sign_script": "21036de346673b5ca211a8e3377e77b3179046edede71e271c4007ca72fa424a3d15ac",
+        "program_hash": "21ef04fe9e4dfdd143ed675764d8d7ad768bbee754",
+        "address": "EewiyTo2bwuFP5mvAZGD9pmuYT7TDTvVXb"
+    },
+    "main_miner:": {
+        "private_key": "53a5b6dae4e93d7c012067d25bf84b4364176bee7df0fd7a546715fe8eba8885",
+        "public_key": "0201c307a2f44653a159e00e5b7b78f0f26a30c762b4e51ccc86abab47f1a0a47a",
+        "sign_script": "210201c307a2f44653a159e00e5b7b78f0f26a30c762b4e51ccc86abab47f1a0a47aac",
+        "program_hash": "21140a59f49ab743dce525ec921f4e555254792098",
+        "address": "EJysQeXnk6u4Wc272bAjq5tbmVgKrW8L7y"
+    },
+    "side_miner:": {
+        "private_key": "232c9b82b1459e0fa7dafcc5daa42cb29345cce60e72a8c7a1dc61456f7b91a5",
+        "public_key": "03607f75c05060b9bff3bead7071d7249e96aada6c5600ef171907b66d132a6abd",
+        "sign_script": "2103607f75c05060b9bff3bead7071d7249e96aada6c5600ef171907b66d132a6abdac",
+        "program_hash": "21eff06ffbf9e3a8b74b7ad40ec0928ff91a8e5d46",
+        "address": "Ef2b2KPGKphzcj3G6UHwN1ywSNj1XkvGEX"
+    },
+    "main_tap:": {
+        "private_key": "416bb535a724b687e742ac8ec4189f4850e1e106109c3f6b69ab004ecd8459ff",
+        "public_key": "02c7e48c6567d743e4c959159e33b1cc8bb40e04801d3cc4b55f3f3197293f8c3b",
+        "sign_script": "2102c7e48c6567d743e4c959159e33b1cc8bb40e04801d3cc4b55f3f3197293f8c3bac",
+        "program_hash": "217a9a51729b3f8f485077ac377a7698b622ed62a7",
+        "address": "EULAoCc4qB5coPV8c5r4bmZgBKQWdFQHi7"
+    },
+    "side_tap:": {
+        "private_key": "6ee3b800ec2ff208c1cb9a2ff27021a4a842044ef7445b73f28e485375026417",
+        "public_key": "02d3883c8810c79da05e40179cdd2250789a31759032c0577b1a6b7971ff04b4a7",
+        "sign_script": "2102d3883c8810c79da05e40179cdd2250789a31759032c0577b1a6b7971ff04b4a7ac",
+        "program_hash": "21320f1227abfdc9176c0f3ef99e62370449b1c4f7",
+        "address": "EMibLKbcrGijgDTYifVR8MT2Ng2QL2VRhE"
+    }
+}

@@ -35,6 +35,7 @@ class ElaNode(Node):
         Node.reset_config_common(self, self.index, "ela", self.params.number)
         _config = self.config[constant.CONFIG_TITLE]
         _config[constant.CONFIG_MAGIC] = self.params.magic
+        _config[constant.CONFIG_PRINT_LEVEL] = self.params.print_level
         _config[constant.CONFIG_ARBITER_ENABLE] = self.params.arbiter_enable
         _config[constant.CONFIG_FOUNDATION_ADDRESS] = self.keystore_manager.special_key_stores[0].address
         _config[constant.CONFIG_POW][constant.CONFIG_PAY_TO_ADDR] = self.keystore_manager.special_key_stores[1].address
@@ -52,6 +53,7 @@ class ElaNode(Node):
             "ela",
             "arbiter_node_port"
         )
+        _config[constant.CONFIG_ARBITER_CONFIGURATION][constant.CONFIG_PRINT_LEVEL] = self.params.print_level
         _config[constant.CONFIG_ARBITER_CONFIGURATION][constant.CONFIG_ORIGIN_ARBITERS] = self.gen_original_arbiter()
         _config[constant.CONFIG_ARBITER_CONFIGURATION][constant.CONFIG_CRC_ARBITERS] = self.gen_crc_config()
         _config[constant.CONFIG_ARBITER_CONFIGURATION][constant.CONFIG_NORMAL_ARBITERS_COUNT] = \

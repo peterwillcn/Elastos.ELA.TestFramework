@@ -76,17 +76,30 @@ class NodeManager(object):
                 time.sleep(0.5)
             ret = self.service_manager.wait_rpc_ready(self.did_nodes[0].rpc_port)
             if ret:
-                self.params.arbiter_params.side_chain_genesis_hash = \
-                    self.service_manager.rpc.get_block_hash_by_height(0, self.did_nodes[0].rpc_port)
-                Logger.debug("{} did genesis hash: {}".format(self.tag, self.params.arbiter_params.side_chain_genesis_hash))
-                self.params.arbiter_params.side_info = "did"
+                self.create_side_info()
                 if self.params.arbiter_params.enable:
                     self._deploy_nodes("arbiter", self.params.arbiter_params.number)
+                    time.sleep(2)
+                    self.start_arbiter_nodes()
+
+    def start_arbiter_nodes(self):
+        arbiter_node_number = len(self.arbiter_nodes)
+        if arbiter_node_number <= 0:
+            return False
+        for i in range(arbiter_node_number):
+            self.arbiter_nodes[i].start()
+
+        return True
 
     def stop_nodes(self):
         if self.params.ela_params.enable:
             for i in range(len(self.ela_nodes)):
                 self.ela_nodes[i].stop()
+                time.sleep(0.5)
+
+        if self.params.arbiter_params.enable:
+            for i in range(len(self.arbiter_nodes)):
+                self.arbiter_nodes[i].stop()
                 time.sleep(0.5)
 
         if self.params.did_params.enable:
@@ -168,7 +181,7 @@ class NodeManager(object):
                 )
 
                 shutil.copy(
-                    os.path.join(self.params.root_path, "datas/keystores/special/tap.dat"),
+                    os.path.join(self.params.root_path, "datas/keystores/special/main_tap.dat"),
                     os.path.join(dest_path, "tap.dat")
                 )
 
@@ -190,8 +203,18 @@ class NodeManager(object):
 
         return True
 
+    def create_side_info(self):
+        self.params.arbiter_params.side_info = "did"
+        side_chain_genesis_hash = self.service_manager.rpc.get_block_hash_by_height(0, self.did_nodes[0].rpc_port)
+        Logger.debug("{} did genesis hash: {}".format(self.tag, self.params.arbiter_params.side_chain_genesis_hash))
+        self.params.arbiter_params.recharge_address = self.service_manager.jar_service.gen_genesis_address(
+            block_hash=side_chain_genesis_hash
+        )
+        self.params.arbiter_params.withdraw_address = "0000000000000000000000000000000000"
+        self.params.arbiter_params.side_chain_genesis_hash = side_chain_genesis_hash
 
-
+        Logger.info("{} recharge address: {}".format(self.tag, self.params.arbiter_params.recharge_address))
+        Logger.info("{} withdraw address: {}".format(self.tag, self.params.arbiter_params.withdraw_address))
 
 
 
