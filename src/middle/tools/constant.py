@@ -96,7 +96,7 @@ COLOR_RED = "\033[0;31m"
 
 
 
-PROJECT_NAME = "Elastos.ELA.TestingWork"
+PROJECT_NAME = "Elastos.ELA.TestFramework"
 
 DID_GENESIS_ADDRESS = "56be936978c261b2e649d58dbfaf3f23d4a868274f5522cd2adb4308a955c4a3"
 

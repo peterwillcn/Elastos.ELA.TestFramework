@@ -2006,3 +2006,37 @@ program hash: 210BA048E77830E1777E323D85C83C49F86C592A26
 2019-04-10 12:00:17,638 [ERROR] [qtp2058534881-14] : NewTransferAssetTransaction end
 2019-04-10 12:00:17,639 [INFO ] [qtp2058534881-14] : {"result":{"rawtx":"0902000100142D38343130333635333032333539333430383834012F918BF56DFC0F43F5D3C0FE2BF743F0B73521A9BED714B26788073CA5044E5A01000000000002B037DB964A231458D2D6FFD5EA18944C4F90E63D547C5D3B9874DF66A4EAD0A300E1F5050000000000000000210BA048E77830E1777E323D85C83C49F86C592A26010001000121033A2AF7106723095837CBB90AFFF909755603BBC9D009DDED78EF90296A2711B4B037DB964A231458D2D6FFD5EA18944C4F90E63D547C5D3B9874DF66A4EAD0A38C7F5C647400000000000000210BA048E77830E1777E323D85C83C49F86C592A2600000000000141400425A9FDBC0EEB6F102F6EA540587729B3DE33DD4C1C0DD60B44906A60FC1770BE8ADAAA8FE90B9861A6FAD20176F412F7546528832E50536BA4AE90583815012321033A2AF7106723095837CBB90AFFF909755603BBC9D009DDED78EF90296A2711B4AC","txhash":"381B49DAECCD535B9C9E09D3B36802EE4B433C48B0D7F824A3732199552E7718"},"id":null,"jsonrpc":"2.0","error":null}
 2019-04-10 12:01:52,852 [INFO ] [qtp2058534881-11] : {"result":{"rawtx":"090D000100133631323631333631393437383234333035383403102C9C22C7A948DFD02EDEA4ED75857CE1D0F31FB4EAA7430C234A9017692812000000000000102C9C22C7A948DFD02EDEA4ED75857CE1D0F31FB4EAA7430C234A901769281201000000000073E44BDD76319FE4E682C4BADE3B3752BD457B734A48189C4EC636A0881DB95305000000000002B037DB964A231458D2D6FFD5EA18944C4F90E63D547C5D3B9874DF66A4EAD0A3005531AA0B000000000000001F6995296ECD233F132B6BDB03A7365900C36E605D00B037DB964A231458D2D6FFD5EA18944C4F90E63D547C5D3B9874DF66A4EAD0A37CE420C06800000000000000216995296ECD233F132B6BDB03A7365900C36E605D0000000000014140E169919D092912E5970EF5E6ADC4AE6EC5E65ACB08DC99562490071725D464F69FBA9838938DF77ECA0826914408EB9644DBBA959F1FECF474C504442848065D232102A38BBD3CD95383F5B79ACBD54AB311D31C356E8A353474700E16C66B4385214BAC","txhash":"AC12E27775C3A5B87C126C9391583811EEF4EEEB884A9E9E5541829882314E63"},"id":null,"jsonrpc":"2.0","error":null}
+2019-04-10 14:42:31,289 [INFO ] [main] : Logging initialized @344ms
+2019-04-10 14:42:31,334 [INFO ] [main] : jetty-9.2.z-SNAPSHOT
+2019-04-10 14:42:31,379 [WARN ] [main] : FAILED ServerConnector@311d617d{HTTP/1.1}{0.0.0.0:8989}: java.net.BindException: Address already in use
+java.net.BindException: Address already in use
+	at sun.nio.ch.Net.bind0(Native Method)
+	at sun.nio.ch.Net.bind(Net.java:433)
+	at sun.nio.ch.Net.bind(Net.java:425)
+	at sun.nio.ch.ServerSocketChannelImpl.bind(ServerSocketChannelImpl.java:223)
+	at sun.nio.ch.ServerSocketAdaptor.bind(ServerSocketAdaptor.java:74)
+	at org.eclipse.jetty.server.ServerConnector.open(ServerConnector.java:321)
+	at org.eclipse.jetty.server.AbstractNetworkConnector.doStart(AbstractNetworkConnector.java:80)
+	at org.eclipse.jetty.server.ServerConnector.doStart(ServerConnector.java:236)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at org.eclipse.jetty.server.Server.doStart(Server.java:366)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at org.elastos.elaweb.HttpServer.main(HttpServer.java:14)
+2019-04-10 14:42:31,381 [WARN ] [main] : FAILED org.eclipse.jetty.server.Server@2aae9190: java.net.BindException: Address already in use
+java.net.BindException: Address already in use
+	at sun.nio.ch.Net.bind0(Native Method)
+	at sun.nio.ch.Net.bind(Net.java:433)
+	at sun.nio.ch.Net.bind(Net.java:425)
+	at sun.nio.ch.ServerSocketChannelImpl.bind(ServerSocketChannelImpl.java:223)
+	at sun.nio.ch.ServerSocketAdaptor.bind(ServerSocketAdaptor.java:74)
+	at org.eclipse.jetty.server.ServerConnector.open(ServerConnector.java:321)
+	at org.eclipse.jetty.server.AbstractNetworkConnector.doStart(AbstractNetworkConnector.java:80)
+	at org.eclipse.jetty.server.ServerConnector.doStart(ServerConnector.java:236)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at org.eclipse.jetty.server.Server.doStart(Server.java:366)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at org.elastos.elaweb.HttpServer.main(HttpServer.java:14)
+2019-04-10 14:43:03,180 [INFO ] [main] : Logging initialized @227ms
+2019-04-10 14:43:03,200 [INFO ] [main] : jetty-9.2.z-SNAPSHOT
+2019-04-10 14:43:03,245 [INFO ] [main] : Started ServerConnector@3ea4dc69{HTTP/1.1}{0.0.0.0:8989}
+2019-04-10 14:43:03,245 [INFO ] [main] : Started @295ms
