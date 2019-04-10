@@ -34,7 +34,7 @@ def assert_equal(arg1, arg2):
     result = False
     if arg1 != arg2:
         print(constant.COLOR_RED + "[NOT EQUAL]" + constant.COLOR_END)
-        # exit(-1)
+        exit(-1)
     else:
         result = True
     return result

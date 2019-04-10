@@ -76,6 +76,7 @@ CONFIG_ARBITER_RPC = "Rpc"
 CONFIG_ARBITER_IP_ADDRESS = "IpAddress"
 CONFIG_MIN_OUTBOUND = "MinOutbound"
 CONFIG_MAX_CONNECTION = "MaxConnections"
+CONFIG_MAX_INACTIVATE_ROUNDS = "MaxInactiveRounds"
 CONFIG_EXCHANGE_RATE = "ExchangeRate"
 CONFIG_GENESIS_BLOCK = "GenesisBlock"
 CONFIG_MINER_ADDRESS = "MiningAddr"
@@ -92,10 +93,7 @@ COLOR_GREEN = "\033[1;32m"
 COLOR_YELLOW = "\033[1;33m"
 COLOR_RED = "\033[0;31m"
 
-PRODUCER_REGISTER = "Register Producer"
-PRODUCER_UPDATE = "Update Producer"
-PRODUCER_CANCEL = "Cancel producer"
-PRODUCER_REDEEM = "Redeem Producer"
+
 
 
 PROJECT_NAME = "Elastos.ELA.TestingWork"

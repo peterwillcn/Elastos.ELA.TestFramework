@@ -28,3 +28,12 @@ class Controller(object):
     def terminate_all_process(self):
         self.middle.service_manager.jar_service.stop()
         self.middle.node_manager.stop_nodes()
+
+    def forbidden_side_chain(self):
+        self.middle.params.ela_params.enable = True
+        self.middle.params.ela_params.crc_number = 4
+
+        self.middle.params.arbiter_params.enable = False
+        self.middle.params.did_params.enable = False
+        self.middle.params.token_params.enable = False
+        self.middle.params.neo_params.enable = False

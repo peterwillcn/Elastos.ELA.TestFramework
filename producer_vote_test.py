@@ -9,6 +9,12 @@ from src.middle.tools.log import Logger
 
 if __name__ == '__main__':
     controller = Controller()
+    controller.forbidden_side_chain()
+    controller.middle.params.ela_params.number = 5
+    controller.middle.params.ela_params.crc_number = 1
+    controller.middle.params.ela_params.crc_dpos_height = 100000
+    controller.middle.params.ela_params.public_dpos_height = 200000
+
     controller.middle.tx_manager.recharge_producer_keystore()
     ret = controller.middle.tx_manager.register_producers_candidates()
     if ret:

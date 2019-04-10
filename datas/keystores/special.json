@@ -1,44 +1,44 @@
 {
     "main_foundation:": {
-        "private_key": "80a91fba58bf23e2d50faf73fef134f0e6da59b18b716dc736d73667c5313cb6",
-        "public_key": "03667db316f3719e9368bdfc271083e5db334dc7fca18a26ccb68f8b8a0d1a704a",
-        "sign_script": "2103667db316f3719e9368bdfc271083e5db334dc7fca18a26ccb68f8b8a0d1a704aac",
-        "program_hash": "21fc523483faeca2feb7e6e12ee783f0ab897c2fba",
-        "address": "EgA4Fdzfd5EtpENwRSi7KjoKnZUW9vo7br"
+        "private_key": "ea34bbb0be2cffdbc268874331c86cdc16d51cb3c310c67284ba7103b8d5ea84",
+        "public_key": "02da9ae5cf17a32bd948cd89296f2462066c4757c283fc31c54d5063024a32877d",
+        "sign_script": "2102da9ae5cf17a32bd948cd89296f2462066c4757c283fc31c54d5063024a32877dac",
+        "program_hash": "21ef8509ab0d3a9ef3421efced40e6099eb14df008",
+        "address": "EezNN4JScxnk9oGv67VFNstK3CrEyxyyV9"
     },
     "side_foundation:": {
-        "private_key": "330b53b8affad90f5072f049a2f9b2b8d3018646207ef8f67b9cb8a37a5e822e",
-        "public_key": "036de346673b5ca211a8e3377e77b3179046edede71e271c4007ca72fa424a3d15",
-        "sign_script": "21036de346673b5ca211a8e3377e77b3179046edede71e271c4007ca72fa424a3d15ac",
-        "program_hash": "21ef04fe9e4dfdd143ed675764d8d7ad768bbee754",
-        "address": "EewiyTo2bwuFP5mvAZGD9pmuYT7TDTvVXb"
+        "private_key": "38b0514c10687b041ebb51692f9fdbeab24fad04686cda887bf93771279c69ff",
+        "public_key": "0231daf43746fbc4c9b62315c3ba196600ba5698ab5a70dc003367bc14b73a2063",
+        "sign_script": "210231daf43746fbc4c9b62315c3ba196600ba5698ab5a70dc003367bc14b73a2063ac",
+        "program_hash": "21b05f289161a2a81e7205bc84d9338711025d92ed",
+        "address": "EZEUR5Ae4Dz1uuUdD63BQiTicR4t7gXetf"
     },
     "main_miner:": {
-        "private_key": "53a5b6dae4e93d7c012067d25bf84b4364176bee7df0fd7a546715fe8eba8885",
-        "public_key": "0201c307a2f44653a159e00e5b7b78f0f26a30c762b4e51ccc86abab47f1a0a47a",
-        "sign_script": "210201c307a2f44653a159e00e5b7b78f0f26a30c762b4e51ccc86abab47f1a0a47aac",
-        "program_hash": "21140a59f49ab743dce525ec921f4e555254792098",
-        "address": "EJysQeXnk6u4Wc272bAjq5tbmVgKrW8L7y"
+        "private_key": "0b1b1a78d3fccb850bacb12fed40f71d6c3e275af4d01440e8879dff74373985",
+        "public_key": "0216631fbce0201b8ae98a1989a039fedab3db6e5567416f78cd3cc9ae56e24348",
+        "sign_script": "210216631fbce0201b8ae98a1989a039fedab3db6e5567416f78cd3cc9ae56e24348ac",
+        "program_hash": "21ffef974d7ca307819fc12fd888da7b2e27961459",
+        "address": "EgVApaSGveNY4kMXjddBo9hCgxVtJimJQw"
     },
     "side_miner:": {
-        "private_key": "232c9b82b1459e0fa7dafcc5daa42cb29345cce60e72a8c7a1dc61456f7b91a5",
-        "public_key": "03607f75c05060b9bff3bead7071d7249e96aada6c5600ef171907b66d132a6abd",
-        "sign_script": "2103607f75c05060b9bff3bead7071d7249e96aada6c5600ef171907b66d132a6abdac",
-        "program_hash": "21eff06ffbf9e3a8b74b7ad40ec0928ff91a8e5d46",
-        "address": "Ef2b2KPGKphzcj3G6UHwN1ywSNj1XkvGEX"
+        "private_key": "6bf4db547c767dc6a7bb396702471ee868f11402e69a83169e45ece299d7d60c",
+        "public_key": "021bf3479d161ffac30d851b83be769009123cd70b6156c87bf97e1e3596a6465d",
+        "sign_script": "21021bf3479d161ffac30d851b83be769009123cd70b6156c87bf97e1e3596a6465dac",
+        "program_hash": "21f84390c40c8dc6f1e22189af2c44aca5ca1c0d6b",
+        "address": "Efnc1h25qehuME4CS3bjyQZ8PmvrBPpr6X"
     },
     "main_tap:": {
-        "private_key": "416bb535a724b687e742ac8ec4189f4850e1e106109c3f6b69ab004ecd8459ff",
-        "public_key": "02c7e48c6567d743e4c959159e33b1cc8bb40e04801d3cc4b55f3f3197293f8c3b",
-        "sign_script": "2102c7e48c6567d743e4c959159e33b1cc8bb40e04801d3cc4b55f3f3197293f8c3bac",
-        "program_hash": "217a9a51729b3f8f485077ac377a7698b622ed62a7",
-        "address": "EULAoCc4qB5coPV8c5r4bmZgBKQWdFQHi7"
+        "private_key": "c16c97aa395fae41ec4df57ddf29acd371a86f0cdc8b62c007001e269140045f",
+        "public_key": "02f1a5c2d57e79f94582d4a7ad753c59d6453289faec2464cec85b29e57b9aee76",
+        "sign_script": "2102f1a5c2d57e79f94582d4a7ad753c59d6453289faec2464cec85b29e57b9aee76ac",
+        "program_hash": "21c9a04eb178511041c9fc4905b5e70c7401d0dc55",
+        "address": "EbY1MVgBUGzTVseRxYDEHmEg9vopMzc6UE"
     },
     "side_tap:": {
-        "private_key": "6ee3b800ec2ff208c1cb9a2ff27021a4a842044ef7445b73f28e485375026417",
-        "public_key": "02d3883c8810c79da05e40179cdd2250789a31759032c0577b1a6b7971ff04b4a7",
-        "sign_script": "2102d3883c8810c79da05e40179cdd2250789a31759032c0577b1a6b7971ff04b4a7ac",
-        "program_hash": "21320f1227abfdc9176c0f3ef99e62370449b1c4f7",
-        "address": "EMibLKbcrGijgDTYifVR8MT2Ng2QL2VRhE"
+        "private_key": "fa1ae69974dae9c995361ff7d1307c224c17cdefb44b4d6dd16eb8159b3105ee",
+        "public_key": "02a9ed1cb9b61654786a3f4052e00aaec2c36e946fbc6c2485ac154e11f26abcdc",
+        "sign_script": "2102a9ed1cb9b61654786a3f4052e00aaec2c36e946fbc6c2485ac154e11f26abcdcac",
+        "program_hash": "21f644eed9bc02216ba9e71d90bd6348e5f0064c97",
+        "address": "Efc4JKk7Qaa3x2UnYogHmxNowtj862uJp9"
     }
 }

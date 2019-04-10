@@ -3,6 +3,7 @@
 # date: 2019/4/3 4:49 PM
 # author: liteng
 
+import time
 
 from src.middle.tools import constant
 from src.middle.tools import util
@@ -15,6 +16,12 @@ from src.bottom.tx.register_vote.payload import Payload
 
 
 class Producer(object):
+
+    PRODUCER_REGISTER = "Register Producer"
+    PRODUCER_UPDATE = "Update Producer"
+    PRODUCER_CANCEL = "Cancel producer"
+    PRODUCER_REDEEM = "Redeem Producer"
+    PRODUCER_ACTIVATE = "Activate Producer"
 
     def __init__(self, node: ElaNode, jar_service: JarService, assist: Assist):
         self.tag = util.tag_from_path(__file__, self.__class__.__name__)
@@ -48,10 +55,12 @@ class Producer(object):
     def _inputs(self, category: str):
         deposit_address = ""
         amount = self.fee
-        if category == constant.PRODUCER_REDEEM:
+        if category == self.PRODUCER_REDEEM:
             deposit_address = self.deposit_address
             amount = self.deposit_amount - self.fee - 1
-        elif category == constant.PRODUCER_REGISTER:
+        elif category == self.PRODUCER_REGISTER:
+            amount = self.deposit_amount
+        elif category == self.PRODUCER_ACTIVATE:
             amount = self.deposit_amount
 
         inputs, utxos_value = self.assist.gen_inputs_utxo_value(
@@ -65,7 +74,7 @@ class Producer(object):
 
     def _outputs(self, category: str):
 
-        if category == constant.PRODUCER_REGISTER:
+        if category == self.PRODUCER_REGISTER or self.PRODUCER_ACTIVATE:
             outputs = self.assist.gen_usual_outputs(
                 output_addresses=[self.deposit_address],
                 amount=self.deposit_amount,
@@ -86,7 +95,7 @@ class Producer(object):
 
     def _payload(self, category: str):
         load = None
-        if category == constant.PRODUCER_REGISTER:
+        if category == self.PRODUCER_REGISTER:
 
             load = self.assist.gen_register_producer_payload(
                 privatekey=self.payload.private_key,
@@ -98,7 +107,7 @@ class Producer(object):
                 netaddress=self.payload.net_address
             )
 
-        elif category == constant.PRODUCER_UPDATE:
+        elif category == self.PRODUCER_UPDATE:
             load = self.assist.gen_update_producer_payload(
                 privatekey=self.payload.private_key,
                 owner_publickey=self.payload.owner_public_key,
@@ -109,7 +118,7 @@ class Producer(object):
                 netaddress=self.payload.net_address
             )
 
-        elif category == constant.PRODUCER_CANCEL:
+        elif category == self.PRODUCER_CANCEL or self.PRODUCER_ACTIVATE:
             load = self.assist.gen_cancel_producer_payload(
                 privatekey=self.payload.private_key,
                 owner_publickey=self.payload.owner_public_key
@@ -120,7 +129,7 @@ class Producer(object):
 
     def register(self):
         result = False
-        category = constant.PRODUCER_REGISTER
+        category = self.PRODUCER_REGISTER
         inputs = self._inputs(category)
         outputs = self._outputs(category)
         load = self._payload(category)
@@ -141,7 +150,7 @@ class Producer(object):
         self.assist.rpc.discrete_mining(6)
 
         producer_status_resp = self.assist.rpc.producer_status(self.node.owner_keystore.public_key.hex())
-        Logger.debug("{} producers status: {}".format(constant.PRODUCER_REGISTER, producer_status_resp))
+        Logger.debug("{} producers status: {}".format(self.PRODUCER_REGISTER, producer_status_resp))
 
         if producer_status_resp == "Activate":
             self.registered = True
@@ -151,7 +160,7 @@ class Producer(object):
 
     def update(self):
         result = False
-        category = constant.PRODUCER_UPDATE
+        category = self.PRODUCER_UPDATE
         inputs = self._inputs(category)
         outputs = self._outputs(category)
         load = self._payload(category)
@@ -182,7 +191,7 @@ class Producer(object):
     def cancel(self):
         result = False
 
-        category = constant.PRODUCER_CANCEL
+        category = self.PRODUCER_CANCEL
         inputs = self._inputs(category)
         outputs = self._outputs(category)
         load = self._payload(category)
@@ -215,7 +224,7 @@ class Producer(object):
 
     def redeem(self):
         result = False
-        category = constant.PRODUCER_REDEEM
+        category = self.PRODUCER_REDEEM
         balance1 = self.get_deposit_balance()
         inputs = self._inputs(category)
         outputs = self._outputs(category)
@@ -236,8 +245,39 @@ class Producer(object):
         self.assist.rpc.discrete_mining(1)
         balance2 = self.get_deposit_balance()
         balance3 = self.assist.rpc.get_balance_by_address(self.node.owner_keystore.address)
-        Logger.debug("{} balance1 = {}, balance2 = {}, balance3 = {}".format(constant.PRODUCER_REDEEM,
+        Logger.debug("{} balance1 = {}, balance2 = {}, balance3 = {}".format(self.PRODUCER_REDEEM,
                                                                             balance1, balance2, balance3))
+        return result
+
+    def activate(self):
+        result = False
+        category = self.PRODUCER_ACTIVATE
+        self.deposit_amount = 501 * constant.TO_SELA
+        inputs = self._inputs(category)
+        outputs = self._outputs(category)
+        payload = self._payload(category)
+
+        activate_resp = self.jar_service.gen_activate_producer_tx(
+            inputs=inputs,
+            outputs=outputs,
+            privatekeysign=self.privatekeysign,
+            payload=payload
+        )
+
+        tran_raw = activate_resp["rawtx"]
+        tran_txid = activate_resp["txhash"].lower()
+
+        sendraw_resp = self.assist.rpc.send_raw_transaction(data=tran_raw)
+        Logger.warn("{} jar txid: {}".format(self.tag, tran_txid))
+        Logger.warn("{} rpc txid: {}".format(self.tag, sendraw_resp))
+        compare = util.assert_equal(arg1=sendraw_resp, arg2=tran_txid)
+        if compare:
+            result = True
+            i = 0
+            while i < 8:
+                self.assist.rpc.discrete_mining(1)
+                time.sleep(1)
+
         return result
 
     def get_deposit_balance(self):

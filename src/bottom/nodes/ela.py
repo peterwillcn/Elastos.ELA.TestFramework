@@ -61,6 +61,8 @@ class ElaNode(Node):
         _config[constant.CONFIG_ARBITER_CONFIGURATION][constant.CONFIG_CANDIDATES_COUNT] = self.params.crc_number * 6
         _config[constant.CONFIG_ARBITER_CONFIGURATION][constant.CONFIG_PRE_CONNECT_OFFSET] = \
             self.params.pre_connect_offset
+        _config[constant.CONFIG_ARBITER_CONFIGURATION][constant.CONFIG_MAX_INACTIVATE_ROUNDS] = \
+            self.params.max_inactivate_rounds
 
     def start(self):
         if self.params.arbiter_enable:

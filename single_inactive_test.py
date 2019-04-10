@@ -25,7 +25,11 @@ if __name__ == '__main__':
             stop_height = current_height
             Logger.error("[main] node {} stopped at height {} on success!".format(index, stop_height))
 
-        if current_height == stop_height + 2000:
+        if current_height == stop_height + 40:
+            ret = controller.middle.tx_manager.tx.activate_a_producer(
+                controller.middle.tx_manager.tx.register_producers_list[1]
+            )
+        if current_height == stop_height + 60:
             break
         time.sleep(1)
         controller.discrete_mining_blocks(1)

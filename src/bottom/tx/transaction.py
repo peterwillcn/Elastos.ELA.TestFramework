@@ -85,7 +85,6 @@ class Transaction(object):
                 self.assist.rpc.get_balance_by_address(output_address, port - 20)
             ))
 
-
         inputs, utxo_value = self.assist.gen_inputs_utxo_value(
             input_keystore=input_keystore,
             amount=amount,
@@ -195,6 +194,12 @@ class Transaction(object):
         if ret:
             self.redeem_producers_list.append(producer)
             Logger.debug("{} node {} has redeem a producer!".format(self.tag, producer.node.index))
+        return ret
+
+    def activate_a_producer(self, producer: Producer):
+        ret = producer.activate()
+        if ret:
+            Logger.debug("{} node {} has activate a producer!".format(self.tag, producer.node.index))
         return ret
 
     def vote_a_producer(self, vote_keystore: KeyStore, producer: Producer, vote_amount: int):

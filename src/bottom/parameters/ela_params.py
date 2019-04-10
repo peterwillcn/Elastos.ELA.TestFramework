@@ -25,4 +25,4 @@ class ElaParams(object):
         self.vote_start_height = config["vote_start_height"]
         self.crc_dpos_height = config["crc_dpos_height"]
         self.public_dpos_height = config["public_dpos_height"]
-
+        self.max_inactivate_rounds = config["max_inactivate_rounds"]
