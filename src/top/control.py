@@ -40,8 +40,16 @@ class Controller(object):
             if key is "side":
                 if not up_config[key]:
                     self.forbidden_side_chain()
-            else:
-                pass
+
+            if key is "arbiter":
+                _config = up_config["arbiter"]
+                for k in _config.keys():
+                    self.config[key][k] = _config[k]
+
+            if key is "did":
+                _config = up_config[key]
+                for k in _config.keys():
+                    self.config[key][k] = _config[k]
 
     def forbidden_side_chain(self):
         self.config["arbiter"]["enable"] = False

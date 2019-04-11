@@ -16,13 +16,15 @@ config = {
         "crc_number": 4,
         "pre_connect_offset": 20,
         "crc_dpos_height": 210,
-        "public_dpos_height": 240      # public_dpos_height - crc_dpos_height should not be equal pre_off_set, or panic
+        "public_dpos_height": 240      # public_dpos_height - crc_dpos_height should not be equal pre_connect_offset, or panic
     },
-    "side": False
+    "side": False,
+    "stop": False
 }
 
 if __name__ == '__main__':
 
+    stop = config["stop"]
     control = Controller(config)
     control.middle.ready_for_dpos()
     while True:
@@ -39,7 +41,8 @@ if __name__ == '__main__':
             Logger.info("[main] H2 PASS!")
 
         if current_height == control.middle.params.ela_params.public_dpos_height + \
-                control.middle.params.ela_params.crc_number * 3 * 4:
-            break
+                control.middle.params.ela_params.crc_number * 3 * 5:
+            if stop:
+                break
 
     control.terminate_all_process()

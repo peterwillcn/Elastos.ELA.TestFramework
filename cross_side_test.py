@@ -9,7 +9,26 @@ from src.middle.tools.log import Logger
 
 from src.top.control import Controller
 
-config = {}
+config = {
+    "ela": {
+        "number": 12,
+        "crc_number": 4,
+        "crc_dpos_height": 100000,
+        "public_dpos_height": 200000
+    },
+    "side": True,
+    "arbiter": {
+        "enable": True,
+        "number": 9,
+        "pow_chain": True,
+        "print_level": 0
+    },
+    "did": {
+        "enable": True,
+        "number": 5,
+        "instant_block": True
+    }
+}
 
 
 def cross_chain_before_h1():
@@ -41,4 +60,4 @@ def cross_chain_between_h1_and_h2():
 
 if __name__ == '__main__':
 
-   cross_chain_between_h1_and_h2()
+    cross_chain_before_h1()
