@@ -10,7 +10,7 @@
     "instant_block": true,
     "ip_address": "127.0.0.1",
     "max_inactivate_rounds" : 20,
-    "pre_connect_offset": 30,
+    "pre_connect_offset": 20,
     "check_address_height": 101,
     "vote_start_height": 100,
     "crc_dpos_height": 190,

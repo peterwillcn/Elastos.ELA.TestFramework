@@ -3,6 +3,7 @@
 # date: 2019/4/8 3:21 PM
 # author: liteng
 
+import time
 from src.top.control import Controller
 from src.middle.tools.log import Logger
 
@@ -13,10 +14,12 @@ config = {
         "crc_dpos_height": 100000,
         "public_dpos_height": 200000
     },
-    "side": False
+    "side": False,
+    "times": 3
 }
 
-if __name__ == '__main__':
+
+def test_content():
     controller = Controller(config)
     controller.forbidden_side_chain()
 
@@ -37,4 +40,13 @@ if __name__ == '__main__':
 
     controller.terminate_all_process()
 
+
+if __name__ == '__main__':
+
+    for i in range(config["times"]):
+        Logger.warn("[main] begin testing {} times".format(i+1))
+        time.sleep(2)
+        test_content()
+        Logger.warn("[main] end testing {} times".format(i+1))
+        time.sleep(3)
 

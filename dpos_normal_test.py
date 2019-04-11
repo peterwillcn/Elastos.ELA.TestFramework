@@ -19,11 +19,12 @@ config = {
         "public_dpos_height": 240      # public_dpos_height - crc_dpos_height should not be equal pre_connect_offset, or panic
     },
     "side": False,
-    "stop": False
+    "stop": True,
+    "times": 3
 }
 
-if __name__ == '__main__':
 
+def test_content():
     stop = config["stop"]
     control = Controller(config)
     control.middle.ready_for_dpos()
@@ -46,3 +47,15 @@ if __name__ == '__main__':
                 break
 
     control.terminate_all_process()
+
+
+if __name__ == '__main__':
+
+    for i in range(config["times"]):
+        Logger.warn("[main] begin testing {} times".format(i+1))
+        time.sleep(2)
+        test_content()
+        Logger.warn("[main] end testing {} times".format(i+1))
+        time.sleep(3)
+
+
