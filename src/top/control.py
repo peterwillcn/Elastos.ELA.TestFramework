@@ -11,11 +11,12 @@ from src.middle.distribute import Distribution
 
 class Controller(object):
 
-    def __init__(self):
+    def __init__(self, up_config: dict):
         self.tag = util.tag_from_path(__file__, self.__class__.__name__)
         self.root_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "../../.."))
         print(self.root_path)
         self.config = util.read_config_file(os.path.join(self.root_path, "config.json"))
+        self.reset_config(up_config)
         self.middle = Distribution(self.config, self.root_path)
         self.middle.init_for_testing()
 
@@ -29,11 +30,21 @@ class Controller(object):
         self.middle.service_manager.jar_service.stop()
         self.middle.node_manager.stop_nodes()
 
-    def forbidden_side_chain(self):
-        self.middle.params.ela_params.enable = True
-        self.middle.params.ela_params.crc_number = 4
+    def reset_config(self, up_config: dict):
+        for key in up_config.keys():
+            if key is "ela":
+                _config = up_config["ela"]
+                for k in _config.keys():
+                    self.config["ela"][k] = _config[k]
 
-        self.middle.params.arbiter_params.enable = False
-        self.middle.params.did_params.enable = False
-        self.middle.params.token_params.enable = False
-        self.middle.params.neo_params.enable = False
+            if key is "side":
+                if not up_config[key]:
+                    self.forbidden_side_chain()
+            else:
+                pass
+
+    def forbidden_side_chain(self):
+        self.config["arbiter"]["enable"] = False
+        self.config["did"]["enable"] = False
+        self.config["token"]["enable"] = False
+        self.config["neo"]["enable"] = False

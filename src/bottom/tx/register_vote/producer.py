@@ -60,21 +60,20 @@ class Producer(object):
             amount = self.deposit_amount - self.fee - 1
         elif category == self.PRODUCER_REGISTER:
             amount = self.deposit_amount
-        elif category == self.PRODUCER_ACTIVATE:
-            amount = self.deposit_amount
 
-        inputs, utxos_value = self.assist.gen_inputs_utxo_value(
+        inputs, utxo_value = self.assist.gen_inputs_utxo_value(
             self.node.owner_keystore,
             amount,
             deposit_address=deposit_address
         )
-        self.utxo_value = utxos_value
+        self.utxo_value = utxo_value
         Logger.debug("{} {} inputs: {}".format(self.tag, category, inputs))
+        Logger.debug("{} {} utxo_value: {}".format(self.tag, category, utxo_value))
         return inputs
 
     def _outputs(self, category: str):
 
-        if category == self.PRODUCER_REGISTER or self.PRODUCER_ACTIVATE:
+        if category == self.PRODUCER_REGISTER:
             outputs = self.assist.gen_usual_outputs(
                 output_addresses=[self.deposit_address],
                 amount=self.deposit_amount,

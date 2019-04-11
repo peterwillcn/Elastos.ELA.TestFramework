@@ -24,9 +24,9 @@ class Transaction(object):
         self.jar_service = service_manager.jar_service
         self.assist = Assist(service_manager.rpc, service_manager.rest)
         self.fee = 100
-        self.register_producers_list = list()
-        self.update_producers_list = list()
-        self.cancel_producers_list = list()
+        self.register_producers_list = []
+        self.update_producers_list = []
+        self.cancel_producers_list = []
         self.redeem_producers_list = list()
         self.voter_list = list()
         self.vote_producers_list = list()
@@ -177,7 +177,7 @@ class Transaction(object):
         ret = producer.update()
         if ret:
             self.update_producers_list.append(producer)
-            Logger.debug("{} node {} has update a producer!".format(self.tag, producer.node.index))
+            Logger.info("{} node {} has updated a producer!".format(self.tag, producer.node.index))
 
         return ret
 
@@ -185,7 +185,7 @@ class Transaction(object):
         ret = producer.cancel()
         if ret:
             self.cancel_producers_list.append(producer)
-            Logger.debug("{} node {} has registered a producer!".format(self.tag, producer.node.index))
+            Logger.info("{} node {} has cancelled a producer!".format(self.tag, producer.node.index))
 
         return ret
 
@@ -193,13 +193,13 @@ class Transaction(object):
         ret = producer.redeem()
         if ret:
             self.redeem_producers_list.append(producer)
-            Logger.debug("{} node {} has redeem a producer!".format(self.tag, producer.node.index))
+            Logger.info("{} node {} has redeemed a producer!".format(self.tag, producer.node.index))
         return ret
 
     def activate_a_producer(self, producer: Producer):
         ret = producer.activate()
         if ret:
-            Logger.debug("{} node {} has activate a producer!".format(self.tag, producer.node.index))
+            Logger.debug("{} node {} has activated a producer!".format(self.tag, producer.node.index))
         return ret
 
     def vote_a_producer(self, vote_keystore: KeyStore, producer: Producer, vote_amount: int):

@@ -6,16 +6,22 @@
 from src.top.control import Controller
 from src.middle.tools.log import Logger
 
+config = {
+    "ela": {
+        "number": 5,
+        "crc_number": 1,
+        "crc_dpos_height": 100000,
+        "public_dpos_height": 200000
+    },
+    "side": False
+}
 
 if __name__ == '__main__':
-    controller = Controller()
+    controller = Controller(config)
     controller.forbidden_side_chain()
-    controller.middle.params.ela_params.number = 5
-    controller.middle.params.ela_params.crc_number = 1
-    controller.middle.params.ela_params.crc_dpos_height = 100000
-    controller.middle.params.ela_params.public_dpos_height = 200000
 
     controller.middle.tx_manager.recharge_producer_keystore()
+
     ret = controller.middle.tx_manager.register_producers_candidates()
     if ret:
         Logger.info("[main] register producers on success!")

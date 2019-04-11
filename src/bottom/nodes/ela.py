@@ -53,6 +53,7 @@ class ElaNode(Node):
             "ela",
             "arbiter_node_port"
         )
+        _config[constant.CONFIG_ARBITER_CONFIGURATION][constant.CONFIG_IP_ADDRESS] = self.params.ip_address
         _config[constant.CONFIG_ARBITER_CONFIGURATION][constant.CONFIG_PRINT_LEVEL] = self.params.print_level
         _config[constant.CONFIG_ARBITER_CONFIGURATION][constant.CONFIG_ORIGIN_ARBITERS] = self.gen_original_arbiter()
         _config[constant.CONFIG_ARBITER_CONFIGURATION][constant.CONFIG_CRC_ARBITERS] = self.gen_crc_config()

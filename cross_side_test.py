@@ -9,9 +9,11 @@ from src.middle.tools.log import Logger
 
 from src.top.control import Controller
 
+config = {}
+
 
 def cross_chain_before_h1():
-    controller = Controller()
+    controller = Controller(config)
     time.sleep(3)
     controller.middle.tx_manager.cross_chain_transaction(True)
     time.sleep(2)
@@ -21,7 +23,7 @@ def cross_chain_before_h1():
 
 
 def cross_chain_between_h1_and_h2():
-    controller = Controller()
+    controller = Controller(config)
     controller.middle.ready_for_dpos()
     time.sleep(3)
     current_height = controller.get_current_height()

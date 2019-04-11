@@ -33,7 +33,7 @@ def arbiter_public_keys(key_stores):
 def assert_equal(arg1, arg2):
     result = False
     if arg1 != arg2:
-        print(constant.COLOR_RED + "[NOT EQUAL]" + constant.COLOR_END)
+        print(Logger.COLOR_RED + "[NOT EQUAL]" + Logger.COLOR_END)
         exit(-1)
     else:
         result = True

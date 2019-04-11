@@ -3,11 +3,12 @@
     "enable": true,
     "arbiter_enable": true,
     "password": "123",
-    "number": 13,
+    "number": 12,
     "crc_number": 4,
     "print_level": 0,
     "auto_mining": false,
     "instant_block": true,
+    "ip_address": "127.0.0.1",
     "max_inactivate_rounds" : 20,
     "pre_connect_offset": 30,
     "check_address_height": 101,
@@ -16,7 +17,7 @@
     "public_dpos_height": 200
   },
   "arbiter": {
-    "enable": false,
+    "enable": true,
     "number": 9,
     "pow_chain": true,
     "print_level": 0
