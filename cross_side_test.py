@@ -33,13 +33,6 @@ config = {
 }
 
 
-def cross_chain_before_h1():
-    controller = Controller(config)
-    time.sleep(3)
-
-    controller.terminate_all_process()
-
-
 def test_content():
     stop = config["stop"]
     controller = Controller(config)
@@ -81,6 +74,10 @@ def test_content():
 
 
 if __name__ == '__main__':
+
+    times = config["times"]
+    if times > 1:
+        config["stop"] = True
 
     for i in range(config["times"]):
         Logger.warn("[main] begin testing {} times".format(i+1))

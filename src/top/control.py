@@ -41,6 +41,7 @@ class Controller(object):
     def terminate_all_process(self):
         self.middle.service_manager.jar_service.stop()
         self.middle.node_manager.stop_nodes()
+        exit(-1)
 
     def reset_config(self, up_config: dict):
         for key in up_config.keys():
@@ -62,3 +63,13 @@ class Controller(object):
         self.config["did"]["enable"] = False
         self.config["token"]["enable"] = False
         self.config["neo"]["enable"] = False
+
+    def test_result(self, case: str, result: bool):
+        current_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        if result:
+            print(current_time + Logger.COLOR_GREEN + " [PASS!] " + Logger.COLOR_END + case)
+        else:
+            print(current_time + Logger.COLOR_RED + " [NOT PASS!] " + Logger.COLOR_END + case)
+            self.terminate_all_process()
+
+

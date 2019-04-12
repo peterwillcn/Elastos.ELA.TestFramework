@@ -85,3 +85,6 @@ class RPC(object):
 
     def producer_status(self, publickey: str, port=DEFAULT_PORT):
         return self.post_request("producerstatus", params={"publickey": publickey}, port=port)
+
+    def get_arbiters_info(self, port=DEFAULT_PORT):
+        return self.post_request("getarbitersinfo", params={}, port=port)
