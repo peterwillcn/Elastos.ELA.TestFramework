@@ -31,7 +31,6 @@ def much_inactive_test():
     h2 = controller.middle.params.ela_params.public_dpos_height
     test_case = ">= 1/3 Inactive and Arbiter Rotation"
     inactive_producers_nodes = controller.middle.node_manager.ela_nodes[crc_number: crc_number * 2]
-    replace_candidates_nodes = controller.middle.node_manager.ela_nodes[crc_number * 3: number]
 
     inactive_public_keys = controller.middle.keystore_manager.node_key_stores[crc_number: crc_number * 2]
     replace_public_keys = controller.middle.keystore_manager.node_key_stores[crc_number * 3: number]
@@ -52,14 +51,17 @@ def much_inactive_test():
             stop_height = current_height
             print("stop_height 1: ", stop_height)
         if stop_height != 0 and current_height > stop_height:
-            # arbiters_set = set(controller.middle.service_manager.rpc.get_arbiters_info()["arbiters"])
             arbiters_nicknames = controller.get_current_arbiter_nicknames()
             Logger.info("arbiters nicknames: {}".format(arbiters_nicknames))
 
-        if stop_height != 0 and current_height > stop_height + 60:
-            break
-        time.sleep(1)
+        if stop_height != 0 and current_height > stop_height + 36:
+            arbiters_set = set(controller.middle.service_manager.rpc.get_arbiters_info()["arbiters"])
+            ret = not inactive_set.issubset(arbiters_set) and replace_set.issubset(arbiters_set)
 
+            controller.test_result(test_case, ret)
+            if ret:
+                break
+        time.sleep(1)
 
     controller.terminate_all_process()
 

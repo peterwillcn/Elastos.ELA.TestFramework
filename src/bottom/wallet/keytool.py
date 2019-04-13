@@ -12,7 +12,11 @@ from Crypto.Cipher import AES
 
 
 def create_ecc_pair(curve_type: str):
-    ecc_key_pair = ECC.generate(curve=curve_type)
+    while True:
+        ecc_key_pair = ECC.generate(curve=curve_type)
+        private_key = ecc_key_pair.d.to_bytes()
+        if len(private_key) == 32:
+            break
     return ecc_key_pair
 
 
@@ -82,7 +86,7 @@ def aes_decrypt(ciphertext, key, iv):
 
 
 def encrypt_private_key(master_key, private_key, public_key, iv):
-    decrypted_private_key = []
+    decrypted_private_key = list()
     for i in range(96):
         decrypted_private_key.append(bytes(0x00))
     public_key_bytes = encode_point(False, public_key)
