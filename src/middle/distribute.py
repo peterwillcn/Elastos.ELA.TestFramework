@@ -44,7 +44,7 @@ class Distribution(object):
         Logger.info("{} starting nodes on success!".format(self.tag))
         self.service_manager.mining_blocks_ready(self.node_manager.main_foundation_address)
         Logger.info("{} mining 101 blocks on success!".format(self.tag))
-        time.sleep(3)
+        time.sleep(4)
         self.tx_manager.recharge_tap_keystore(20000000 * constant.TO_SELA)
         Logger.info("{} recharge tap keystore {} ELAs on success!".format(self.tag, 20000000 * constant.TO_SELA))
         if self.params.arbiter_params.enable:

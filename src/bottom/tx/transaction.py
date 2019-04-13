@@ -210,11 +210,15 @@ class Transaction(object):
 
     def vote_a_producer(self, vote_keystore: KeyStore, producer: Producer, vote_amount: int):
         voter = Voter(vote_keystore, self.jar_service, self.assist)
-        self.voter_list.append(voter)
 
         ret = voter.vote([producer], vote_amount)
-        if ret:
-            self.vote_producers_list.append({"voter": voter, "producer": producer})
+        Logger.debug("{} register_vote result: {}".format(self.tag, ret))
+        return ret
+
+    def vote_producers(self, vote_keystore: KeyStore, producers: list, vote_amount: int):
+        voter = Voter(vote_keystore, self.jar_service, self.assist)
+
+        ret = voter.vote(producers, vote_amount)
         Logger.debug("{} register_vote result: {}".format(self.tag, ret))
         return ret
 

@@ -18,6 +18,8 @@ class TransactionManager(object):
         self.params = params
         self.node_manager = node_manager
         self.tx = Transaction(self.node_manager.service_manager)
+        self.general_producer_public_keys = list()
+        self.candidate_public_keys = list()
 
     def recharge_tap_keystore(self, amount):
         ret = self.tx.ordinary_single_sign(
@@ -98,10 +100,23 @@ class TransactionManager(object):
         return True
 
     def register_producers_candidates(self):
+        num = 0
         for i in range(self.params.ela_params.crc_number, self.params.ela_params.number):
-            ret = self.tx.register_a_producer(self.node_manager.ela_nodes[i])
+            ela_node = self.node_manager.ela_nodes[i]
+            public_key = ela_node.node_keystore.public_key.hex()
+            ret = self.tx.register_a_producer(ela_node)
             if not ret:
                 return False
+            num += 1
+            if num <= self.params.ela_params.crc_number * 2:
+                self.general_producer_public_keys.append(public_key)
+            else:
+                self.candidate_public_keys.append(public_key)
+
+        Logger.info("{} general register public keys size: {}".format(self.tag, len(self.general_producer_public_keys)))
+        Logger.info("{} general register public keys: {}".format(self.tag, self.general_producer_public_keys))
+        Logger.info("{} candidate public keys size: {}".format(self.tag, len(self.candidate_public_keys)))
+        Logger.info("{} candidate public keys: {}".format(self.tag, self.candidate_public_keys))
         return True
 
     def update_produces_candidates(self):

@@ -59,7 +59,6 @@ class Voter(object):
         return privatekeysign
 
     def vote(self, producers: [Producer], vote_amount: int):
-        result = False
 
         inputs = self._inputs(vote_amount)
         outputs = self._outputs(producers, vote_amount)
@@ -77,15 +76,11 @@ class Voter(object):
 
         compare = util.assert_equal(arg1=sendraw_resp, arg2=tran_txid)
         if not compare:
-            return result
+            return False
 
-        self.assist.rpc.discrete_mining(2)
+        self.assist.rpc.discrete_mining(1)
 
-        amount = self.get_vote_amount()
-
-        if (amount - float(vote_amount)) < 0.000001:
-            result = True
-        return result
+        return True
 
     def get_vote_amount(self):
         vote_status_resp = self.assist.rpc.vote_status(

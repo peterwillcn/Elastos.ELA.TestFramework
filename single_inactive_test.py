@@ -50,7 +50,7 @@ if __name__ == '__main__':
             first_time = True
             Logger.error("[main] node {} stopped at height {} on success!".format(index, stop_height))
 
-        if stop_height != 0 and current_height >= stop_height + config["ela"]["max_inactivate_rounds"] + 13 * 2:
+        if stop_height != 0 and current_height >= stop_height + config["ela"]["max_inactivate_rounds"] + 14:
             arbiters_info = controller.middle.service_manager.rpc.get_arbiters_info()
             arbiters_list = arbiters_info["arbiters"]
             print(arbiters_info)

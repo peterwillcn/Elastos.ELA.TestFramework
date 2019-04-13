@@ -39,6 +39,7 @@ class Controller(object):
             time.sleep(2)
 
     def terminate_all_process(self):
+        Logger.info("{} terminal all the process and exit...".format(self.tag))
         self.middle.service_manager.jar_service.stop()
         self.middle.node_manager.stop_nodes()
         exit(-1)
@@ -72,4 +73,25 @@ class Controller(object):
             print(current_time + Logger.COLOR_RED + " [NOT PASS!] " + Logger.COLOR_END + case)
             self.terminate_all_process()
 
+    def get_tap_keystore(self):
+        return self.middle.keystore_manager.special_key_stores[4]
 
+    def get_register_nickname_public_key(self):
+        public_key_nickname = dict()
+        for i in range(self.middle.params.ela_params.crc_number):
+            public_key_nickname[self.middle.keystore_manager.node_key_stores[i].public_key.hex()] = "Crc-" + str(i)
+        list_producers = self.middle.service_manager.rpc.list_producers(0, 100)
+        print(list_producers)
+        for producer in list_producers["producers"]:
+            public_key_nickname[producer["nodepublickey"]] = producer["nickname"]
+        Logger.debug("{} node_publickey -> nickname: {}".format(self.tag, public_key_nickname))
+        return public_key_nickname
+
+    def get_current_arbiter_nicknames(self):
+        public_key_nickname = self.get_register_nickname_public_key()
+        arbiters = self.middle.service_manager.rpc.get_arbiters_info()["arbiters"]
+        current_nicknames = list()
+        for public_key in arbiters:
+            current_nicknames.append(public_key_nickname[public_key])
+
+        return current_nicknames
