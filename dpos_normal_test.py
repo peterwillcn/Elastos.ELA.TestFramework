@@ -15,8 +15,8 @@ config = {
         "number": 13,
         "crc_number": 4,
         "pre_connect_offset": 20,
-        "crc_dpos_height": 200,
-        "public_dpos_height": 230      # public_dpos_height - crc_dpos_height should not be equal pre_connect_offset, or panic
+        "crc_dpos_height": 210,
+        "public_dpos_height": 240      # public_dpos_height - crc_dpos_height should not be equal pre_connect_offset, or panic
     },
     "side": False,
     "stop": True,
@@ -33,6 +33,7 @@ def test_content():
         Logger.debug("[main] current height: {}".format(current_height))
         control.discrete_mining_blocks(1)
         time.sleep(3)
+
         if current_height == control.middle.params.ela_params.crc_dpos_height + 1:
             Logger.info("[main] H1 PASS!")
             Logger.info("[main] H1 PASS!")

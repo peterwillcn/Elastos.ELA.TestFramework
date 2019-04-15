@@ -42,7 +42,6 @@ class Controller(object):
         Logger.info("{} terminal all the process and exit...".format(self.tag))
         self.middle.service_manager.jar_service.stop()
         self.middle.node_manager.stop_nodes()
-        exit(-1)
 
     def reset_config(self, up_config: dict):
         for key in up_config.keys():

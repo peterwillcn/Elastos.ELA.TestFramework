@@ -138,11 +138,18 @@ class NodeManager(object):
             config_dict = self.env_manager.config_dict[category]
 
         for i in range(num):
-            dest_path = os.path.join(
-                self.env_manager.test_path, category + "_nodes",
-                self.env_manager.current_date_time,
-                category + str(i)
-            )
+            if category == "ela" and i < self.params.ela_params.crc_number:
+                dest_path = os.path.join(
+                    self.env_manager.test_path, category + "_nodes",
+                    self.env_manager.current_date_time,
+                    "crc" + str(i)
+                )
+            else:
+                dest_path = os.path.join(
+                    self.env_manager.test_path, category + "_nodes",
+                    self.env_manager.current_date_time,
+                    category + str(i)
+                )
             Logger.debug("{} dest_path: {}".format(self.tag, dest_path))
             if not os.path.exists(dest_path):
                 os.makedirs(dest_path)
