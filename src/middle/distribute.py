@@ -25,17 +25,17 @@ class Distribution(object):
         self.check_params()
         self.env_manager = EnvManager()
         self.keystore_manager = KeyStoreManager(self.params)
-        # self.service_manager = ServiceManager(self.params)
-        # self.node_manager = NodeManager(
-        #     self.params,
-        #     self.env_manager,
-        #     self.service_manager,
-        #     self.keystore_manager
-        # )
-        # self.tx_manager = TransactionManager(
-        #     self.params,
-        #     self.node_manager
-        # )
+        self.service_manager = ServiceManager(self.params)
+        self.node_manager = NodeManager(
+            self.params,
+            self.env_manager,
+            self.service_manager,
+            self.keystore_manager
+        )
+        self.tx_manager = TransactionManager(
+            self.params,
+            self.node_manager
+        )
 
     def init_for_testing(self):
         self.node_manager.deploy_nodes()

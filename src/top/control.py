@@ -23,7 +23,7 @@ class Controller(object):
         self.node_types = ["ela", "arbiter", "did", "token", "neo"]
         self.reset_config(self.up_config)
         self.middle = Distribution(self.config, self.root_path)
-        # self.middle.init_for_testing()
+        self.middle.init_for_testing()
 
     def discrete_mining_blocks(self, num: int):
         self.middle.service_manager.rpc.discrete_mining(num)
