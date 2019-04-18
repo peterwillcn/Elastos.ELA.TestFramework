@@ -33,10 +33,15 @@ class ElaNode(Node):
 
     def reset_config(self):
         Node.reset_config_common(self, self.index, "ela", self.params.number)
+
         _config = self.config[constant.CONFIG_TITLE]
+        if self.index == 0:
+            _config[constant.CONFIG_ARBITER_ENABLE] = False
+        else:
+            _config[constant.CONFIG_ARBITER_ENABLE] = self.params.arbiter_enable
+
         _config[constant.CONFIG_MAGIC] = self.params.magic
         _config[constant.CONFIG_PRINT_LEVEL] = self.params.print_level
-        _config[constant.CONFIG_ARBITER_ENABLE] = self.params.arbiter_enable
         _config[constant.CONFIG_FOUNDATION_ADDRESS] = self.keystore_manager.special_key_stores[0].address
         _config[constant.CONFIG_POW][constant.CONFIG_PAY_TO_ADDR] = self.keystore_manager.special_key_stores[1].address
         _config[constant.CONFIG_POW][constant.CONFIG_AUTO_MINING] = self.params.auto_mining
@@ -59,6 +64,9 @@ class ElaNode(Node):
         _config[constant.CONFIG_ARBITER_CONFIGURATION][constant.CONFIG_CRC_ARBITERS] = self.gen_crc_config()
         _config[constant.CONFIG_ARBITER_CONFIGURATION][constant.CONFIG_NORMAL_ARBITERS_COUNT] = \
             self.params.crc_number * 2
+        _config[constant.CONFIG_ARBITER_CONFIGURATION][constant.CONFIG_EMERGENCY_INACTIVE_PENALTY] = \
+                                                                        self.params.emergency_inactive_penalty
+        _config[constant.CONFIG_ARBITER_CONFIGURATION][constant.CONFIG_INACTIVE_PENALTY] = self.params.inactive_penalty
         _config[constant.CONFIG_ARBITER_CONFIGURATION][constant.CONFIG_CANDIDATES_COUNT] = self.params.crc_number * 6
         _config[constant.CONFIG_ARBITER_CONFIGURATION][constant.CONFIG_PRE_CONNECT_OFFSET] = \
             self.params.pre_connect_offset
@@ -66,13 +74,22 @@ class ElaNode(Node):
             self.params.max_inactivate_rounds
 
     def start(self):
-        if self.params.arbiter_enable:
+        if self.params.arbiter_enable and self.index != 0:
             self.process = subprocess.Popen('./ela -p ' + self.password, stdout=self.dev_null, shell=True, cwd=self.cwd_dir)
+            if self.index in range(1, self.params.crc_number + 1):
+                Logger.debug('{} crc{} started on success.'.format(self.tag, self.index))
+            elif self.index in range(self.params.crc_number + 1, self.params.crc_number * 3 + 1):
+                Logger.debug('{} producer{} started on success.'.format(self.tag, self.index))
+            else:
+                Logger.debug('{} candidate{} started on success.'.format(self.tag, self.index))
         else:
             self.process = subprocess.Popen('./ela', stdout=self.dev_null, shell=True, cwd=self.cwd_dir)
+            if self.index == 0:
+                Logger.debug('{} miner started on success.'.format(self.tag))
+            else:
+                Logger.debug('{} normal ela{} started on success.'.format(self.tag, self.index))
 
         self.running = True
-        Logger.debug('{} ela{} -p {} started on success.'.format(self.tag, self.index, self.password))
         return True
 
     def stop(self):
@@ -88,7 +105,7 @@ class ElaNode(Node):
 
     def gen_crc_config(self):
         crc_arbiters = list()
-        for index in range(self.params.crc_number):
+        for index in range(1, self.params.crc_number + 1):
             crc_element = dict()
             crc_element[constant.CONFIG_PUBLIC_KEY] = self.keystore_manager.node_key_stores[index].public_key.hex()
             crc_element[constant.CONFIG_NET_ADDRESS] = "127.0.0.1:" \

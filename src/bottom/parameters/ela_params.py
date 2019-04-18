@@ -27,3 +27,5 @@ class ElaParams(object):
         self.crc_dpos_height = config["crc_dpos_height"]
         self.public_dpos_height = config["public_dpos_height"]
         self.max_inactivate_rounds = config["max_inactivate_rounds"]
+        self.inactive_penalty = config["inactive_penalty"]
+        self.emergency_inactive_penalty = config["emergency_inactive_penalty"]

@@ -47,10 +47,12 @@ class Assist(object):
             exit(-1)
 
         utxo_value = 0
-        index = 0
+        index = -1
         while utxo_value <= (amount + fee):
-            utxo_value += int(float(unspect_utxos[index]["amount"]) * constant.TO_SELA)
             index += 1
+            utxo_value += int(float(unspect_utxos[index]["amount"]) * constant.TO_SELA)
+            Logger.debug("### {} index = {}, utxo_value = {}, amount + fee = {}".format(self.tag, index, utxo_value,
+                                                                                        amount + fee))
         return {"value": utxo_value, "quantity": index + 1}
 
     def gen_inputs_utxo_value(self, input_keystore: KeyStore, amount: int, deposit_address="",

@@ -101,7 +101,7 @@ class TransactionManager(object):
 
     def register_producers_candidates(self):
         num = 0
-        for i in range(self.params.ela_params.crc_number, self.params.ela_params.number):
+        for i in range(self.params.ela_params.crc_number + 1, self.params.ela_params.number + 1):
             ela_node = self.node_manager.ela_nodes[i]
             public_key = ela_node.node_keystore.public_key.hex()
             ret = self.tx.register_a_producer(ela_node)

@@ -12,42 +12,48 @@ config = {
     "ela": {
         "enable": True,
         "password": "123",
-        "number": 13,
+        "number": 12,
         "crc_number": 4,
-        "pre_connect_offset": 20,
-        "crc_dpos_height": 210,
-        "public_dpos_height": 240      # public_dpos_height - crc_dpos_height should not be equal pre_connect_offset, or panic
+        "pre_connect_offset": 5,
+        "crc_dpos_height": 200,
+        "public_dpos_height": 208
     },
     "side": False,
     "stop": True,
-    "times": 3
+    "times": 1
 }
 
 
 def test_content():
     stop = config["stop"]
-    control = Controller(config)
-    control.middle.ready_for_dpos()
+    controller = Controller(config)
+    controller.middle.ready_for_dpos()
+    h1 = controller.middle.params.ela_params.crc_dpos_height
+
     while True:
-        current_height = control.get_current_height()
+        current_height = controller.get_current_height()
         Logger.debug("[main] current height: {}".format(current_height))
-        control.discrete_mining_blocks(1)
-        time.sleep(3)
+        num = h1 - current_height
+        if num > 0:
+            controller.discrete_mining_blocks(num)
+        else:
+            controller.discrete_mining_blocks(1)
+        time.sleep(1)
 
-        if current_height == control.middle.params.ela_params.crc_dpos_height + 1:
+        if current_height == controller.middle.params.ela_params.crc_dpos_height + 1:
             Logger.info("[main] H1 PASS!")
             Logger.info("[main] H1 PASS!")
 
-        if current_height == control.middle.params.ela_params.public_dpos_height + 2:
+        if current_height == controller.middle.params.ela_params.public_dpos_height + 2:
             Logger.info("[main] H2 PASS!")
             Logger.info("[main] H2 PASS!")
 
-        if current_height == control.middle.params.ela_params.public_dpos_height + \
-                control.middle.params.ela_params.crc_number * 3 * 5:
+        if current_height == controller.middle.params.ela_params.public_dpos_height + \
+                controller.middle.params.ela_params.crc_number * 3 * 2:     # 2 代表H2后跑2轮共识，修改此数字可多修改几轮
             if stop:
                 break
-
-    control.terminate_all_process()
+    controller.test_result("Dpos Normal Test", True)
+    controller.terminate_all_process()
 
 
 if __name__ == '__main__':

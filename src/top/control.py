@@ -17,7 +17,6 @@ class Controller(object):
     def __init__(self, up_config: dict):
         self.tag = util.tag_from_path(__file__, self.__class__.__name__)
         self.root_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "../../.."))
-        print(self.root_path)
         self.config = util.read_config_file(os.path.join(self.root_path, "config.json"))
         self.up_config = up_config
         self.node_types = ["ela", "arbiter", "did", "token", "neo"]
@@ -42,6 +41,7 @@ class Controller(object):
         Logger.info("{} terminal all the process and exit...".format(self.tag))
         self.middle.service_manager.jar_service.stop()
         self.middle.node_manager.stop_nodes()
+        exit(0)
 
     def reset_config(self, up_config: dict):
         for key in up_config.keys():
@@ -67,9 +67,9 @@ class Controller(object):
     def test_result(self, case: str, result: bool):
         current_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         if result:
-            print(current_time + Logger.COLOR_GREEN + " [PASS!] " + Logger.COLOR_END + case)
+            print(current_time + Logger.COLOR_GREEN + " [PASS!] " + Logger.COLOR_END + case + "\n")
         else:
-            print(current_time + Logger.COLOR_RED + " [NOT PASS!] " + Logger.COLOR_END + case)
+            print(current_time + Logger.COLOR_RED + " [NOT PASS!] " + Logger.COLOR_END + case + "\n")
             self.terminate_all_process()
 
     def get_tap_keystore(self):
@@ -77,20 +77,28 @@ class Controller(object):
 
     def get_register_nickname_public_key(self):
         public_key_nickname = dict()
-        for i in range(self.middle.params.ela_params.crc_number):
+        for i in range(self.middle.params.ela_params.crc_number + 1):
+            if i == 0:
+                continue
             public_key_nickname[self.middle.keystore_manager.node_key_stores[i].public_key.hex()] = "Crc-" + str(i)
         list_producers = self.middle.service_manager.rpc.list_producers(0, 100)
-        print(list_producers)
         for producer in list_producers["producers"]:
             public_key_nickname[producer["nodepublickey"]] = producer["nickname"]
-        Logger.debug("{} node_publickey -> nickname: {}".format(self.tag, public_key_nickname))
+        # Logger.debug("{} node_publickey -> nickname: {}".format(self.tag, public_key_nickname))
         return public_key_nickname
 
     def get_current_arbiter_nicknames(self):
         public_key_nickname = self.get_register_nickname_public_key()
+        print(public_key_nickname)
         arbiters = self.middle.service_manager.rpc.get_arbiters_info()["arbiters"]
+        print(arbiters)
         current_nicknames = list()
         for public_key in arbiters:
             current_nicknames.append(public_key_nickname[public_key])
 
+        print(current_nicknames)
         return current_nicknames
+
+    def show_current_height(self):
+        current_height = self.get_current_height()
+        Logger.debug("{} current height: {}".format(self.tag, current_height))

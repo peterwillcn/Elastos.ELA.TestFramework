@@ -5,7 +5,9 @@
 
 import time
 
+
 from src.middle.tools import util
+from src.middle.tools import constant
 from src.middle.tools.log import Logger
 from src.middle.managers.service_manager import ServiceManager
 
@@ -61,18 +63,18 @@ class Transaction(object):
         pass
 
     def cross_chain_transaction(self, input_keystore: KeyStore, lock_address, output_address, amount, port: int):
-
-        Logger.info("{} port: {}".format(self.tag, port))
-
+        balance1 = 0
+        balance2 = 0
         if port == self.assist.rpc.DEFAULT_PORT:
             Logger.info("{} before cross transaction input address address: {} ELAs".format(
                 self.tag,
                 self.assist.rpc.get_balance_by_address(input_keystore.address, port)
             ))
 
+            balance1 = self.assist.rpc.get_balance_by_address(output_address, port + 20)
             Logger.info("{} before cross transaction output address address: {} ELAs".format(
                 self.tag,
-                self.assist.rpc.get_balance_by_address(output_address, port + 20)
+                balance1
             ))
         else:
             Logger.info("{} before cross transaction input address address: {} ELAs".format(
@@ -80,9 +82,10 @@ class Transaction(object):
                 self.assist.rpc.get_balance_by_address(input_keystore.address, port)
             ))
 
+            balance1 = self.assist.rpc.get_balance_by_address(output_address, port - 20)
             Logger.info("{} before cross transaction output address address: {} ELAs".format(
                 self.tag,
-                self.assist.rpc.get_balance_by_address(output_address, port - 20)
+                balance2
             ))
 
         inputs, utxo_value = self.assist.gen_inputs_utxo_value(
@@ -152,9 +155,10 @@ class Transaction(object):
                 self.assist.rpc.get_balance_by_address(input_keystore.address, port)
             ))
 
+            balance2 = self.assist.rpc.get_balance_by_address(output_address, port + 20)
             Logger.info("{} after cross transaction output address address: {} ELAs".format(
                 self.tag,
-                self.assist.rpc.get_balance_by_address(output_address, port + 20)
+                balance2
             ))
         else:
             Logger.info("{} after cross transaction input address address: {} ELAs".format(
@@ -162,19 +166,27 @@ class Transaction(object):
                 self.assist.rpc.get_balance_by_address(input_keystore.address, port)
             ))
 
+            balance2 = self.assist.rpc.get_balance_by_address(output_address, port - 20)
             Logger.info("{} after cross transaction output address address: {} ELAs".format(
                 self.tag,
                 self.assist.rpc.get_balance_by_address(output_address, port - 20)
             ))
 
-        return True
+        print("balance2: {}".format(balance2))
+        print("balance1: {}".format(balance1))
+        print("amount: {}".format(amount))
 
-    def register_a_producer(self, node: ElaNode):
+        return float(balance2) - float(balance1) > float(amount - 3 * 10000) / constant.TO_SELA
+
+    def register_a_producer(self, node: ElaNode, without_mining=False):
         producer = Producer(node, self.jar_service, self.assist)
-        ret = producer.register()
-        if ret:
-            self.register_producers_list.append(producer)
-            Logger.debug("{} node {} has registered a producer!".format(self.tag, node.index))
+        if without_mining:
+            ret = producer.register_without_mining()
+        else:
+            ret = producer.register()
+            if ret:
+                self.register_producers_list.append(producer)
+                Logger.debug("{} node {} has registered a producer!".format(self.tag, node.index))
 
         return ret
 

@@ -74,7 +74,7 @@ class Voter(object):
         tran_txid = vote_resp["txhash"].lower()
         sendraw_resp = self.assist.rpc.send_raw_transaction(data=tran_raw)
 
-        compare = util.assert_equal(arg1=sendraw_resp, arg2=tran_txid)
+        compare = util.assert_equal(send_resp=sendraw_resp, jar_txid=tran_txid)
         if not compare:
             return False
 

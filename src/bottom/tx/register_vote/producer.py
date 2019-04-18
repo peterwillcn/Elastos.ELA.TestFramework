@@ -54,9 +54,9 @@ class Producer(object):
 
     def _inputs(self, category: str):
         deposit_address = ""
-        amount = self.fee
+        amount = 0
         if category == self.PRODUCER_REDEEM:
-            deposit_address = self.deposit_address
+            deposit_address = self. deposit_address
             amount = self.deposit_amount - self.fee - 1
         elif category == self.PRODUCER_REGISTER:
             amount = self.deposit_amount
@@ -67,6 +67,7 @@ class Producer(object):
             deposit_address=deposit_address
         )
         self.utxo_value = utxo_value
+        Logger.debug("{} {} amount: {}".format(self.tag, category, amount))
         Logger.debug("{} {} inputs: {}".format(self.tag, category, inputs))
         Logger.debug("{} {} utxo_value: {}".format(self.tag, category, utxo_value))
         return inputs
@@ -157,6 +158,25 @@ class Producer(object):
 
         return result
 
+    def register_without_mining(self):
+        category = self.PRODUCER_REGISTER
+        inputs = self._inputs(category)
+        outputs = self._outputs(category)
+        load = self._payload(category)
+        register_resp = self.jar_service.gen_register_producer_tx(
+            inputs=inputs,
+            outputs=outputs,
+            privatekeysign=self.privatekeysign,
+            payload=load
+        )
+
+        tran_raw = register_resp["rawtx"]
+        tran_txid = register_resp["txhash"].lower()
+        sendraw_resp = self.assist.rpc.send_raw_transaction(data=tran_raw)
+        result = util.assert_equal(sendraw_resp, tran_txid)
+
+        return result
+
     def update(self):
         result = False
         category = self.PRODUCER_UPDATE
@@ -206,7 +226,7 @@ class Producer(object):
         tran_txid = cancel_resp["txhash"].lower()
         sendraw_resp = self.assist.rpc.send_raw_transaction(data=tran_raw)
 
-        compare = util.assert_equal(arg1=sendraw_resp, arg2=tran_txid)
+        compare = util.assert_equal(send_resp=sendraw_resp, jar_txid=tran_txid)
         if compare:
             result = True
 
@@ -237,7 +257,7 @@ class Producer(object):
         tran_raw = redeem_resp["rawtx"]
         tran_txid = redeem_resp["txhash"].lower()
         sendraw_resp = self.assist.rpc.send_raw_transaction(data=tran_raw)
-        compare = util.assert_equal(arg1=sendraw_resp, arg2=tran_txid)
+        compare = util.assert_equal(send_resp=sendraw_resp, jar_txid=tran_txid)
         if compare:
             result = True
 
@@ -251,7 +271,6 @@ class Producer(object):
     def activate(self):
         result = False
         category = self.PRODUCER_ACTIVATE
-        self.deposit_amount = 501 * constant.TO_SELA
         inputs = self._inputs(category)
         outputs = self._outputs(category)
         payload = self._payload(category)
@@ -269,7 +288,7 @@ class Producer(object):
         sendraw_resp = self.assist.rpc.send_raw_transaction(data=tran_raw)
         Logger.warn("{} jar txid: {}".format(self.tag, tran_txid))
         Logger.warn("{} rpc txid: {}".format(self.tag, sendraw_resp))
-        compare = util.assert_equal(arg1=sendraw_resp, arg2=tran_txid)
+        compare = util.assert_equal(send_resp=sendraw_resp, jar_txid=tran_txid)
         if compare:
             result = True
             i = 0

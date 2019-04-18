@@ -137,14 +137,22 @@ class NodeManager(object):
             Logger.debug("{} config.json will generate from the default".format(self.tag))
             config_dict = self.env_manager.config_dict[category]
 
-        for i in range(num):
-            if category == "ela" and i < self.params.ela_params.crc_number:
+        for i in range(num+1):
+            if category == "ela" and i == 0:
+                dest_path = os.path.join(
+                    self.env_manager.test_path, category + "_nodes",
+                    self.env_manager.current_date_time,
+                    "miner"
+                )
+            elif category == "ela" and i <= self.params.ela_params.crc_number:
                 dest_path = os.path.join(
                     self.env_manager.test_path, category + "_nodes",
                     self.env_manager.current_date_time,
                     "crc" + str(i)
                 )
             else:
+                if category is not "ela" and i == num:
+                    break
                 dest_path = os.path.join(
                     self.env_manager.test_path, category + "_nodes",
                     self.env_manager.current_date_time,
@@ -204,7 +212,7 @@ class NodeManager(object):
                     shutil.copy(
                         os.path.join(
                             self.params.root_path,
-                            "datas/keystores/arbiter_keystores/crc_arbiter_" + str(i - 5) + ".dat"),
+                            "datas/keystores/arbiter_keystores/crc_arbiter_" + str(i - 5 + 1) + ".dat"),
                         os.path.join(dest_path, "keystore.dat")
                     )
 

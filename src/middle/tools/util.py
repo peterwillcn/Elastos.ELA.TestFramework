@@ -30,11 +30,12 @@ def arbiter_public_keys(key_stores):
     return public_keys
 
 
-def assert_equal(arg1, arg2):
+def assert_equal(send_resp, jar_txid):
     result = False
-    if arg1 != arg2:
+    if send_resp != jar_txid:
+        print("jar_txid: {}".format(jar_txid))
+        print("send_res: {}".format(send_resp))
         print(Logger.COLOR_RED + "[NOT EQUAL]" + Logger.COLOR_END)
-        exit(-1)
     else:
         result = True
     return result

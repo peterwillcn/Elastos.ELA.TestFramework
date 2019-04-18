@@ -28,7 +28,7 @@ class KeyStoreManager(object):
         self.init_keystore_files()
 
     def init_keystore_files(self):
-        Logger.info("{} begin generating the key stores".format(self.tag))
+        Logger.info("{} begin to generate the key stores".format(self.tag))
 
         self.keystore_saved_dir = os.path.join(self.params.root_path, "datas/keystores")
         if not os.path.exists(self.keystore_saved_dir):
@@ -49,6 +49,8 @@ class KeyStoreManager(object):
         # generate original arbiters key stores
         if self.params.arbiter_params.enable:
             self.create_arbiter_stores()
+
+        Logger.info("{} generate the key stores on success!".format(self.tag))
 
     def add_sub_account(self, main_dat: dict, sub_keystore: KeyStore):
         iv = main_dat['IV']
@@ -86,6 +88,8 @@ class KeyStoreManager(object):
         keytool.save_to_json(k, category + ":", os.path.join(self.keystore_saved_dir, "special.json"), first_time)
         keytool.save_to_dat(k.keystore_dat, os.path.join(special_dat_dir, category + ".dat"))
 
+        Logger.debug("{} generate {} keystore on success!".format(self.tag, category))
+
     def create_general_stores(self, category: str, category_list: list):
         category_dat_dir = os.path.join(self.keystore_saved_dir, category + "_keystores")
         if os.path.exists(category_dat_dir):
@@ -94,7 +98,7 @@ class KeyStoreManager(object):
         else:
             os.makedirs(category_dat_dir)
 
-        for i in range(self.params.ela_params.number):
+        for i in range(self.params.ela_params.number + 1):
             if i == 0:
                 first_time = True
             else:
@@ -152,7 +156,9 @@ class KeyStoreManager(object):
             )
 
         # generate crc arbiter keystore
-        for i in range(self.params.ela_params.crc_number):
+        for i in range(self.params.ela_params.crc_number + 1):
+            if i == 0:
+                continue
             k = self.node_key_stores[i]
             self.arbiter_stores.append(k)
             sub_k = KeyStore(self.password)
