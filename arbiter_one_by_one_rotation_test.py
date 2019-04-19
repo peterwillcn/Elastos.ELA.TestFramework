@@ -28,7 +28,7 @@ config = {
 
 
 def one_by_one_rotation_test():
-    test_case = "Arbiter One by One Retation Test"
+    test_case = "Arbiter One by One Rotation Test"
     control = Controller(config)
     control.middle.ready_for_dpos()
 
@@ -36,6 +36,7 @@ def one_by_one_rotation_test():
     number = control.middle.params.ela_params.number
     crc_number = control.middle.params.ela_params.crc_number
     tap_keystore = control.get_tap_keystore()
+
     candidate_producers = control.middle.tx_manager.tx.register_producers_list[crc_number * 2: (number - crc_number)]
     voted = False
     global current_vote_height
@@ -60,7 +61,6 @@ def one_by_one_rotation_test():
                                                                     candidate.payload.nickname))
                     control.terminate_all_process()
                 current_vote_height = current_height - h2
-                index += 1
                 voted = True
         if current_vote_height > 0:
             Logger.debug("last vote candidate height: {}".format(current_vote_height + h2))
@@ -68,13 +68,13 @@ def one_by_one_rotation_test():
         if current_height > h2 + current_vote_height + crc_number * 3 * 2:
             arbiters_list = control.middle.service_manager.rpc.get_arbiters_info()["arbiters"]
             ret = candidate.node.node_keystore.public_key.hex() in arbiters_list
-            control.test_result("{} has rotated a producer!", ret)
+            control.test_result("{} has rotated a producer!".format(candidate.payload.nickname), ret)
             if ret:
                 voted = False
                 index += 1
         if index == 8:
             break
-        time.sleep(5)
+        time.sleep(1)
 
     control.test_result(test_case, True)
     control.terminate_all_process()

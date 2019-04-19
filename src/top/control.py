@@ -6,7 +6,6 @@
 import os
 import time
 
-
 from src.middle.tools import util
 from src.middle.tools.log import Logger
 from src.middle.distribute import Distribution
@@ -75,6 +74,11 @@ class Controller(object):
     def get_tap_keystore(self):
         return self.middle.keystore_manager.special_key_stores[4]
 
+    def get_producer_state(self, index: int):
+        list_producers = self.middle.service_manager.rpc.list_producers(0, 100)
+        producers = list_producers["producers"]
+        return producers[index]["state"]
+
     def get_register_nickname_public_key(self):
         public_key_nickname = dict()
         for i in range(self.middle.params.ela_params.crc_number + 1):
@@ -102,3 +106,4 @@ class Controller(object):
     def show_current_height(self):
         current_height = self.get_current_height()
         Logger.debug("{} current height: {}".format(self.tag, current_height))
+

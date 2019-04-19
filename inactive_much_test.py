@@ -23,7 +23,7 @@ config = {
 }
 
 
-def much_inactive_test():
+def test_content():
     controller = Controller(config)
     controller.middle.ready_for_dpos()
     number = controller.middle.params.ela_params.number
@@ -82,8 +82,14 @@ def much_inactive_test():
 
 if __name__ == '__main__':
 
-    much_inactive_test()
+    times = config["times"]
 
+    for i in range(config["times"]):
+        Logger.warn("[main] begin testing {} times".format(i + 1))
+        time.sleep(2)
+        test_content()
+        Logger.warn("[main] end testing {} times".format(i + 1))
+        time.sleep(3)
 
 
 

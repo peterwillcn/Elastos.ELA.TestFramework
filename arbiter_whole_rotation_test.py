@@ -17,17 +17,17 @@ config = {
         "password": "123",
         "number": 20,
         "crc_number": 4,
-        "pre_connect_offset": 10,
+        "pre_connect_offset": 3,
         "crc_dpos_height": 220,
-        "public_dpos_height": 240
+        "public_dpos_height": 228
     },
     "side": False,
     "stop": True,
-    "times": 3
+    "times": 1
 }
 
 
-def whole_rotation_test():
+def test_content():
 
     test_case = "Arbiter Whole Retation Test"
     control = Controller(config)
@@ -45,10 +45,11 @@ def whole_rotation_test():
         current_height = control.get_current_height()
         Logger.debug("[test] current height: {}".format(current_height))
         control.discrete_mining_blocks(1)
-        before_rotation_nicknames = list()
+        global before_rotation_nicknames
 
         if vote_height == 0 and current_height > h2 + 5:
             before_rotation_nicknames = control.get_current_arbiter_nicknames()
+            before_rotation_nicknames.sort()
             tap_balance = control.middle.service_manager.rpc.get_balance_by_address(tap_keystore.address)
             Logger.info("[test] tap_balance: {}".format(tap_balance))
 
@@ -67,20 +68,21 @@ def whole_rotation_test():
 
         if vote_height > 0 and current_height > vote_height + crc_number * 3 * 2:
             after_rotation_nicknames = control.get_current_arbiter_nicknames()
+            after_rotation_nicknames.sort()
             arbiter_info = control.middle.service_manager.rpc.get_arbiters_info()
             arbiter = arbiter_info["arbiters"]
             arbiter_set = set(arbiter)
             candidate_public_key_set = set(control.middle.tx_manager.candidate_public_keys)
             general_public_key_set = set(control.middle.tx_manager.general_producer_public_keys)
-            Logger.info("before rotation register producers: {}".format(before_rotation_nicknames.sort()))
-            Logger.info("after rotation register producers: {}".format(after_rotation_nicknames.sort()))
+            Logger.info("before rotation register producers: {}".format(before_rotation_nicknames))
+            Logger.info("after  rotation register producers: {}".format(after_rotation_nicknames))
             if not general_public_key_set.issubset(arbiter_set) and candidate_public_key_set.issubset(arbiter_set):
                 control.test_result(test_case, True)
                 break
             else:
                 control.test_result(test_case, False)
 
-        time.sleep(2)
+        time.sleep(1)
 
     time.sleep(2)
     control.terminate_all_process()
@@ -95,6 +97,6 @@ if __name__ == '__main__':
     for i in range(config["times"]):
         Logger.warn("[main] begin testing {} times".format(i + 1))
         time.sleep(2)
-        whole_rotation_test()
+        test_content()
         Logger.warn("[main] end testing {} times".format(i + 1))
         time.sleep(3)

@@ -28,7 +28,7 @@ class JarService(object):
         self.running = False
         self.rpc_port = 8989
         self.url = "http://127.0.0.1:8989"
-        self.command = "java -cp " + root_path + "/datas/jars/" + constant.JAR_ELA_OLD + constant.JAR_HTTP_SERVICE
+        self.command = "java -cp " + root_path + "/datas/jars/" + constant.JAR_ELA_TOOL + constant.JAR_HTTP_SERVICE
         self.start()
 
     def start(self):

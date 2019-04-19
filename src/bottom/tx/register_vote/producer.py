@@ -291,11 +291,14 @@ class Producer(object):
         compare = util.assert_equal(send_resp=sendraw_resp, jar_txid=tran_txid)
         if compare:
             result = True
-            i = 0
-            while i < 8:
+            height1 = self.assist.rpc.get_block_count()
+            while True:
                 self.assist.rpc.discrete_mining(1)
                 time.sleep(1)
-
+                height2 = self.assist.rpc.get_block_count()
+                Logger.debug("{} height1 = {}, height2 = {}".format(self.tag, height1, height2))
+                if height2 - height1 > 6:
+                    break
         return result
 
     def get_deposit_balance(self):

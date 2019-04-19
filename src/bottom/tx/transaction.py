@@ -182,6 +182,8 @@ class Transaction(object):
         producer = Producer(node, self.jar_service, self.assist)
         if without_mining:
             ret = producer.register_without_mining()
+            if ret:
+                self.register_producers_list.append(producer)
         else:
             ret = producer.register()
             if ret:

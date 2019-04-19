@@ -68,8 +68,12 @@ class ArbiterNode(Node):
         main_node[constant.CONFIG_ARBITER_RPC] = dict()
         rpc_config = main_node[constant.CONFIG_ARBITER_RPC]
         rpc_config[constant.CONFIG_ARBITER_IP_ADDRESS] = "127.0.0.1"
+        if self.index > 4:
+            index = self.index % 5 + 1
+        else:
+            index = self.index
         rpc_config[constant.CONFIG_PORT_JSON] = self.reset_port(
-            index=self.index % 5,
+            index=index,
             node_type="ela",
             port_type="json_port"
         )
@@ -77,7 +81,7 @@ class ArbiterNode(Node):
         rpc_config[constant.CONFIG_RPC_PASS] = ""
         main_node[constant.CONFIG_SPV_SEED_LIST] = list()
         main_node[constant.CONFIG_SPV_SEED_LIST].append("127.0.0.1:" + str(self.reset_port(
-            index=self.index % 5,
+            index=index,
             node_type="ela",
             port_type="node_port"
         )))
@@ -86,7 +90,7 @@ class ArbiterNode(Node):
         main_node[constant.CONFIG_MAX_CONNECTION] = 3
         main_node[constant.CONFIG_FOUNDATION_ADDRESS] = self.keystore_manager.special_key_stores[0].address
         main_node[constant.CONFIG_PORT_ARBITER_MAIN_DEFAULT] = self.reset_port(
-            index=self.index % 5,
+            index=index,
             node_type="ela",
             port_type="node_port"
         )

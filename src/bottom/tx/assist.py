@@ -30,6 +30,8 @@ class Assist(object):
 
         unspend_utxos = list()
         for utxo in utxos_response:
+            if utxo["txtype"] == 0 and utxo["confirmations"] <= 100:
+                continue
             unspend_utxos.append(
                 {
                     "txid": utxo["txid"],

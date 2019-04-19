@@ -43,6 +43,8 @@ class KeyStoreManager(object):
         self.create_special_stores("side_miner", False)
         self.create_special_stores("main_tap", False)
         self.create_special_stores("side_tap", False)
+        Logger.debug("{} generate special keystore on success!".format(self.tag))
+
         # generate general keystore such as owner and node
         self.create_general_stores("owner", self.owner_key_stores)
         self.create_general_stores("node", self.node_key_stores)
@@ -88,7 +90,6 @@ class KeyStoreManager(object):
         keytool.save_to_json(k, category + ":", os.path.join(self.keystore_saved_dir, "special.json"), first_time)
         keytool.save_to_dat(k.keystore_dat, os.path.join(special_dat_dir, category + ".dat"))
 
-        Logger.debug("{} generate {} keystore on success!".format(self.tag, category))
 
     def create_general_stores(self, category: str, category_list: list):
         category_dat_dir = os.path.join(self.keystore_saved_dir, category + "_keystores")
@@ -172,7 +173,7 @@ class KeyStoreManager(object):
 
             keytool.save_to_json(
                 sub_k,
-                "sub account #" + str(i + 5) + ":",
+                "sub account #" + str(i + 5 - 1) + ":",
                 os.path.join(self.keystore_saved_dir, "sub_keystore.json"),
                 False
             )

@@ -57,7 +57,6 @@ def tag_from_path(path: str, class_name: str):
     tag += "】"
     return tag
 
-
 def read_config_file(config_file_path):
     with open(config_file_path, "r", encoding="utf8") as f:
         content = f.read()
