@@ -36,6 +36,13 @@ class Controller(object):
             self.discrete_mining_blocks(1)
             time.sleep(2)
 
+    def get_height_times(self, height_times: dict, current_height: int):
+        if current_height not in height_times.keys():
+            height_times[current_height] = 1
+        else:
+            height_times[current_height] += 1
+        return height_times[current_height]
+
     def terminate_all_process(self):
         Logger.info("{} terminal all the process and exit...".format(self.tag))
         self.middle.service_manager.jar_service.stop()

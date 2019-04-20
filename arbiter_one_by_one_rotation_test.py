@@ -35,8 +35,8 @@ def one_by_one_rotation_test():
     h2 = control.middle.params.ela_params.public_dpos_height
     number = control.middle.params.ela_params.number
     crc_number = control.middle.params.ela_params.crc_number
-    tap_keystore = control.get_tap_keystore()
 
+    tap_keystore = control.get_tap_keystore()
     candidate_producers = control.middle.tx_manager.tx.register_producers_list[crc_number * 2: (number - crc_number)]
     voted = False
     global current_vote_height

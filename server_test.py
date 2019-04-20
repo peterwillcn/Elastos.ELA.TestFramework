@@ -5,8 +5,14 @@
 
 from tests.dpos_test import DposTest
 
+from src.middle.tools.log import Logger
+
 
 if __name__ == '__main__':
 
     t = DposTest()
-    t.run()
+
+    for i in range(10):
+        Logger.warn("begin {} times test".format(i))
+        t.run()
+        Logger.warn("end {} times test".format(i))

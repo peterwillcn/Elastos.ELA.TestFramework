@@ -112,7 +112,7 @@ class TransactionManager(object):
                 self.general_producer_public_keys.append(public_key)
             else:
                 self.candidate_public_keys.append(public_key)
-
+            Logger.info("{} register node-{} to be a producer on success!\n".format(self.tag, i))
         Logger.info("{} general register public keys size: {}".format(self.tag, len(self.general_producer_public_keys)))
         Logger.info("{} general register public keys: {}".format(self.tag, self.general_producer_public_keys))
         Logger.info("{} candidate public keys size: {}".format(self.tag, len(self.candidate_public_keys)))
@@ -146,14 +146,16 @@ class TransactionManager(object):
         return True
 
     def vote_producers_candidates(self):
-        for i in range(self.params.ela_params.crc_number, self.params.ela_params.number):
+        for i in range(self.params.ela_params.crc_number + 1, self.params.ela_params.number + 1):
+            vote_amount = (self.params.ela_params.number - i + 1) * constant.TO_SELA
             ret = self.tx.vote_a_producer(
                 vote_keystore=self.node_manager.keystore_manager.owner_key_stores[i],
-                producer=self.tx.register_producers_list[i - self.params.ela_params.crc_number],
-                vote_amount=(self.params.ela_params.number - i) * constant.TO_SELA
+                producer=self.tx.register_producers_list[i - self.params.ela_params.crc_number - 1],
+                vote_amount=vote_amount
             )
             if not ret:
                 return False
+            Logger.info("{} vote node-{} {} Elas on success!\n".format(self.tag, i, vote_amount))
         return True
 
     def transfer_money(self, addresses: list, amount: int):

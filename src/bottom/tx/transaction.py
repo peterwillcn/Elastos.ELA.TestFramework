@@ -140,7 +140,7 @@ class Transaction(object):
                 time.sleep(1)
 
         else:
-            for i in range(10):
+            for i in range(30):
                 self.assist.rpc.discrete_mining(1)
                 Logger.info("{} main chain height: {}, side chain height: {}".format(
                     self.tag,
