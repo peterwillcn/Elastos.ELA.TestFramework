@@ -114,10 +114,15 @@ class DposTest(object):
                               self.crc_number * 2: self.crc_number * 3]
         voted = False
         global current_vote_height
+        global result
+        global before_rotation_nicknames
+        global after_rotation_nicknames
+
+        before_rotation_nicknames = list()
+        after_rotation_nicknames = list()
         current_vote_height = 0
         index = 0
         candidate = None
-        global result
 
         height_times = dict()
         height_times[self.controller.get_current_height()] = 1
@@ -140,6 +145,8 @@ class DposTest(object):
             self.controller.discrete_mining_blocks(1)
             if current_height > self.h2 + current_vote_height + 1:
                 if not voted:
+                    before_rotation_nicknames = self.controller.get_current_arbiter_nicknames()
+                    before_rotation_nicknames.sort()
                     candidate = candidate_producers[index]
                     vote_amount = (len(candidate_producers) - index) * constant.TO_SELA * 100
                     ret = self.controller.middle.tx_manager.tx.vote_a_producer(self.tap_keystore, candidate, vote_amount)
@@ -156,8 +163,12 @@ class DposTest(object):
             #     Logger.debug("last vote candidate height: {}".format(current_vote_height + self.h2))
 
             if current_height > self.h2 + current_vote_height + self.crc_number * 3 * 2:
+                after_rotation_nicknames = self.controller.get_current_arbiter_nicknames()
+                after_rotation_nicknames.sort()
                 arbiters_list = self.controller.middle.service_manager.rpc.get_arbiters_info()["arbiters"]
                 ret = candidate.node.node_keystore.public_key.hex() in arbiters_list
+                Logger.debug("{} before rotation nicknames: {}".format(self.tag, before_rotation_nicknames))
+                Logger.debug("{} after  rotation nicknames: {}".format(self.tag, after_rotation_nicknames))
                 self.controller.test_result("{} has rotated a producer!".format(candidate.payload.nickname), ret)
                 if ret:
                     voted = False
