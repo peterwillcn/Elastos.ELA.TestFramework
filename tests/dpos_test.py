@@ -251,8 +251,6 @@ class DposTest(object):
 
         self.controller.test_result(test_case, result)
 
-
-
     def minor_stop_test(self):
         test_case = "4、[stop minor ela nodes]"
         current_height = self.controller.get_current_height()
@@ -343,6 +341,7 @@ class DposTest(object):
             if times >= 90:
                 result = False
                 break
+            time.sleep(1)
 
         if current_height >= stop_height:
             result = True

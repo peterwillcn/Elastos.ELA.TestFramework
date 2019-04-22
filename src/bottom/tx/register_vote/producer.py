@@ -45,7 +45,7 @@ class Producer(object):
             private_key=self.node.owner_keystore.private_key.hex(),
             owner_public_key=self.node.owner_keystore.public_key.hex(),
             node_public_key=self.node.node_keystore.public_key.hex(),
-            nickname=str(self.node.index) + "-PRO",
+            nickname="PRO-{:0>3d}".format(self.node.index),
             url="https://elastos.org",
             location=0,
             net_address="127.0.0.1:" + str(self.node.reset_port(self.node.index, "ela", "arbiter_node_port"))

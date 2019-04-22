@@ -65,8 +65,10 @@ def test_content():
             print("stop_height 1: ", stop_height)
         if stop_height != 0 and current_height >= stop_height:
             arbiters_nicknames = controller.get_current_arbiter_nicknames()
+            next_arbiter_nicknames = controller.get_next_arbiter_nicknames()
             arbiters_nicknames.sort()
-            Logger.info("arbiters nicknames: {}".format(arbiters_nicknames))
+            Logger.info("current arbiters nicknames: {}".format(arbiters_nicknames))
+            Logger.info("next    arbiters nicknames: {}".format(next_arbiter_nicknames))
 
         if stop_height != 0 and current_height > stop_height + 36:
             arbiters_set = set(controller.middle.service_manager.rpc.get_arbiters_info()["arbiters"])

@@ -91,7 +91,8 @@ class Controller(object):
         for i in range(self.middle.params.ela_params.crc_number + 1):
             if i == 0:
                 continue
-            public_key_nickname[self.middle.keystore_manager.node_key_stores[i].public_key.hex()] = str(i) + "-CRC"
+            public_key_nickname[self.middle.keystore_manager.node_key_stores[i].public_key.hex()] = \
+                "CRC-{:0>3d}".format(i)
         list_producers = self.middle.service_manager.rpc.list_producers(0, 100)
         for producer in list_producers["producers"]:
             public_key_nickname[producer["nodepublickey"]] = producer["nickname"]
@@ -100,9 +101,21 @@ class Controller(object):
 
     def get_current_arbiter_nicknames(self):
         public_key_nickname = self.get_register_nickname_public_key()
-        print(public_key_nickname)
+        # print(public_key_nickname)
         arbiters = self.middle.service_manager.rpc.get_arbiters_info()["arbiters"]
-        print(arbiters)
+        # print(arbiters)
+        current_nicknames = list()
+        for public_key in arbiters:
+            current_nicknames.append(public_key_nickname[public_key])
+
+        print(current_nicknames)
+        return current_nicknames
+
+    def get_next_arbiter_nicknames(self):
+        public_key_nickname = self.get_register_nickname_public_key()
+        # print(public_key_nickname)
+        arbiters = self.middle.service_manager.rpc.get_arbiters_info()["nextarbiters"]
+        # print(arbiters)
         current_nicknames = list()
         for public_key in arbiters:
             current_nicknames.append(public_key_nickname[public_key])

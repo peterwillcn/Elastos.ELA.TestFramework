@@ -41,6 +41,15 @@ def get_node_height(port: int):
 	return response
 
 
+def get_txpool_size(port: int):
+	url = "http://127.0.0.1:" + str(port)
+	tx_pool = post_request(url, "getrawmempool", params={})
+	if type(tx_pool) == list:
+		return len(tx_pool)
+	else:
+		return False
+
+
 if __name__ == '__main__':
 	signal.signal(signal.SIGINT, exit_handler)
 
@@ -51,6 +60,7 @@ if __name__ == '__main__':
 		for i in range(int(node_num)):
 			port = (100 + i) * 100 + 14
 			height = get_node_height(port)
-			print("ela {}\theight: {}".format(i, height))
+			tx_size = get_txpool_size(port)
+			print("ela {}\theight: {}\t txpool size: {}".format(i, height, tx_size))
 		time.sleep(span_time)
-		print('*' * 100)
+		print('*' * 60)
