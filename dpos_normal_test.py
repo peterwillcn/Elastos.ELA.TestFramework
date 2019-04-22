@@ -4,6 +4,7 @@
 # author: liteng
 
 import time
+import signal
 
 from src.middle.tools.log import Logger
 from src.top.control import Controller
@@ -19,13 +20,11 @@ config = {
         "public_dpos_height": 208
     },
     "side": False,
-    "stop": True,
     "times": 1
 }
 
 
 def test_content():
-    stop = config["stop"]
     controller = Controller(config)
     controller.middle.ready_for_dpos()
     h1 = controller.middle.params.ela_params.crc_dpos_height
@@ -49,18 +48,13 @@ def test_content():
             Logger.info("[main] H2 PASS!")
 
         if current_height == controller.middle.params.ela_params.public_dpos_height + \
-                controller.middle.params.ela_params.crc_number * 3 * 2:     # 2 代表H2后跑2轮共识，修改此数字可多修改几轮
-            if stop:
-                break
+                controller.middle.params.ela_params.crc_number * 3 * 1:     # 2 代表H2后跑2轮共识，修改此数字可多修改几轮
+            break
     controller.test_result("Dpos Normal Test", True)
     controller.terminate_all_process()
 
 
 if __name__ == '__main__':
-
-    times = config["times"]
-    if times > 1:
-        config["stop"] = True
 
     for i in range(config["times"]):
         Logger.warn("[main] begin testing {} times".format(i+1))

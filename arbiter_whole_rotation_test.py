@@ -22,7 +22,6 @@ config = {
         "public_dpos_height": 228
     },
     "side": False,
-    "stop": True,
     "times": 1
 }
 
@@ -89,10 +88,6 @@ def test_content():
 
 
 if __name__ == '__main__':
-
-    times = config["times"]
-    if times > 1:
-        config["stop"] = True
 
     for i in range(config["times"]):
         Logger.warn("[main] begin testing {} times".format(i + 1))

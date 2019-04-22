@@ -3,6 +3,7 @@
 # date: 2019/3/28 5:30 PM
 # author: liteng
 
+import os
 import subprocess
 
 from src.middle.tools import util
@@ -28,6 +29,8 @@ class ElaNode(Node):
         self.cwd_dir = cwd_dir
         self.password = self.params.password
         self.rpc_port = self.reset_port(self.index, "ela", "json_port")
+        self.err_output = open(os.path.join(self.cwd_dir, "error.log"), 'w')
+
         self.process = None
         self.running = False
 
@@ -75,8 +78,13 @@ class ElaNode(Node):
 
     def start(self):
         if self.params.arbiter_enable and self.index != 0:
-            self.process = subprocess.Popen("./ela{} -p {} 2>output".format(self.index, self.password),
-                                            stdout=self.dev_null, shell=True, cwd=self.cwd_dir)
+            self.process = subprocess.Popen(
+                "./ela{} -p {}".format(self.index, self.password),
+                stdout=self.dev_null,
+                stderr=self.err_output,
+                shell=True,
+                cwd=self.cwd_dir
+            )
             if self.index in range(1, self.params.crc_number + 1):
                 Logger.debug("{} crc{} started on success.".format(self.tag, self.index))
             elif self.index in range(self.params.crc_number + 1, self.params.crc_number * 3 + 1):
@@ -84,7 +92,13 @@ class ElaNode(Node):
             else:
                 Logger.debug("{} candidate{} started on success.".format(self.tag, self.index))
         else:
-            self.process = subprocess.Popen("./ela{} 2>output".format(self.index), stdout=self.dev_null, shell=True, cwd=self.cwd_dir)
+            self.process = subprocess.Popen(
+                "./ela{}".format(self.index),
+                stdout=self.dev_null,
+                stderr=self.err_output,
+                shell=True,
+                cwd=self.cwd_dir
+            )
             if self.index == 0:
                 Logger.debug("{} miner started on success.".format(self.tag))
             else:
@@ -99,6 +113,8 @@ class ElaNode(Node):
             return
         try:
             self.process.terminate()
+            self.dev_null.close()
+            self.err_output.close()
         except subprocess.SubprocessError as e:
             Logger.error("{} Unable to stop ela{}, error: {}".format(self.tag, self.index, e))
         self.running = False

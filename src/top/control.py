@@ -4,6 +4,7 @@
 # author: liteng
 
 import os
+import sys
 import time
 
 from src.middle.tools import util
@@ -126,4 +127,6 @@ class Controller(object):
     def show_current_height(self):
         current_height = self.get_current_height()
         Logger.debug("{} current height: {}".format(self.tag, current_height))
+
+
 

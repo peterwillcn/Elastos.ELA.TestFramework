@@ -29,7 +29,6 @@ config = {
         "number": 5,
         "instant_block": True
     },
-    "stop": True,
     "times": 1
 }
 

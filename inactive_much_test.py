@@ -84,8 +84,6 @@ def test_content():
 
 if __name__ == '__main__':
 
-    times = config["times"]
-
     for i in range(config["times"]):
         Logger.warn("[main] begin testing {} times".format(i + 1))
         time.sleep(2)

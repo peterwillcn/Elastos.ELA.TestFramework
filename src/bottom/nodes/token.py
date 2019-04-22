@@ -3,6 +3,8 @@
 # date: 2019/3/28 6:02 PM
 # author: liteng
 
+import os
+
 from src.middle.tools import util
 
 from src.bottom.nodes.node import Node
@@ -18,6 +20,7 @@ class TokenNode(Node):
         self.params = params
         self.cwd_dir = cwd_dir
         self.rpc_port = self.reset_port(index, "token", "json_port")
+        self.err_output = open(os.path.join(self.cwd_dir, "error.log"), 'w')
 
     def reset_config(self, num: int, update_content: dict):
         Node.reset_config_common(self, self.index, "token", num)

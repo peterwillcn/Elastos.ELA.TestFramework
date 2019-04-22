@@ -3,6 +3,7 @@
 # date: 2019/3/28 5:59 PM
 # author: liteng
 
+import os
 import time
 import subprocess
 
@@ -25,13 +26,16 @@ class ArbiterNode(Node):
         self.keystore_manager = keystore_manager
         self.cwd_dir = cwd_dir
         self.rpc_port = self.reset_port(index, "arbiter", "json_port")
+        self.err_output = open(os.path.join(self.cwd_dir, "error.log"), 'w')
+
         self.process = None
         self.running = False
 
     def start(self):
         self.process = subprocess.Popen(
-            "./arbiter{} -p {} 2>output ".format(self.index, self.params.password),
+            "./arbiter{} -p {}".format(self.index, self.params.password),
             stdout=self.dev_null,
+            stderr=self.err_output,
             shell=True,
             cwd=self.cwd_dir
         )
@@ -46,6 +50,8 @@ class ArbiterNode(Node):
             return
         try:
             self.process.terminate()
+            self.dev_null.close()
+            self.err_output.close()
         except subprocess.SubprocessError as e:
             Logger.error("{} Unable to stop ela{}, error: {}".format(self.tag, self.index, e))
         self.running = False

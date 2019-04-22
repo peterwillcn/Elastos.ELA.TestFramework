@@ -1,38 +1,33 @@
 #!/bin/bash 
 
-#killall ela java did arbiter
+# kill ela process
+ids=`ps -ef | grep ela\[0-9\] | awk '{print $2}'`
 
-for i in `seq 50`
+for id in $ids
 do
-	ID=`ps -ef | grep "ela$i" | grep -v "grep" | awk '{print $2}'`
-	for id in $ID
-	do
-		kill -9 $id
-		echo "killed $id"
-	done
+    echo "kill process ela id $id"
+    kill -9 $id
 done
 
-for i in `seq 10`
+# kill arbiter process
+ids=`ps -ef | grep arbiter\[0-9\] | awk '{print $2}'`
+
+for id in $ids
 do
-	ID=`ps -ef | grep "arbiter$i" | grep -v "grep" | awk '{print $2}'`
-	for id in $ID
-	do
-		kill -9 $id
-		echo "killed $id"
-	done
+    echo "kill process arbiter id $id"
+    kill -9 $id
 done
 
+# kill did process
+ids=`ps -ef | grep did\[0-9\] | awk '{print $2}'`
 
-for i in `seq 10`
+for id in $ids
 do
-	ID=`ps -ef | grep "did$i" | grep -v "grep" | awk '{print $2}'`
-	for id in $ID
-	do
-		kill -9 $id
-		echo "killed $id"
-	done
+    echo "kill process did id $id"
+    kill -9 $id
 done
 
+echo "kill process java"
 killall java
 
 echo "kill all processes!"
