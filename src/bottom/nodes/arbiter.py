@@ -30,26 +30,26 @@ class ArbiterNode(Node):
 
     def start(self):
         self.process = subprocess.Popen(
-            './arbiter -p ' + str(self.params.password),
+            "./arbiter{} -p {} 2>output ".format(self.index, self.params.password),
             stdout=self.dev_null,
             shell=True,
             cwd=self.cwd_dir
         )
         time.sleep(0.5)
         self.running = True
-        Logger.debug('{} ./arbiter{} started on success.'.format(self.tag, self.index))
+        Logger.debug("{} ./arbiter{} started on success.".format(self.tag, self.index))
         return True
 
     def stop(self):
         if not self.running:
-            Logger.error('{} arbiter{} has already stopped'.format(self.tag, self.index))
+            Logger.error("{} arbiter{} has already stopped".format(self.tag, self.index))
             return
         try:
             self.process.terminate()
         except subprocess.SubprocessError as e:
-            Logger.error('{} Unable to stop ela{}, error: {}'.format(self.tag, self.index, e))
+            Logger.error("{} Unable to stop ela{}, error: {}".format(self.tag, self.index, e))
         self.running = False
-        Logger.debug('{} arbiter{} has stopped on success!'.format(self.tag, self.index))
+        Logger.debug("{} arbiter{} has stopped on success!".format(self.tag, self.index))
 
     def reset_config(self):
 

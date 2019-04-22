@@ -28,7 +28,7 @@ class DidNode(Node):
         self.running = False
 
     def start(self):
-        self.process = subprocess.Popen('./did ', stdout=self.dev_null, shell=True, cwd=self.cwd_dir)
+        self.process = subprocess.Popen('./did{} 2>output'.format(self.index), stdout=self.dev_null, shell=True, cwd=self.cwd_dir)
         self.running = True
         Logger.debug('{} ./did{} started on success.'.format(self.tag, self.index))
         return True

@@ -75,33 +75,34 @@ class ElaNode(Node):
 
     def start(self):
         if self.params.arbiter_enable and self.index != 0:
-            self.process = subprocess.Popen('./ela -p ' + self.password, stdout=self.dev_null, shell=True, cwd=self.cwd_dir)
+            self.process = subprocess.Popen("./ela{} -p {} 2>output".format(self.index, self.password),
+                                            stdout=self.dev_null, shell=True, cwd=self.cwd_dir)
             if self.index in range(1, self.params.crc_number + 1):
-                Logger.debug('{} crc{} started on success.'.format(self.tag, self.index))
+                Logger.debug("{} crc{} started on success.".format(self.tag, self.index))
             elif self.index in range(self.params.crc_number + 1, self.params.crc_number * 3 + 1):
-                Logger.debug('{} producer{} started on success.'.format(self.tag, self.index))
+                Logger.debug("{} producer{} started on success.".format(self.tag, self.index))
             else:
-                Logger.debug('{} candidate{} started on success.'.format(self.tag, self.index))
+                Logger.debug("{} candidate{} started on success.".format(self.tag, self.index))
         else:
-            self.process = subprocess.Popen('./ela', stdout=self.dev_null, shell=True, cwd=self.cwd_dir)
+            self.process = subprocess.Popen("./ela{} 2>output".format(self.index), stdout=self.dev_null, shell=True, cwd=self.cwd_dir)
             if self.index == 0:
-                Logger.debug('{} miner started on success.'.format(self.tag))
+                Logger.debug("{} miner started on success.".format(self.tag))
             else:
-                Logger.debug('{} normal ela{} started on success.'.format(self.tag, self.index))
+                Logger.debug("{} normal ela{} started on success.".format(self.tag, self.index))
 
         self.running = True
         return True
 
     def stop(self):
         if not self.running:
-            Logger.error('{} ela{} has already stopped'.format(self.tag, self.index))
+            Logger.error("{} ela{} has already stopped".format(self.tag, self.index))
             return
         try:
             self.process.terminate()
         except subprocess.SubprocessError as e:
-            Logger.error('{} Unable to stop ela{}, error: {}'.format(self.tag, self.index, e))
+            Logger.error("{} Unable to stop ela{}, error: {}".format(self.tag, self.index, e))
         self.running = False
-        Logger.debug('{} ela{} has stopped on success!'.format(self.tag, self.index))
+        Logger.debug("{} ela{} has stopped on success!".format(self.tag, self.index))
 
     def gen_crc_config(self):
         crc_arbiters = list()

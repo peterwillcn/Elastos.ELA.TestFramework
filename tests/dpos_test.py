@@ -54,8 +54,8 @@ class DposTest(object):
     def run(self):
         self.before_test()
         self.normal_test()
-        self.rotation_onebyone_test()
-        self.rotation_whole_test()
+        # self.rotation_onebyone_test()
+        # self.rotation_whole_test()
         self.minor_stop_test()
         self.inactive_single_test()
         self.cross_normal_test()
@@ -306,7 +306,7 @@ class DposTest(object):
             time2 = datetime.now()
             diff = (time2 - time1).seconds
             Logger.debug("{} diff: {} seconds".format(self.tag, diff))
-            if diff >= 2 * 60:
+            if diff >= 4 * 60:
                 result = False
                 break
             self.controller.discrete_mining_blocks(1)
@@ -316,7 +316,7 @@ class DposTest(object):
             if times >= 90:
                 result = False
                 break
-            time.sleep(1)
+            time.sleep(2)
 
         if current_height >= stop_height:
             result = True
@@ -331,7 +331,7 @@ class DposTest(object):
             time2 = datetime.now()
             diff = (time2 - time1).seconds
             Logger.debug("{} diff: {} seconds".format(self.tag, diff))
-            if diff >= 2 * 60:
+            if diff >= 6 * 60:
                 result = False
                 break
             self.controller.discrete_mining_blocks(1)
@@ -341,7 +341,7 @@ class DposTest(object):
             if times >= 90:
                 result = False
                 break
-            time.sleep(1)
+            time.sleep(6)
 
         if current_height >= stop_height:
             result = True

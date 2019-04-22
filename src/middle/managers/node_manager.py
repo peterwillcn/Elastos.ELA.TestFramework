@@ -162,7 +162,7 @@ class NodeManager(object):
             if not os.path.exists(dest_path):
                 os.makedirs(dest_path)
 
-            shutil.copy(os.path.join(src_path, category), os.path.join(dest_path, category))
+            shutil.copy(os.path.join(src_path, category), os.path.join(dest_path, category + str(i)))
             node = self._init_nodes(
                 category,
                 config_dict,
