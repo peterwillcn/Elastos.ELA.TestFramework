@@ -19,7 +19,7 @@ config = {
         "max_inactivate_rounds": 20
     },
     "side": False,
-    "time": 1
+    "times": 1
 }
 
 

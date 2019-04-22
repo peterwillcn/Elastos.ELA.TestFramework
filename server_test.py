@@ -13,6 +13,6 @@ if __name__ == '__main__':
     t = DposTest()
 
     for i in range(10):
-        Logger.warn("begin {} times test".format(i))
+        Logger.warn("begin {} times test".format(i + 1))
         t.run()
-        Logger.warn("end {} times test".format(i))
+        Logger.warn("end {} times test".format(i + 1))

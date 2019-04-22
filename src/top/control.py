@@ -91,7 +91,7 @@ class Controller(object):
         for i in range(self.middle.params.ela_params.crc_number + 1):
             if i == 0:
                 continue
-            public_key_nickname[self.middle.keystore_manager.node_key_stores[i].public_key.hex()] = "Crc-" + str(i)
+            public_key_nickname[self.middle.keystore_manager.node_key_stores[i].public_key.hex()] = str(i) + "-CRC"
         list_producers = self.middle.service_manager.rpc.list_producers(0, 100)
         for producer in list_producers["producers"]:
             public_key_nickname[producer["nodepublickey"]] = producer["nickname"]
