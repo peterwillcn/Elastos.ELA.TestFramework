@@ -2,7 +2,7 @@
 
 a test framework written in python for ela node testing.
 
-originally inherited from `git@git.elastos.org:zxcsvd/ServersTestFramework.git`
+originally inherited from `git@github.com:elastos/Elastos.ELA.TestFramework.git`
 
 run `python3 -m pip install -r requirements.txt` to install dependencies.
 
