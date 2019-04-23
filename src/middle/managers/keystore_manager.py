@@ -90,7 +90,6 @@ class KeyStoreManager(object):
         keytool.save_to_json(k, category + ":", os.path.join(self.keystore_saved_dir, "special.json"), first_time)
         keytool.save_to_dat(k.keystore_dat, os.path.join(special_dat_dir, category + ".dat"))
 
-
     def create_general_stores(self, category: str, category_list: list):
         category_dat_dir = os.path.join(self.keystore_saved_dir, category + "_keystores")
         if os.path.exists(category_dat_dir):

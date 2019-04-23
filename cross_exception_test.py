@@ -57,6 +57,7 @@ if __name__ == '__main__':
             controller.middle.node_manager.did_nodes[1].stop()
             ret = controller.middle.tx_manager.cross_chain_transaction(True)
             controller.test_result("stop one did , test cross recharge", ret)
+
             # ret = controller.middle.tx_manager.cross_chain_transaction(False)
             # controller.test_result("stop one arbiter, test cross withdraw", ret)
 

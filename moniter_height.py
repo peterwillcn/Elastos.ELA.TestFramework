@@ -37,7 +37,11 @@ def post_request(url, method, params):
 
 def get_node_height(port: int):
 	url = "http://127.0.0.1:" + str(port)
-	response = post_request(url=url, method="getblockcount", params={})
+	response = post_request(
+		url=url,
+		method="getblockcount",
+		params={}
+	)
 	return response
 
 

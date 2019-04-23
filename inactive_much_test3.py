@@ -11,11 +11,11 @@ from src.middle.tools.log import Logger
 
 config = {
     "ela": {
-        "number": 16,
+        "number": 20,
         "crc_number": 4,
-        "pre_connect_offset": 5,
+        "pre_connect_offset": 10,
         "crc_dpos_height": 200,
-        "public_dpos_height": 208,
+        "public_dpos_height": 220,
         "max_inactivate_rounds": 20
     },
     "side": False,
@@ -31,27 +31,21 @@ def test_content():
     h1 = controller.middle.params.ela_params.crc_dpos_height
     h2 = controller.middle.params.ela_params.public_dpos_height
     pre_offset = config["ela"]["pre_connect_offset"]
-    test_case = ">= 1/3 Inactive and Arbiter Rotation"
-    inactive_producers_nodes = controller.middle.node_manager.ela_nodes[crc_number * 2 + 1: crc_number * 3 + 1]
-    replace_cadidates_nodes = controller.middle.node_manager.ela_nodes[crc_number * 3 + 1: number]
-
-    inactive_public_keys = list()
-    replace_public_keys = list()
-
-    for node in inactive_producers_nodes:
-        inactive_public_keys.append(node.node_keystore.public_key.hex())
-
-    for node in replace_cadidates_nodes:
-        replace_public_keys.append(node.node_keystore.public_key.hex())
-
-    inactive_set = set(inactive_public_keys)
-    replace_set = set(replace_public_keys)
+    test_case = "More than 1/3 producers inactive both first and second rotation failed and finally degenerate to CRC"
+    inactive_producers_nodes = controller.middle.node_manager.ela_nodes[crc_number * 2 + 1: number]
 
     stop_height = 0
+    global result
+    height_times = dict()
+    height_times[controller.get_current_height()] = 1
 
     while True:
         current_height = controller.get_current_height()
-        Logger.info("[test] current height: {}".format(current_height))
+        times = controller.get_height_times(height_times, current_height)
+        Logger.info("current height: {}, times: {}".format(current_height, times))
+        if times >= 200:
+            result = False
+            break
         if current_height < h1 - pre_offset:
             controller.discrete_mining_blocks(h1 - pre_offset - current_height)
         controller.discrete_mining_blocks(1)
@@ -65,20 +59,18 @@ def test_content():
             print("stop_height 1: ", stop_height)
         if stop_height != 0 and current_height >= stop_height:
             arbiters_nicknames = controller.get_current_arbiter_nicknames()
-            next_arbiter_nicknames = controller.get_next_arbiter_nicknames()
             arbiters_nicknames.sort()
+            next_arbiter_nicknames = controller.get_next_arbiter_nicknames()
+            next_arbiter_nicknames.sort()
             Logger.info("current arbiters nicknames: {}".format(arbiters_nicknames))
             Logger.info("next    arbiters nicknames: {}".format(next_arbiter_nicknames))
 
         if stop_height != 0 and current_height > stop_height + 36:
-            arbiters_set = set(controller.middle.service_manager.rpc.get_arbiters_info()["arbiters"])
-            ret = not inactive_set.issubset(arbiters_set) and replace_set.issubset(arbiters_set)
-
-            controller.test_result(test_case, ret)
-            if ret:
-                break
+            result = True
+            break
         time.sleep(1)
 
+    controller.test_result(test_case, result)
     controller.terminate_all_process()
 
 

@@ -102,14 +102,11 @@ class Controller(object):
 
     def get_current_arbiter_nicknames(self):
         public_key_nickname = self.get_register_nickname_public_key()
-        # print(public_key_nickname)
         arbiters = self.middle.service_manager.rpc.get_arbiters_info()["arbiters"]
-        # print(arbiters)
         current_nicknames = list()
         for public_key in arbiters:
             current_nicknames.append(public_key_nickname[public_key])
 
-        print(current_nicknames)
         return current_nicknames
 
     def get_next_arbiter_nicknames(self):
@@ -121,7 +118,6 @@ class Controller(object):
         for public_key in arbiters:
             current_nicknames.append(public_key_nickname[public_key])
 
-        print(current_nicknames)
         return current_nicknames
 
     def show_current_height(self):

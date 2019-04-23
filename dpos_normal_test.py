@@ -4,7 +4,6 @@
 # author: liteng
 
 import time
-import signal
 
 from src.middle.tools.log import Logger
 from src.top.control import Controller
@@ -13,7 +12,7 @@ config = {
     "ela": {
         "enable": True,
         "password": "123",
-        "number": 12,
+        "number": 20,
         "crc_number": 4,
         "pre_connect_offset": 5,
         "crc_dpos_height": 200,
@@ -29,9 +28,13 @@ def test_content():
     controller.middle.ready_for_dpos()
     h1 = controller.middle.params.ela_params.crc_dpos_height
 
+    height_times = dict()
+    height_times[controller.get_current_height()] = 1
+
     while True:
         current_height = controller.get_current_height()
-        Logger.debug("[main] current height: {}".format(current_height))
+        times = controller.get_height_times(height_times, current_height)
+        Logger.debug("[main] current height: {}, times: {}".format(current_height, times))
         num = h1 - current_height
         if num > 0:
             controller.discrete_mining_blocks(num)
