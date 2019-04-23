@@ -13,8 +13,9 @@ config = {
     "ela": {
         "number": 12,
         "crc_number": 4,
-        "crc_dpos_height": 200,
-        "public_dpos_height": 235
+        "pre_connect_offset": 5,
+        "crc_dpos_height": 300,
+        "public_dpos_height": 335
     },
     "side": True,
     "arbiter": {
@@ -28,71 +29,86 @@ config = {
         "number": 5,
         "instant_block": True
     },
-    "stop": True,
     "times": 1
 }
 
 
 def test_content():
-    stop = config["stop"]
     controller = Controller(config)
     controller.middle.ready_for_dpos()
-    time.sleep(3)
-    controller.show_current_height()
-    # Logger.info("######### [main] begin to test cross recharge and withdraw before H1 ########")
-    # Logger.info("######### [main] begin to test cross recharge and withdraw before H1 ########")
-    # ret = controller.middle.tx_manager.cross_chain_transaction(True)
-    # controller.test_result("recharge to the side chain before H1", ret)
-    # time.sleep(2)
-    # ret = controller.middle.tx_manager.cross_chain_transaction(False)
-    # controller.test_result("withdraw from the side chain before H1", ret)
-    # time.sleep(1)
-    # controller.show_current_height()
-    #
-    # current_height = controller.get_current_height()
-    # Logger.debug("[main] current height: {}".format(current_height))
-    #
-    # Logger.info("######### [main] begin to test cross recharge and withdraw between H1 and H2 ########")
-    # Logger.info("######### [main] begin to test cross recharge and withdraw between H1 and H2 ########")
 
     h1 = controller.middle.params.ela_params.crc_dpos_height
-    current_height = controller.get_current_height()
-    if current_height < h1 - 5:
-        controller.discrete_mining_blocks(h1 - current_height - 5)
-
-    while current_height <= h1 + 4:
-        controller.discrete_mining_blocks(1)
-        time.sleep(0.5)
-        current_height = controller.get_current_height()
-        Logger.debug("{} current height: {}".format("[main]", current_height))
-    ret = controller.middle.tx_manager.cross_chain_transaction(True)
-    controller.test_result("recharge to the side chain between H1 and H2", ret)
-    time.sleep(2)
-    ret = controller.middle.tx_manager.cross_chain_transaction(False)
-    controller.test_result("withdraw from the side chain between H1 and H2", ret)
-    time.sleep(1)
-
     h2 = controller.middle.params.ela_params.public_dpos_height
+    pre_offset = config["ela"]["pre_connect_offset"]
 
-    Logger.info("######### [main] begin to test cross recharge and withdraw after H2 ########")
-    Logger.info("######### [main] begin to test cross recharge and withdraw after H2 ########")
-
-    while current_height <= h2 + 2:
-        controller.discrete_mining_blocks(1)
-        time.sleep(0.5)
-        current_height = controller.get_current_height()
-        Logger.debug("{} current height: {}".format("[main]", current_height))
+    global test_case
+    test_case = "cross recharge before H1"
+    current_height = controller.get_current_height()
+    Logger.debug("current height: {}".format(current_height))
+    Logger.info("### Testing {} ###".format(test_case))
+    time.sleep(2)
     ret = controller.middle.tx_manager.cross_chain_transaction(True)
-    controller.test_result("recharge to the side chain after H2", ret)
+    controller.test_result(test_case, ret)
+
+    test_case = "cross withdraw before H1"
+    current_height = controller.get_current_height()
+    Logger.debug("current height: {}".format(current_height))
+    Logger.info("### Testing {} ###".format(test_case))
     time.sleep(2)
     ret = controller.middle.tx_manager.cross_chain_transaction(False)
-    controller.test_result("withdraw from the side chain after H2", ret)
-    time.sleep(1)
+    controller.test_result(test_case, ret)
 
-    if stop:
-        controller.terminate_all_process()
-    else:
-        controller.loop_for_ever()
+    current_height = controller.get_current_height()
+    Logger.debug("current height: {}".format(current_height))
+
+    if current_height < h1 - pre_offset - 1:
+        controller.discrete_mining_blocks(h1 - pre_offset - 1 - current_height)
+
+    height_times = dict()
+    height_times[current_height] = 1
+
+    global result
+
+    while True:
+        current_height = controller.get_current_height()
+        times = controller.get_height_times(height_times, current_height)
+        Logger.debug("current height: {}, times: {}".format(current_height, times))
+
+        if times >= 100:
+            result = False
+            break
+
+        if current_height > h1 + 4:
+            test_case = "cross chain recharge between H1 and H2"
+            Logger.info("### Testing {} ###".format(test_case))
+            result = controller.middle.tx_manager.cross_chain_transaction(True)
+            controller.test_result(test_case, result)
+
+            controller.discrete_mining_blocks(1)
+            test_case = "cross chain withdraw between H1 and H2"
+            Logger.info("### Testing {} ###".format(test_case))
+            result = controller.middle.tx_manager.cross_chain_transaction(False)
+            controller.test_result(test_case, result)
+
+        if current_height > h2 + 12:
+            test_case = "cross chain recharge after H2"
+            Logger.info("### Testing {} ###".format(test_case))
+            result = controller.middle.tx_manager.cross_chain_transaction(True)
+            controller.test_result(test_case, result)
+
+            controller.discrete_mining_blocks(1)
+            test_case = "cross chain withdraw between after H2"
+            Logger.info("### Testing {} ###".format(test_case))
+            result = controller.middle.tx_manager.cross_chain_transaction(False)
+            controller.test_result(test_case, result)
+
+            if result:
+                break
+
+        controller.discrete_mining_blocks(1)
+        time.sleep(1)
+
+    controller.terminate_all_process()
 
 
 if __name__ == '__main__':

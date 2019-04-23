@@ -14,8 +14,8 @@ config = {
         "number": 12,
         "crc_number": 4,
         "pre_connect_offset": 5,
-        "crc_dpos_height": 180,
-        "public_dpos_height": 188
+        "crc_dpos_height": 300,
+        "public_dpos_height": 308
     },
     "side": True,
     "arbiter": {
@@ -40,13 +40,22 @@ if __name__ == '__main__':
 
     h1 = controller.middle.params.ela_params.crc_dpos_height
     h2 = controller.middle.params.ela_params.public_dpos_height
+    pre_offset = config["ela"]["pre_connect_offset"]
+
+    current_height = controller.get_current_height()
+    if current_height < h1 - pre_offset - 1:
+        controller.discrete_mining_blocks(h1 - pre_offset - 1 - current_height)
+
+    height_times = dict()
+    height_times[current_height] = 1
 
     while True:
         current_height = controller.get_current_height()
-        Logger.debug("current height: {}".format(current_height))
-
-        if current_height < h1 - 6:
-            controller.discrete_mining_blocks(h1 - current_height - 6)
+        times = controller.get_height_times(height_times, current_height)
+        Logger.debug("current height: {}, times: {}".format(current_height, times))
+        if times > 100:
+            controller.test_result("cross transaction stop a arbiter or a did", False)
+            break
 
         if current_height > h2 + 12:
 

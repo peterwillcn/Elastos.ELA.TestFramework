@@ -107,10 +107,10 @@ class NodeManager(object):
                 self.did_nodes[i].stop()
                 time.sleep(0.5)
 
-    def _init_nodes(self, category: str, config, index: int, cwd_dir: str):
+    def _init_nodes(self, category: str, config, index: int, cwd_dir: str, ela_type="normal"):
 
         if category == "ela":
-            node = ElaNode(index, config, self.params.ela_params, self.keystore_manager, cwd_dir)
+            node = ElaNode(index, config, self.params.ela_params, self.keystore_manager, cwd_dir, ela_type)
         elif category == "arbiter":
             node = ArbiterNode(index, config, self.params.arbiter_params, self.keystore_manager, cwd_dir)
         elif category == "did":
@@ -137,6 +137,8 @@ class NodeManager(object):
             Logger.debug("{} config.json will generate from the default".format(self.tag))
             config_dict = self.env_manager.config_dict[category]
 
+        global ela_type
+
         for i in range(num+1):
             if category == "ela" and i == 0:
                 dest_path = os.path.join(
@@ -144,15 +146,28 @@ class NodeManager(object):
                     self.env_manager.current_date_time,
                     "miner"
                 )
+                ela_type = ElaNode.TYPE_MINER
             elif category == "ela" and i <= self.params.ela_params.crc_number:
                 dest_path = os.path.join(
                     self.env_manager.test_path, category + "_nodes",
                     self.env_manager.current_date_time,
                     "crc" + str(i)
                 )
+
+                ela_type = ElaNode.TYPE_CRC
+
+            elif category == "ela" and i <= self.params.ela_params.crc_number * 3:
+                dest_path = os.path.join(
+                    self.env_manager.test_path, category + "_nodes",
+                    self.env_manager.current_date_time,
+                    "producer" + str(i)
+                )
+                ela_type = ElaNode.TYPE_PRODUCER
             else:
                 if category is not "ela" and i == num:
                     break
+                else:
+                    ela_type = ElaNode.TYPE_CANDIDATE
                 dest_path = os.path.join(
                     self.env_manager.test_path, category + "_nodes",
                     self.env_manager.current_date_time,
@@ -167,7 +182,8 @@ class NodeManager(object):
                 category,
                 config_dict,
                 i,
-                dest_path
+                dest_path,
+                ela_type
             )
             node.reset_config()
             util.write_config_file(node.config, os.path.join(dest_path, "config.json"))

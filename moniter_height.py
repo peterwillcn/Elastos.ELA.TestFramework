@@ -10,6 +10,7 @@ import sys
 
 
 span_time = 2
+crc_number = 4
 prompt = '> '
 
 
@@ -65,6 +66,14 @@ if __name__ == '__main__':
 			port = (100 + i) * 100 + 14
 			height = get_node_height(port)
 			tx_size = get_txpool_size(port)
-			print("ela {}\theight: {}\t txpool size: {}".format(i, height, tx_size))
+			if i == 0:
+				print("miner     {}\theight: {}\t txpool size: {}".format(i, height, tx_size))
+			elif i <= crc_number:
+				print("crc       {}\theight: {}\t txpool size: {}".format(i, height, tx_size))
+			elif i <= crc_number * 3:
+				print("producer  {}\theight: {}\t txpool size: {}".format(i, height, tx_size))
+			else:
+				print("candidate {}\theight: {}\t txpool size: {}".format(i, height, tx_size))
+
 		time.sleep(span_time)
 		print('*' * 60)

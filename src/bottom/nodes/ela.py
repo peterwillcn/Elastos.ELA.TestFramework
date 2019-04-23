@@ -18,12 +18,20 @@ from src.bottom.parameters.ela_params import ElaParams
 
 class ElaNode(Node):
 
-    def __init__(self, index: int, config, params: ElaParams, keystore_manager: KeyStoreManager, cwd_dir: str):
+    TYPE_MINER = "miner"
+    TYPE_CRC = "crc"
+    TYPE_PRODUCER = "producer"
+    TYPE_CANDIDATE = "candidate"
+    TYPE_NORMAL = "normal"
+
+    def __init__(self, index: int, config, params: ElaParams, keystore_manager: KeyStoreManager,
+                 cwd_dir: str, ela_type: str):
         Node.__init__(self, config)
         self.tag = util.tag_from_path(__file__, self.__class__.__name__)
         self.index = index
         self.params = params
         self.keystore_manager = keystore_manager
+        self.type = ela_type
         self.owner_keystore = keystore_manager.owner_key_stores[index]
         self.node_keystore = keystore_manager.node_key_stores[index]
         self.cwd_dir = cwd_dir

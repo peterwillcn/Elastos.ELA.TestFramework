@@ -13,9 +13,9 @@ config = {
     "ela": {
         "number": 20,
         "crc_number": 4,
-        "pre_connect_offset": 10,
-        "crc_dpos_height": 200,
-        "public_dpos_height": 220,
+        "pre_connect_offset": 5,
+        "crc_dpos_height": 300,
+        "public_dpos_height": 308,
         "max_inactivate_rounds": 20
     },
     "side": False,
@@ -26,18 +26,25 @@ config = {
 def test_content():
     controller = Controller(config)
     controller.middle.ready_for_dpos()
+
     number = controller.middle.params.ela_params.number
     crc_number = controller.middle.params.ela_params.crc_number
     h1 = controller.middle.params.ela_params.crc_dpos_height
     h2 = controller.middle.params.ela_params.public_dpos_height
     pre_offset = config["ela"]["pre_connect_offset"]
+
     test_case = "More than 1/3 producers inactive both first and second rotation failed and finally degenerate to CRC"
     inactive_producers_nodes = controller.middle.node_manager.ela_nodes[crc_number * 2 + 1: number]
 
     stop_height = 0
     global result
+
+    current_height = controller.get_current_height()
+    if current_height < h1 - pre_offset - 1:
+        controller.discrete_mining_blocks(h1 - pre_offset - 1 - current_height)
+
     height_times = dict()
-    height_times[controller.get_current_height()] = 1
+    height_times[current_height] = 1
 
     while True:
         current_height = controller.get_current_height()
@@ -46,9 +53,7 @@ def test_content():
         if times >= 200:
             result = False
             break
-        if current_height < h1 - pre_offset:
-            controller.discrete_mining_blocks(h1 - pre_offset - current_height)
-        controller.discrete_mining_blocks(1)
+
         if stop_height == 0 and current_height >= h2 + 12:
             controller.test_result("Ater H2，the first round of consensus", True)
 
@@ -68,6 +73,8 @@ def test_content():
         if stop_height != 0 and current_height > stop_height + 36:
             result = True
             break
+
+        controller.discrete_mining_blocks(1)
         time.sleep(1)
 
     controller.test_result(test_case, result)
