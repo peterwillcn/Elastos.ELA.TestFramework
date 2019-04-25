@@ -47,9 +47,9 @@ class ElaNode(Node):
 
         _config = self.config[constant.CONFIG_TITLE]
         if self.index == 0:
-            _config[constant.CONFIG_ARBITER_ENABLE] = False
+            _config[constant.CONFIG_ARBITER_CONFIGURATION][constant.CONFIG_ARBITER_ENABLE] = False
         else:
-            _config[constant.CONFIG_ARBITER_ENABLE] = self.params.arbiter_enable
+            _config[constant.CONFIG_ARBITER_CONFIGURATION][constant.CONFIG_ARBITER_ENABLE] = self.params.arbiter_enable
 
         _config[constant.CONFIG_MAGIC] = self.params.magic
         _config[constant.CONFIG_PRINT_LEVEL] = self.params.print_level
@@ -64,7 +64,7 @@ class ElaNode(Node):
         # rpc accept set
 
         _config[constant.CONFIG_ARBITER_CONFIGURATION][constant.CONFIG_PUBLIC_KEY] = self.node_keystore.public_key.hex()
-        _config[constant.CONFIG_ARBITER_CONFIGURATION][constant.CONFIG_PORT_NODE] = self.reset_port(
+        _config[constant.CONFIG_ARBITER_CONFIGURATION][constant.CONFIG_PORT_DPOS] = self.reset_port(
             self.index,
             "ela",
             "arbiter_node_port"
@@ -131,11 +131,7 @@ class ElaNode(Node):
     def gen_crc_config(self):
         crc_arbiters = list()
         for index in range(1, self.params.crc_number + 1):
-            crc_element = dict()
-            crc_element[constant.CONFIG_PUBLIC_KEY] = self.keystore_manager.node_key_stores[index].public_key.hex()
-            crc_element[constant.CONFIG_NET_ADDRESS] = "127.0.0.1:" \
-                                                       + str(Node.reset_port(self, index, "ela", "arbiter_node_port"))
-            crc_arbiters.append(crc_element)
+            crc_arbiters.append(self.keystore_manager.node_key_stores[index].public_key.hex())
         return crc_arbiters
 
     def gen_original_arbiter(self):

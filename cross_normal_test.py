@@ -102,7 +102,7 @@ def test_content():
             controller.test_result(test_case, result)
 
             controller.discrete_mining_blocks(1)
-            test_case = "cross chain withdraw between after H2"
+            test_case = "cross chain withdraw after H2"
             Logger.info("### Testing {} ###".format(test_case))
             result = controller.middle.tx_manager.cross_chain_transaction("token", False)
             controller.test_result(test_case, result)
