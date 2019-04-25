@@ -14,3 +14,4 @@ class TokenParams(object):
         self.spv_magic = constant.CONFIG_MAGIC_ELA
         self.enable = config["enable"]
         self.number = config["number"]
+        self.instant_block = config["instant_block"]

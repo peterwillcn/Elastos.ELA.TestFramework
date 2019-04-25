@@ -15,8 +15,7 @@ config = {
         "crc_number": 4,
         "pre_connect_offset": 5,
         "crc_dpos_height": 300,
-        "public_dpos_height": 308,
-        "max_inactivate_rounds": 20
+        "public_dpos_height": 308
     },
     "side": False,
     "times": 1
@@ -50,7 +49,7 @@ def test_content():
         current_height = controller.get_current_height()
         times = controller.get_height_times(height_times, current_height)
         Logger.info("current height: {}, times: {}".format(current_height, times))
-        if times >= 200:
+        if times >= 1000:
             result = False
             break
 

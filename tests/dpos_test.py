@@ -404,10 +404,10 @@ class DposTest(object):
     def cross_normal_test(self):
         test_case = "6、[normal]"
         self.controller.show_current_height()
-        ret = self.controller.middle.tx_manager.cross_chain_transaction(True)
+        ret = self.controller.middle.tx_manager.cross_chain_transaction("did", True)
         self.controller.test_result("{} recharge to the side chain after H2".format(test_case), ret)
         time.sleep(2)
-        ret = self.controller.middle.tx_manager.cross_chain_transaction(False)
+        ret = self.controller.middle.tx_manager.cross_chain_transaction("did", False)
         self.controller.test_result("{} withdraw from the side chain after H2".format(test_case), ret)
         time.sleep(1)
 
@@ -415,7 +415,7 @@ class DposTest(object):
         test_case = "7、[exception]"
         self.controller.middle.node_manager.arbiter_nodes[1].stop()
         self.controller.middle.node_manager.did_nodes[1].stop()
-        ret = self.controller.middle.tx_manager.cross_chain_transaction(True)
+        ret = self.controller.middle.tx_manager.cross_chain_transaction("did", True)
         self.controller.test_result("{} stop one arbiter, test cross recharge".format(test_case), ret)
 
         self.controller.middle.node_manager.did_nodes[1].stop()

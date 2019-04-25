@@ -60,11 +60,11 @@ if __name__ == '__main__':
         if current_height > h2 + 12:
 
             controller.middle.node_manager.arbiter_nodes[1].stop()
-            ret = controller.middle.tx_manager.cross_chain_transaction(True)
+            ret = controller.middle.tx_manager.cross_chain_transaction("did", True)
             controller.test_result("stop one arbiter, test cross recharge", ret)
 
             controller.middle.node_manager.did_nodes[1].stop()
-            ret = controller.middle.tx_manager.cross_chain_transaction(True)
+            ret = controller.middle.tx_manager.cross_chain_transaction("did", True)
             controller.test_result("stop one did , test cross recharge", ret)
 
             # ret = controller.middle.tx_manager.cross_chain_transaction(False)

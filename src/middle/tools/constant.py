@@ -90,7 +90,12 @@ CONFIG_CRC_ONLY_DPOS_HEIGHT = "CRCOnlyDPOSHeight"
 
 CONFIG_INACTIVE_PENALTY = "InactivePenalty"
 CONFIG_EMERGENCY_INACTIVE_PENALTY = "EmergencyInactivePenalty"
+
+SIDE_GENESIS_ADDRESS = "GenesisAddress"
+SIDE_RECHARGE_ADDRESS = "SideRechargeAddress"
+SIDE_WITHDRAW_ADDRESS = "SideWithdrawAddress"
 PROJECT_NAME = "Elastos.ELA.TestFramework"
+
 
 TO_SELA = 100000000
 

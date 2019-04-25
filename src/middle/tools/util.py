@@ -12,6 +12,30 @@ from src.middle.tools.log import Logger
 from src.middle.tools import constant
 
 
+node_type_dict = {
+    "ela": 10,
+    "arbiter": 20,
+    "did": 30,
+    "token": 40,
+    "neo": 50
+}
+
+
+port_type_dict = {
+    "info_port": 1,
+    "rest_port": 2,
+    "ws_port": 3,
+    "json_port": 4,
+    "node_port": 5,
+    "arbiter_node_port": 6
+}
+
+
+def reset_port(index, node_type: str, port_type: str):
+    port = (100 + index) * 100 + node_type_dict[node_type] + port_type_dict[port_type]
+    return port
+
+
 def get_go_path():
     go_path = ""
     path = os.environ.get("GOPATH")
@@ -56,6 +80,7 @@ def tag_from_path(path: str, class_name: str):
         tag += "."
     tag += "】"
     return tag
+
 
 def read_config_file(config_file_path):
     with open(config_file_path, "r", encoding="utf8") as f:

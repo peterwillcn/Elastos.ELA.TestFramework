@@ -70,11 +70,11 @@ class TransactionManager(object):
             Logger.debug("{} producers {} wallet balance: {}".format(self.tag, i, value))
         return ret
 
-    def cross_chain_transaction(self, recharge: bool):
+    def cross_chain_transaction(self, side_node_type: str, recharge: bool):
         if recharge:
             ret = self.tx.cross_chain_transaction(
                 input_keystore=self.node_manager.keystore_manager.special_key_stores[4],
-                lock_address=self.params.arbiter_params.recharge_address,
+                lock_address=self.params.arbiter_params.side_info[side_node_type][constant.SIDE_RECHARGE_ADDRESS],
                 output_address=self.node_manager.keystore_manager.special_key_stores[5].address,
                 amount=200 * constant.TO_SELA,
                 port=self.node_manager.ela_nodes[0].rpc_port

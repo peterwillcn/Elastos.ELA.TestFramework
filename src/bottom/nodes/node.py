@@ -46,12 +46,30 @@ class Node(object):
 
         if node_type is not "arbiter":
             _config[constant.CONFIG_SEED_LIST] = []
-            _config[constant.CONFIG_PP_LIST] = []
+            if node_type == "ela":
+                _config[constant.CONFIG_PP_LIST] = []
             for i in range(num):
                 if i == 10:
                     break
-                _config[constant.CONFIG_SEED_LIST].append("127.0.0.1:" + str(self.reset_port(i, node_type, "node_port")))
-                _config[constant.CONFIG_PP_LIST].append("127.0.0.1:" + str(self.reset_port(i, node_type, "node_port")))
+                _config[constant.CONFIG_SEED_LIST].append(
+                    "127.0.0.1:" + str(
+                        self.reset_port(
+                            i,
+                            node_type,
+                            "node_port"
+                        )
+                    )
+                )
+                if node_type == "ela":
+                    _config[constant.CONFIG_PP_LIST].append(
+                        "127.0.0.1:" + str(
+                            self.reset_port(
+                                i,
+                                node_type,
+                                "node_port"
+                            )
+                        )
+                    )
             _config[constant.CONFIG_PORT_INFO] = self.reset_port(index, node_type, "info_port")
             _config[constant.CONFIG_PORT_REST] = self.reset_port(index, node_type, "rest_port")
             _config[constant.CONFIG_PORT_WS] = self.reset_port(index, node_type, "ws_port")

@@ -23,5 +23,5 @@ class ArbiterParams(object):
         self.side_chain_genesis_hash = ""
         self.recharge_address = ""
         self.withdraw_address = ""
-        self.side_info = ""
+        self.side_info = dict()
         self.password = ela_params.password

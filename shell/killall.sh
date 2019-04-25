@@ -27,7 +27,26 @@ do
     kill -9 $id
 done
 
-echo "kill process java"
-killall java
+# kill token process
+ids=`ps -ef | grep token\[0-9\] | awk '{print $2}'`
+
+for id in $ids
+do
+    echo "kill process token id $id"
+    kill -9 $id
+done
+
+# kill neo process
+ids=`ps -ef | grep neo\[0-9\] | awk '{print $2}'`
+
+for id in $ids
+do
+    echo "kill process neo id $id"
+    kill -9 $id
+done
+
+echo "kill process jar"
+ps -ef | grep old.jar | awk '{print $2}' | xargs kill -9
+ps -ef | grep ela_tool.jar | awk '{print $2}' | xargs kill -9
 
 echo "kill all processes!"

@@ -8,6 +8,7 @@ import time
 import shutil
 
 from src.middle.tools import util
+from src.middle.tools import constant
 from src.middle.tools.log import Logger
 
 from src.middle.managers.env_manager import EnvManager
@@ -74,13 +75,21 @@ class NodeManager(object):
             for i in range(len(self.did_nodes)):
                 self.did_nodes[i].start()
                 time.sleep(0.5)
-            ret = self.service_manager.wait_rpc_ready(self.did_nodes[0].rpc_port)
-            if ret:
-                self.create_side_info()
-                if self.params.arbiter_params.enable:
-                    self._deploy_nodes("arbiter", self.params.arbiter_params.number)
-                    time.sleep(2)
-                    self.start_arbiter_nodes()
+            self.service_manager.wait_rpc_ready(self.did_nodes[0].rpc_port)
+            self.create_side_info("did")
+
+        if self.params.token_params.enable:
+            for i in range(len(self.token_nodes)):
+                self.token_nodes[i].start()
+                time.sleep(0.5)
+            self.service_manager.wait_rpc_ready(self.token_nodes[0].rpc_port)
+            self.create_side_info("token")
+
+        if self.params.arbiter_params.enable:
+            if self.params.arbiter_params.enable:
+                self._deploy_nodes("arbiter", self.params.arbiter_params.number)
+                time.sleep(2)
+                self.start_arbiter_nodes()
 
     def start_arbiter_nodes(self):
         arbiter_node_number = len(self.arbiter_nodes)
@@ -107,6 +116,16 @@ class NodeManager(object):
                 self.did_nodes[i].stop()
                 time.sleep(0.5)
 
+        if self.params.token_params.enable:
+            for i in range(len(self.token_nodes)):
+                self.token_nodes[i].stop()
+                time.sleep(0.5)
+
+        if self.params.neo_params.enable:
+            for i in range(len(self.token_nodes)):
+                self.neo_nodes[i].stop()
+                time.sleep(0.5)
+
     def _init_nodes(self, category: str, config, index: int, cwd_dir: str, ela_type="normal"):
 
         if category == "ela":
@@ -116,7 +135,7 @@ class NodeManager(object):
         elif category == "did":
             node = DidNode(index, config, self.params.did_params, self.keystore_manager, cwd_dir)
         elif category == "token":
-            node = TokenNode(index, config, self.params.token_params, cwd_dir)
+            node = TokenNode(index, config, self.params.token_params, self.keystore_manager, cwd_dir)
         elif category == "neo":
             node = NeoNode(index, config, self.params.neo_params, cwd_dir)
         else:
@@ -211,10 +230,10 @@ class NodeManager(object):
                     os.path.join(dest_path, "miner.dat")
                 )
 
-                shutil.copy(
-                    os.path.join(self.params.root_path, "datas/keystores/special/main_tap.dat"),
-                    os.path.join(dest_path, "tap.dat")
-                )
+                # shutil.copy(
+                #     os.path.join(self.params.root_path, "datas/keystores/special/main_tap.dat"),
+                #     os.path.join(dest_path, "tap.dat")
+                # )
 
             if category == "arbiter":
                 if i <= 4:
@@ -234,19 +253,29 @@ class NodeManager(object):
 
         return True
 
-    def create_side_info(self):
-        self.params.arbiter_params.side_info = "did"
-        side_chain_genesis_hash = self.service_manager.rpc.get_block_hash_by_height(0, self.did_nodes[0].rpc_port)
-        Logger.debug("{} did genesis hash: {}".format(self.tag, self.params.arbiter_params.side_chain_genesis_hash))
-        self.params.arbiter_params.recharge_address = self.service_manager.jar_service.gen_genesis_address(
+    def create_side_info(self, node_type: str):
+        self.params.arbiter_params.side_info[node_type] = dict()
+        side_port = util.reset_port(0, node_type, "json_port")
+        side_chain_genesis_hash = self.service_manager.rpc.get_block_hash_by_height(0, side_port)
+        Logger.debug("{} {} genesis hash: {}".format(
+            self.tag,
+            node_type,
+            self.params.arbiter_params.side_chain_genesis_hash
+            )
+        )
+
+        recharge_address = self.service_manager.jar_service.gen_genesis_address(
             block_hash=side_chain_genesis_hash
         )
+        self.params.arbiter_params.recharge_address = recharge_address
         self.params.arbiter_params.withdraw_address = "0000000000000000000000000000000000"
         self.params.arbiter_params.side_chain_genesis_hash = side_chain_genesis_hash
 
         Logger.info("{} recharge address: {}".format(self.tag, self.params.arbiter_params.recharge_address))
         Logger.info("{} withdraw address: {}".format(self.tag, self.params.arbiter_params.withdraw_address))
 
+        self.params.arbiter_params.side_info[node_type][constant.SIDE_GENESIS_ADDRESS] = side_chain_genesis_hash
+        self.params.arbiter_params.side_info[node_type][constant.SIDE_RECHARGE_ADDRESS] = recharge_address
 
 
 

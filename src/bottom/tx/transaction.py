@@ -128,7 +128,7 @@ class Transaction(object):
             return result
 
         if port == self.assist.rpc.DEFAULT_PORT:
-            for i in range(15):
+            for i in range(30):
                 self.assist.rpc.discrete_mining(1)
                 Logger.info("{} main chain height: {}, side chain height: {}".format(
                     self.tag,

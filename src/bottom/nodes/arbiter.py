@@ -104,25 +104,29 @@ class ArbiterNode(Node):
 
     def gen_side_node_list(self):
         side_node_list = list()
-        ela_dict = dict()
-        ela_dict[constant.CONFIG_ARBITER_RPC] = dict()
 
-        rpc_config = ela_dict[constant.CONFIG_ARBITER_RPC]
-        rpc_config[constant.CONFIG_ARBITER_IP_ADDRESS] = "127.0.0.1"
-        rpc_config[constant.CONFIG_PORT_JSON] = self.reset_port(
-            index=self.index % 5,
-            node_type=self.params.side_info,
-            port_type="json_port"
-        )
-        rpc_config[constant.CONFIG_RPC_USER] = ""
-        rpc_config[constant.CONFIG_RPC_PASS] = ""
+        for side_node in self.params.side_info.keys():
+            side_dict = dict()
+            side_dict[constant.CONFIG_ARBITER_RPC] = dict()
 
-        ela_dict[constant.CONFIG_EXCHANGE_RATE] = 1.0
-        ela_dict[constant.CONFIG_GENESIS_BLOCK] = self.params.side_chain_genesis_hash
-        ela_dict[constant.CONFIG_MINER_ADDRESS] = self.keystore_manager.sub_key_stores[self.index].address
-        ela_dict[constant.CONFIG_PAY_TO_ADDR] = self.keystore_manager.special_key_stores[3].address
-        ela_dict[constant.CONFIG_POW_CHAIN] = self.params.pow_chain
-        side_node_list.append(ela_dict)
+            rpc_config = side_dict[constant.CONFIG_ARBITER_RPC]
+            rpc_config[constant.CONFIG_ARBITER_IP_ADDRESS] = "127.0.0.1"
+            rpc_config[constant.CONFIG_PORT_JSON] = self.reset_port(
+                index=self.index % 5,
+                node_type=side_node,
+                port_type="json_port"
+            )
+            rpc_config[constant.CONFIG_RPC_USER] = ""
+            rpc_config[constant.CONFIG_RPC_PASS] = ""
+
+            side_dict[constant.CONFIG_EXCHANGE_RATE] = 1.0
+            side_dict[constant.CONFIG_GENESIS_BLOCK] = self.params.side_info[side_node][constant.SIDE_GENESIS_ADDRESS]
+            side_dict[constant.CONFIG_MINER_ADDRESS] = self.keystore_manager.sub_key_stores[self.index].address
+            side_dict[constant.CONFIG_PAY_TO_ADDR] = self.keystore_manager.special_key_stores[3].address
+            side_dict[constant.CONFIG_POW_CHAIN] = self.params.pow_chain
+
+            side_node_list.append(side_dict)
+
         return side_node_list
 
     def gen_arbiters_list(self, start: int, end: int):

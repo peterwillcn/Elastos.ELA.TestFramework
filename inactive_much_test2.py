@@ -15,8 +15,7 @@ config = {
         "crc_number": 4,
         "pre_connect_offset": 5,
         "crc_dpos_height": 300,
-        "public_dpos_height": 308,
-        "max_inactivate_rounds": 20
+        "public_dpos_height": 308
     },
     "side": False,
     "times": 1
@@ -62,7 +61,7 @@ def test_content():
         current_height = controller.get_current_height()
         times = controller.get_height_times(height_times, current_height)
         Logger.info("current height: {}, times: {}".format(current_height, times))
-        if times >= 200:
+        if times >= 1000:
             result = False
             break
 
@@ -73,6 +72,7 @@ def test_content():
             controller.test_result("Ater H2，stop 1/3 producers and candidates", True)
             Logger.debug("stop_height: {}".format(stop_height))
 
+        if stop_height != 0 and current_height >= stop_height:
             arbiters_nicknames = controller.get_current_arbiter_nicknames()
             arbiters_nicknames.sort()
             next_arbiter_nicknames = controller.get_next_arbiter_nicknames()
@@ -80,7 +80,7 @@ def test_content():
             Logger.info("current arbiters nicknames: {}".format(arbiters_nicknames))
             Logger.info("next    arbiters nicknames: {}".format(next_arbiter_nicknames))
 
-        if stop_height != 0 and current_height > stop_height + 72:
+        if stop_height != 0 and current_height > stop_height + 60:
             arbiters_set = set(controller.middle.service_manager.rpc.get_arbiters_info()["arbiters"])
             result = not inactive_set.issubset(arbiters_set) and replace_set.issubset(arbiters_set)
             break
