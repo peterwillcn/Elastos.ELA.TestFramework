@@ -25,6 +25,7 @@ class KeyStoreManager(object):
         self.special_key_stores = list()
         self.arbiter_stores = list()
         self.sub_key_stores = list()
+        self.crc_public_keys = list()
         self.init_keystore_files()
 
     def init_keystore_files(self):
@@ -48,6 +49,7 @@ class KeyStoreManager(object):
         # generate general keystore such as owner and node
         self.create_general_stores("owner", self.owner_key_stores)
         self.create_general_stores("node", self.node_key_stores)
+        self.gen_crc_public_keys()
         # generate original arbiters key stores
         if self.params.arbiter_params.enable:
             self.create_arbiter_stores()
@@ -184,7 +186,9 @@ class KeyStoreManager(object):
 
         Logger.debug("{} generate arbiter keystores on success! ".format(self.tag))
 
-
+    def gen_crc_public_keys(self):
+        for i in range(1, self.params.ela_params.crc_number + 1):
+            self.crc_public_keys.append(self.node_key_stores[i].public_key.hex())
 
 
 

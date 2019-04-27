@@ -124,5 +124,6 @@ class Controller(object):
         current_height = self.get_current_height()
         Logger.debug("{} current height: {}".format(self.tag, current_height))
 
-
+    def get_current_arbiter_public_keys(self):
+        return self.middle.service_manager.rpc.get_arbiters_info()["arbiters"]
 

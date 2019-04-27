@@ -49,6 +49,8 @@ def test_content():
     height_times[current_height] = 1
 
     global result
+    global restart
+    restart = False
 
     while True:
         current_height = controller.get_current_height()
@@ -74,10 +76,21 @@ def test_content():
             Logger.info("current arbiters nicknames: {}".format(arbiters_nicknames))
             Logger.info("next    arbiters nicknames: {}".format(next_arbiter_nicknames))
 
-        if stop_height != 0 and current_height > stop_height + 60:
+        if not restart and stop_height != 0 and current_height > stop_height + 24:
             crc_public_keys = controller.middle.keystore_manager.crc_public_keys
             current_arbiter_public_keys = controller.get_current_arbiter_public_keys()
             result = set(crc_public_keys) == set(current_arbiter_public_keys)
+
+            Logger.debug("set crc public keys is equal set current arbiter public keys ?: {}".format(result))
+            time.sleep(2)
+
+            for node in inactive_producers_nodes:
+                node.start()
+
+            restart = True
+
+        if stop_height != 0 and current_height > stop_height + 100:
+            result = True
             break
 
         controller.discrete_mining_blocks(1)

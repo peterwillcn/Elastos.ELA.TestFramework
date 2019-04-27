@@ -12,7 +12,7 @@ from src.middle.tools.log import Logger
 
 config = {
     "ela": {
-        "number": 12,
+        "number": 16,
         "crc_number": 4,
         "pre_connect_offset": 5,
         "crc_dpos_height": 300,
@@ -26,6 +26,7 @@ config = {
 
 def test_content():
     controller = Controller(config)
+    number = controller.middle.params.ela_params.number
     crc_number = controller.middle.params.ela_params.crc_number
     h1 = controller.middle.params.ela_params.crc_dpos_height
     h2 = controller.middle.params.ela_params.public_dpos_height
@@ -35,12 +36,17 @@ def test_content():
     will_register_count = random.randrange(2, 7)
     start = crc_number + 1
     end = crc_number + will_register_count + 1
+    start2 = end
+    end2 = number
     Logger.debug("The number will be registered a producer are: {}".format(will_register_count))
     controller.middle.tx_manager.register_producers(start, end)
     controller.middle.tx_manager.vote_producers(start, end)
 
     global result
+    global re_register
+    re_register = False
     crc_public_keys = controller.middle.keystore_manager.crc_public_keys
+    crc_public_keys.sort()
 
     current_height = controller.get_current_height()
     if current_height < h1 - pre_offset - 1:
@@ -65,10 +71,22 @@ def test_content():
             Logger.debug("current arbiters: {}".format(current_nick_names))
             Logger.debug("next    arbiters: {}".format(next_nick_names))
 
-        if current_height >= h2 + 36:
+        if not re_register and current_height >= h2 + 12:
+
             current_arbiters = controller.get_current_arbiter_public_keys()
+            current_arbiters.sort()
+            Logger.debug("crc_public_keys:  {}".format(crc_public_keys))
+            Logger.debug("current arbiters: {}".format(current_arbiters))
             result = set(current_arbiters) == set(crc_public_keys)
+            Logger.debug("crc_public_keys is equal current arbiters: {}".format(result))
+
+            controller.middle.tx_manager.register_producers(start2, end2, True)
+            controller.middle.tx_manager.vote_producers(start2, end2)
+            re_register = True
+
+        if current_height >= h2 + 100:
             break
+
         controller.discrete_mining_blocks(1)
 
         time.sleep(1)

@@ -121,8 +121,8 @@ class ElaNode(Node):
             return
         try:
             self.process.terminate()
-            self.dev_null.close()
-            self.err_output.close()
+            # self.dev_null.close()
+            # self.err_output.close()
         except subprocess.SubprocessError as e:
             Logger.error("{} Unable to stop ela{}, error: {}".format(self.tag, self.index, e))
         self.running = False

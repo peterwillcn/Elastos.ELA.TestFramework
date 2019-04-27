@@ -54,9 +54,9 @@ class Distribution(object):
             Logger.info("{} recharge each arbiter keystore {} ELAs on success!")
             self.tx_manager.recharge_sub_keystore(3 * constant.TO_SELA)
             Logger.info("{} recharge each sub keystore {} ELAs on success!")
+        self.tx_manager.recharge_producer_keystore(10000 * constant.TO_SELA)
 
     def ready_for_dpos(self):
-        self.tx_manager.recharge_producer_keystore(10000 * constant.TO_SELA)
         Logger.info("{} recharge producer on success!".format(self.tag))
         self.tx_manager.register_producers_candidates()
         Logger.info("{} register producer on success!".format(self.tag))

@@ -80,7 +80,7 @@ def test_content():
             Logger.info("current arbiters nicknames: {}".format(arbiters_nicknames))
             Logger.info("next    arbiters nicknames: {}".format(next_arbiter_nicknames))
 
-        if stop_height != 0 and current_height > stop_height + 36:
+        if stop_height != 0 and current_height > stop_height + 100:
             arbiters_set = set(controller.middle.service_manager.rpc.get_arbiters_info()["arbiters"])
             result = not inactive_set.issubset(arbiters_set) and replace_set.issubset(arbiters_set)
             break

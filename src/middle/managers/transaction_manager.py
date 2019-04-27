@@ -3,6 +3,9 @@
 # date: 2019/4/5 5:42 PM
 # author: liteng
 
+
+import time
+
 from src.middle.tools import util
 from src.middle.tools import constant
 from src.middle.tools.log import Logger
@@ -119,6 +122,33 @@ class TransactionManager(object):
         Logger.info("{} candidate public keys: {}".format(self.tag, self.candidate_public_keys))
         return True
 
+    def register_producers(self, start: int, end: int, without_mining=False):
+        num = 0
+        for i in range(start, end):
+            ela_node = self.node_manager.ela_nodes[i]
+            public_key = ela_node.node_keystore.public_key.hex()
+            ret = self.tx.register_a_producer(ela_node, without_mining)
+            if not ret:
+                return False
+            if without_mining:
+                current_height = self.tx.assist.rpc.get_block_count()
+                last_height = current_height
+                while True:
+                    self.tx.assist.rpc.discrete_mining(1)
+                    current_height = self.tx.assist.rpc.get_block_count()
+                    Logger.debug("{} current height: {}".format(self.tag, current_height))
+                    if current_height - 6 > last_height:
+                        break
+                    time.sleep(1)
+
+            num += 1
+            if num <= self.params.ela_params.crc_number * 2:
+                self.general_producer_public_keys.append(public_key)
+            else:
+                self.candidate_public_keys.append(public_key)
+            Logger.info("{} register node-{} to be a producer on success!\n".format(self.tag, i))
+        return True
+
     def update_produces_candidates(self):
         for i in range(len(self.tx.register_producers_list)):
             producer = self.tx.register_producers_list[i]
@@ -147,6 +177,19 @@ class TransactionManager(object):
 
     def vote_producers_candidates(self):
         for i in range(self.params.ela_params.crc_number + 1, self.params.ela_params.number + 1):
+            vote_amount = (self.params.ela_params.number - i + 1) * constant.TO_SELA
+            ret = self.tx.vote_a_producer(
+                vote_keystore=self.node_manager.keystore_manager.owner_key_stores[i],
+                producer=self.tx.register_producers_list[i - self.params.ela_params.crc_number - 1],
+                vote_amount=vote_amount
+            )
+            if not ret:
+                return False
+            Logger.info("{} vote node-{} {} Elas on success!\n".format(self.tag, i, vote_amount))
+        return True
+
+    def vote_producers(self, start: int, end: int):
+        for i in range(start, end):
             vote_amount = (self.params.ela_params.number - i + 1) * constant.TO_SELA
             ret = self.tx.vote_a_producer(
                 vote_keystore=self.node_manager.keystore_manager.owner_key_stores[i],
