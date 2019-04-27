@@ -11,7 +11,7 @@ from src.middle.tools.log import Logger
 
 config = {
     "ela": {
-        "number": 16,
+        "number": 12,
         "crc_number": 4,
         "pre_connect_offset": 5,
         "crc_dpos_height": 300,
@@ -33,8 +33,8 @@ def test_content():
     pre_offset = config["ela"]["pre_connect_offset"]
 
     test_case = "More than 1/3 producers inactive first rotation on success"
-    inactive_producers_nodes = controller.middle.node_manager.ela_nodes[crc_number * 2 + 1: crc_number * 3 + 1]
-    replace_cadidates_nodes = controller.middle.node_manager.ela_nodes[crc_number * 3 + 1: number]
+    inactive_producers_nodes = controller.middle.node_manager.ela_nodes[crc_number * 2 + 1:]
+    # replace_cadidates_nodes = controller.middle.node_manager.ela_nodes[crc_number * 3 + 1: number]
 
     inactive_public_keys = list()
     replace_public_keys = list()
@@ -42,8 +42,8 @@ def test_content():
     for node in inactive_producers_nodes:
         inactive_public_keys.append(node.node_keystore.public_key.hex())
 
-    for node in replace_cadidates_nodes:
-        replace_public_keys.append(node.node_keystore.public_key.hex())
+    # for node in replace_cadidates_nodes:
+    #     replace_public_keys.append(node.node_keystore.public_key.hex())
 
     inactive_set = set(inactive_public_keys)
     replace_set = set(replace_public_keys)
@@ -85,7 +85,7 @@ def test_content():
 
         if stop_height != 0 and current_height > stop_height + 60:
             arbiters_set = set(controller.middle.service_manager.rpc.get_arbiters_info()["arbiters"])
-            result = not inactive_set.issubset(arbiters_set) and replace_set.issubset(arbiters_set)
+            result = not inactive_set.issubset(arbiters_set)
             break
 
         controller.discrete_mining_blocks(1)

@@ -56,7 +56,7 @@ def test_content():
             Logger.info("H2 PASS!")
 
         if current_height == controller.middle.params.ela_params.public_dpos_height + \
-                controller.middle.params.ela_params.crc_number * 3 * 20:     # 2 代表H2后跑2轮共识，修改此数字可多修改几轮
+                controller.middle.params.ela_params.crc_number * 3 * 200:     # 2 代表H2后跑2轮共识，修改此数字可多修改几轮
             result = True
             break
 
