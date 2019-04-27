@@ -34,7 +34,7 @@ def test_content():
 
     test_case = "More than 1/3 producers inactive first rotation still failed but second rotation on success "
     inactive_producers_nodes = controller.middle.node_manager.ela_nodes[crc_number * 2 + 1: crc_number * 4 + 1]
-    replace_cadidates_nodes = controller.middle.node_manager.ela_nodes[crc_number * 4 + 1: number]
+    replace_cadidates_nodes = controller.middle.node_manager.ela_nodes[crc_number * 4 + 1: number + 1]
 
     inactive_public_keys = list()
     replace_public_keys = list()
@@ -80,7 +80,7 @@ def test_content():
             Logger.info("current arbiters nicknames: {}".format(arbiters_nicknames))
             Logger.info("next    arbiters nicknames: {}".format(next_arbiter_nicknames))
 
-        if stop_height != 0 and current_height > stop_height + 60:
+        if stop_height != 0 and current_height > stop_height + 36:
             arbiters_set = set(controller.middle.service_manager.rpc.get_arbiters_info()["arbiters"])
             result = not inactive_set.issubset(arbiters_set) and replace_set.issubset(arbiters_set)
             break

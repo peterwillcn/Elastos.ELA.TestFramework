@@ -12,7 +12,7 @@ config = {
     "ela": {
         "enable": True,
         "password": "123",
-        "number": 20,
+        "number": 12,
         "crc_number": 4,
         "pre_connect_offset": 5,
         "crc_dpos_height": 300,

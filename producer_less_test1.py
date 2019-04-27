@@ -4,6 +4,7 @@
 # author: liteng
 
 import time
+import random
 
 from src.top.control import Controller
 
@@ -11,11 +12,12 @@ from src.middle.tools.log import Logger
 
 config = {
     "ela": {
-        "number": 20,
+        "number": 12,
         "crc_number": 4,
         "pre_connect_offset": 5,
         "crc_dpos_height": 300,
-        "public_dpos_height": 308
+        "public_dpos_height": 320,
+        "max_inactivate_rounds": 20
     },
     "side": False,
     "times": 1
@@ -24,19 +26,21 @@ config = {
 
 def test_content():
     controller = Controller(config)
-    controller.middle.ready_for_dpos()
-
-    number = controller.middle.params.ela_params.number
     crc_number = controller.middle.params.ela_params.crc_number
     h1 = controller.middle.params.ela_params.crc_dpos_height
     h2 = controller.middle.params.ela_params.public_dpos_height
     pre_offset = config["ela"]["pre_connect_offset"]
+    test_case = "Pre connect before h2 and producers are not enough"
 
-    test_case = "More than 1/3 producers inactive both first and second rotation failed and finally degenerate to CRC"
-    inactive_producers_nodes = controller.middle.node_manager.ela_nodes[crc_number * 2 + 1: number + 1]
+    will_register_count = random.randrange(2, 7)
+    start = crc_number + 1
+    end = crc_number + will_register_count + 1
+    Logger.debug("The number will be registered a producer are: {}".format(will_register_count))
+    controller.middle.tx_manager.register_producers(start, end)
+    controller.middle.tx_manager.vote_producers(start, end)
 
-    stop_height = 0
     global result
+    crc_public_keys = controller.middle.keystore_manager.crc_public_keys
 
     current_height = controller.get_current_height()
     if current_height < h1 - pre_offset - 1:
@@ -53,27 +57,20 @@ def test_content():
             result = False
             break
 
-        if stop_height == 0 and current_height >= h2 + 12:
-            controller.test_result("Ater H2，the first round of consensus", True)
+        if current_height > h1:
+            current_nick_names = controller.get_current_arbiter_nicknames()
+            current_nick_names.sort()
+            next_nick_names = controller.get_next_arbiter_nicknames()
+            next_nick_names.sort()
+            Logger.debug("current arbiters: {}".format(current_nick_names))
+            Logger.debug("next    arbiters: {}".format(next_nick_names))
 
-            for node in inactive_producers_nodes:
-                node.stop()
-
-            stop_height = current_height
-            print("stop_height 1: ", stop_height)
-        if stop_height != 0 and current_height >= stop_height:
-            arbiters_nicknames = controller.get_current_arbiter_nicknames()
-            arbiters_nicknames.sort()
-            next_arbiter_nicknames = controller.get_next_arbiter_nicknames()
-            next_arbiter_nicknames.sort()
-            Logger.info("current arbiters nicknames: {}".format(arbiters_nicknames))
-            Logger.info("next    arbiters nicknames: {}".format(next_arbiter_nicknames))
-
-        if stop_height != 0 and current_height > stop_height + 36:
-            result = True
+        if current_height >= h2 + 36:
+            current_arbiters = controller.get_current_arbiter_public_keys()
+            result = set(current_arbiters) == set(crc_public_keys)
             break
-
         controller.discrete_mining_blocks(1)
+
         time.sleep(1)
 
     controller.test_result(test_case, result)

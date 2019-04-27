@@ -39,7 +39,7 @@ class ServiceManager(object):
                     Logger.debug('{} Nodes connect with each other, '
                                  'rpc service is started on success!.'.format(self.tag))
                     return True
-                time.sleep(1)
+                time.sleep(0.1)
         Logger.error('{} Node can not connect with each other, wait rpc service timed out!')
         return False
 
