@@ -33,7 +33,7 @@ def test_content():
     pre_offset = config["ela"]["pre_connect_offset"]
 
     test_case = "More than 1/3 producers inactive both first and second rotation failed and finally degenerate to CRC"
-    inactive_producers_nodes = controller.middle.node_manager.ela_nodes[crc_number * 2 + 1: number]
+    inactive_producers_nodes = controller.middle.node_manager.ela_nodes[crc_number * 2 + 1: number + 1]
 
     stop_height = 0
     global result
