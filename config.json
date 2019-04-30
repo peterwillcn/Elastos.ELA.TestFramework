@@ -22,7 +22,8 @@
     "enable": false,
     "number": 9,
     "pow_chain": false,
-    "print_level": 0
+    "print_level": 0,
+    "spv_print_level":0
   },
   "did": {
     "enable": false,

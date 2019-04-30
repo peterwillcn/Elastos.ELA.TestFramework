@@ -63,11 +63,22 @@ class ArbiterNode(Node):
         _config = self.config[constant.CONFIG_TITLE]
         _config[constant.CONFIG_MAGIC] = self.params.magic
         _config[constant.CONFIG_PRINT_LEVEL] = self.params.print_level
+        _config[constant.CONFIG_SPV_PRINT_LEVEL] = self.params.spv_print_level
         _config[constant.CONFIG_ARBITER_MAIN_NODE] = self.gen_main_node()
         _config[constant.CONFIG_SIDE_NODE_LIST] = self.gen_side_node_list()
         _config[constant.CONFIG_ORIGIN_CROSS_CHAIN_ARBITERS] = self.gen_arbiters_list(0, 5)
         _config[constant.CONFIG_CRC_CROSS_CHAIN_ARBITERS] = self.gen_arbiters_list(5, 5 + self.params.crc_number)
         _config[constant.CONFIG_CRC_ONLY_DPOS_HEIGHT] = self.params.crc_dpos_only_height
+
+        if self.index > 4:
+            index = self.index % 5 + 1
+        else:
+            index = self.index
+        _config[constant.CONFIG_DPOS_NET_ADDRESS] = "127.0.0.1:" + str(self.reset_port(
+            index=index,
+            node_type="ela",
+            port_type="arbiter_node_port"
+        ))
 
     def gen_main_node(self):
         main_node = dict()
@@ -136,12 +147,6 @@ class ArbiterNode(Node):
     def gen_arbiters_list(self, start: int, end: int):
         arbiters_list = list()
         for i in range(start, end):
-            ela_dict = dict()
-            ela_dict[constant.CONFIG_PUBLIC_KEY] = self.keystore_manager.arbiter_stores[i].public_key.hex()
-            ela_dict[constant.CONFIG_NET_ADDRESS] = "127.0.0.1:" + str(self.reset_port(
-                index=i,
-                node_type="arbiter",
-                port_type="node_port"
-            ))
-            arbiters_list.append(ela_dict)
+            arbiters_list.append(self.keystore_manager.arbiter_stores[i].public_key.hex())
+
         return arbiters_list

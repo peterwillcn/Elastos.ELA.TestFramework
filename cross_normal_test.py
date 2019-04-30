@@ -30,7 +30,7 @@ config = {
         "instant_block": True
     },
     "token": {
-        "enable": True,
+        "enable": False,
         "number": 5,
         "instant_block": True
     },

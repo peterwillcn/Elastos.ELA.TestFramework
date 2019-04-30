@@ -18,6 +18,7 @@ class ArbiterParams(object):
         self.number = config["number"]
         self.pow_chain = config["pow_chain"]
         self.print_level = config["print_level"]
+        self.spv_print_level = config["spv_print_level"]
         self.crc_number = ela_params.crc_number
         self.crc_dpos_only_height = ela_params.crc_dpos_height
         self.side_chain_genesis_hash = ""
