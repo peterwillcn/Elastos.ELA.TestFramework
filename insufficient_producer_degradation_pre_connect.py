@@ -84,7 +84,7 @@ def test_content():
             controller.middle.tx_manager.vote_producers(start2, end2)
             re_register = True
 
-        if current_height >= h2 + 100:
+        if current_height >= h2 + 200:
             break
 
         controller.discrete_mining_blocks(1)
