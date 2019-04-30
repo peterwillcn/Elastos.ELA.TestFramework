@@ -14,8 +14,8 @@ config = {
         "number": 12,
         "crc_number": 4,
         "pre_connect_offset": 5,
-        "crc_dpos_height": 300,
-        "public_dpos_height": 335
+        "crc_dpos_height": 400,
+        "public_dpos_height": 520
     },
     "side": True,
     "arbiter": {
@@ -45,6 +45,7 @@ def test_content():
     h1 = controller.middle.params.ela_params.crc_dpos_height
     h2 = controller.middle.params.ela_params.public_dpos_height
     pre_offset = config["ela"]["pre_connect_offset"]
+    token_enable = config["token"]["enable"]
 
     global test_case
     # test_case = "cross recharge before H1"
@@ -84,28 +85,54 @@ def test_content():
             break
 
         if current_height > h1 + 4:
-            test_case = "cross chain recharge between H1 and H2"
+            test_case = "cross chain recharge did between H1 and H2"
             Logger.info("### Testing {} ###".format(test_case))
             result = controller.middle.tx_manager.cross_chain_transaction("did", True)
             controller.test_result(test_case, result)
 
+            if token_enable:
+                test_case = "cross chain recharge token between H1 and H2"
+                Logger.info("### Testing {} ###".format(test_case))
+                result = controller.middle.tx_manager.cross_chain_transaction("token", True)
+                controller.test_result(test_case, result)
+
             controller.discrete_mining_blocks(1)
-            test_case = "cross chain withdraw between H1 and H2"
+            test_case = "cross chain withdraw did between H1 and H2"
             Logger.info("### Testing {} ###".format(test_case))
             result = controller.middle.tx_manager.cross_chain_transaction("did", False)
             controller.test_result(test_case, result)
 
+            if token_enable:
+                controller.discrete_mining_blocks(1)
+                test_case = "cross chain withdraw token between H1 and H2"
+                Logger.info("### Testing {} ###".format(test_case))
+                result = controller.middle.tx_manager.cross_chain_transaction("token", False)
+                controller.test_result(test_case, result)
+
         if current_height > h2 + 12:
-            test_case = "cross chain recharge after H2"
+            test_case = "cross chain recharge did after H2"
             Logger.info("### Testing {} ###".format(test_case))
-            result = controller.middle.tx_manager.cross_chain_transaction("token", True)
+            result = controller.middle.tx_manager.cross_chain_transaction("did", True)
             controller.test_result(test_case, result)
 
+            if token_enable:
+                test_case = "cross chain recharge token after H2"
+                Logger.info("### Testing {} ###".format(test_case))
+                result = controller.middle.tx_manager.cross_chain_transaction("token", True)
+                controller.test_result(test_case, result)
+
             controller.discrete_mining_blocks(1)
-            test_case = "cross chain withdraw after H2"
+            test_case = "cross chain withdraw did after H2"
             Logger.info("### Testing {} ###".format(test_case))
-            result = controller.middle.tx_manager.cross_chain_transaction("token", False)
+            result = controller.middle.tx_manager.cross_chain_transaction("did", False)
             controller.test_result(test_case, result)
+
+            if token_enable:
+                controller.discrete_mining_blocks(1)
+                test_case = "cross chain withdraw token after H2"
+                Logger.info("### Testing {} ###".format(test_case))
+                result = controller.middle.tx_manager.cross_chain_transaction("token", False)
+                controller.test_result(test_case, result)
 
             if result:
                 break

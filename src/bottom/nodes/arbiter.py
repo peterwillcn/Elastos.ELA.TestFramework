@@ -121,7 +121,11 @@ class ArbiterNode(Node):
 
             side_dict[constant.CONFIG_EXCHANGE_RATE] = 1.0
             side_dict[constant.CONFIG_GENESIS_BLOCK] = self.params.side_info[side_node][constant.SIDE_GENESIS_ADDRESS]
-            side_dict[constant.CONFIG_MINER_ADDRESS] = self.keystore_manager.sub_key_stores[self.index].address
+
+            if side_node is "did":
+                side_dict[constant.CONFIG_MINER_ADDRESS] = self.keystore_manager.sub_key_stores[self.index].address
+            elif side_node is "token":
+                side_dict[constant.CONFIG_MINER_ADDRESS] = self.keystore_manager.sub_key_stores2[self.index].address
             side_dict[constant.CONFIG_PAY_TO_ADDR] = self.keystore_manager.special_key_stores[3].address
             side_dict[constant.CONFIG_POW_CHAIN] = self.params.pow_chain
 

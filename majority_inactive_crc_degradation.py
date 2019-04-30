@@ -37,6 +37,20 @@ def test_content():
 
     stop_height = 0
     global result
+    global current_arbiter_public_keys
+
+    replace_public_keys = list()
+    first_rotation_public_keys = list()
+    second_rotation_public_keys = list()
+
+    for i in range(4):
+        replace_public_keys.append(inactive_producers_nodes[i].node_keystore.public_key.hex())
+
+    for i in range(4, 8):
+        first_rotation_public_keys.append(inactive_producers_nodes[i].node_keystore.public_key.hex())
+
+    for i in range(8, 12):
+        second_rotation_public_keys.append(inactive_producers_nodes[i].node_keystore.public_key.hex())
 
     current_height = controller.get_current_height()
     if current_height < h1 - pre_offset - 1:
@@ -62,6 +76,7 @@ def test_content():
             stop_height = current_height
             print("stop_height 1: ", stop_height)
         if stop_height != 0 and current_height >= stop_height:
+            current_arbiter_public_keys = controller.get_current_arbiter_public_keys()
             arbiters_nicknames = controller.get_current_arbiter_nicknames()
             arbiters_nicknames.sort()
             next_arbiter_nicknames = controller.get_next_arbiter_nicknames()
@@ -69,8 +84,16 @@ def test_content():
             Logger.info("current arbiters nicknames: {}".format(arbiters_nicknames))
             Logger.info("next    arbiters nicknames: {}".format(next_arbiter_nicknames))
 
-        if stop_height != 0 and current_height > stop_height + 36:
-            result = True
+            if set(first_rotation_public_keys).issubset(set(current_arbiter_public_keys)):
+                for i in range(4):
+                    inactive_producers_nodes[i].start()
+
+            if set(second_rotation_public_keys).issubset(set(current_arbiter_public_keys)):
+                for i in range(4, 8):
+                    inactive_producers_nodes[i].start()
+
+        if stop_height != 0 and current_height > stop_height + 100:
+            result = set(replace_public_keys).issubset(current_arbiter_public_keys)
             break
 
         controller.discrete_mining_blocks(1)

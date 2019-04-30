@@ -25,6 +25,7 @@ class KeyStoreManager(object):
         self.special_key_stores = list()
         self.arbiter_stores = list()
         self.sub_key_stores = list()
+        self.sub_key_stores2 = list()
         self.crc_public_keys = list()
         self.init_keystore_files()
 
@@ -138,8 +139,13 @@ class KeyStoreManager(object):
 
             k = KeyStore(self.password)
             self.arbiter_stores.append(k)
+
             sub_k = KeyStore(self.password)
             self.sub_key_stores.append(sub_k)
+
+            sub_k2 = KeyStore(self.password)
+            self.sub_key_stores2.append(sub_k2)
+
             keytool.save_to_json(
                 k,
                 "origin arbiter #" + str(i) + ": ",
@@ -152,8 +158,16 @@ class KeyStoreManager(object):
                 os.path.join(self.keystore_saved_dir, "sub_keystore.json"),
                 first_time
             )
+
+            keytool.save_to_json(
+                sub_k2,
+                "sub2 account #" + str(i) + ":",
+                os.path.join(self.keystore_saved_dir, "sub_keystore2.json"),
+                first_time
+            )
+
             keytool.save_to_dat(
-                self.add_sub_account(k.keystore_dat, sub_k),
+                self.add_sub_account(self.add_sub_account(k.keystore_dat, sub_k), sub_k2),
                 os.path.join(arbiter_dat_dir, "origin_arbiter_" + str(i) + ".dat")
             )
 
@@ -165,6 +179,10 @@ class KeyStoreManager(object):
             self.arbiter_stores.append(k)
             sub_k = KeyStore(self.password)
             self.sub_key_stores.append(sub_k)
+
+            sub_k2 = KeyStore(self.password)
+            self.sub_key_stores2.append(sub_k2)
+
             keytool.save_to_json(
                 k,
                 "crc arbiter #" + str(i) + ": ",
@@ -179,8 +197,15 @@ class KeyStoreManager(object):
                 False
             )
 
+            keytool.save_to_json(
+                sub_k2,
+                "sub2 account #" + str(i + 5 - 1) + ":",
+                os.path.join(self.keystore_saved_dir, "sub_keystore2.json"),
+                False
+            )
+
             keytool.save_to_dat(
-                self.add_sub_account(k.keystore_dat, sub_k),
+                self.add_sub_account(self.add_sub_account(k.keystore_dat, sub_k), sub_k2),
                 os.path.join(arbiter_dat_dir, "crc_arbiter_" + str(i) + ".dat")
             )
 
