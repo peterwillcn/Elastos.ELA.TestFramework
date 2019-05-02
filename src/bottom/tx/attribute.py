@@ -1,0 +1,77 @@
+#!/usr/bin/env python
+# -*- coding:utf-8 -*-
+# date: 2019/5/1 2:11 PM
+# author: liteng
+
+import struct
+
+from src.bottom.tx import serialize
+
+
+class Attribute(object):
+
+    NONCE = 0x00
+    SCRIPT = 0x20
+    MEMO = 0x81
+    DESCRIPTION = 0x90
+    DESCRIPTION_URL = 0x91
+    CONFIRMATIONS = 0X92
+
+    def __init__(self, usage=0, data=None):
+        self.usage = usage
+        self.data = data
+
+    @staticmethod
+    def get_attribute_usage(usage: int):
+        if usage == 0x00:
+            return "Nonce"
+        elif usage == 0x20:
+            return "Script"
+        elif usage == 0x81:
+            return "Memo"
+        elif usage == 0x90:
+            return "Description"
+        elif usage == 0x91:
+            return "DescriptionUrl"
+        elif usage == 0x92:
+            return "Confirmations"
+
+    def is_valid_attribute_type(self, usage: int):
+        if usage == self.NONCE or usage == self.SCRIPT or usage == self.MEMO or usage == self.DESCRIPTION \
+                or usage == self.DESCRIPTION_URL or usage == self.CONFIRMATIONS:
+            return True
+        return False
+
+    def serialize(self):
+        if not self.is_valid_attribute_type(self.usage):
+            return None
+
+        r = b""
+        r += struct.pack("<B", self.usage)
+        r = serialize.write_var_bytes(r, self.data)
+        # r += serialize.write_var_uint(len(self.data))
+        # r += self.data
+
+        return r
+
+    def deserialize(self):
+        pass
+
+    def __repr__(self):
+        return "Attribute(usage=%x data=%s)" % (self.usage, self.data.hex())
+
+
+if __name__ == '__main__':
+
+    usage = 0x81
+    r = struct.pack("B", usage)
+    print("r = ", r.hex())
+    data = bytes([1, 2, 3])
+    print("data: ", data, "length: ", len(data))
+
+    attribute = Attribute(usage, data)
+    serial = attribute.serialize()
+
+    print("attribute: ", attribute)
+    print("serial: ", serial.hex())
+

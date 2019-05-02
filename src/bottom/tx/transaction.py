@@ -1,245 +1,241 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# date: 2019/1/24 2:33 PM
+# date: 2019/5/1 10:15 AM
 # author: liteng
 
-import time
+import struct
 
-
-from src.middle.tools import util
-from src.middle.tools import constant
 from src.middle.tools.log import Logger
-from src.middle.managers.service_manager import ServiceManager
 
-from src.bottom.nodes.ela import ElaNode
-from src.bottom.tx.assist import Assist
-from src.bottom.tx.register_vote.payload import Payload
-from src.bottom.tx.register_vote.voter import Voter
-from src.bottom.tx.register_vote.producer import Producer
-from src.bottom.wallet.keystore import KeyStore
+from src.bottom.wallet import keytool
+from src.bottom.tx.attribute import Attribute
+from src.bottom.tx.input import Input
+from src.bottom.tx.output import Output
+from src.bottom.tx.outpoint import OutPoint
+from src.bottom.tx.program import Program
+from src.bottom.tx.active_producer import ActiveProducer
+from src.bottom.tx import serialize
 
 
 class Transaction(object):
 
-    def __init__(self, service_manager: ServiceManager):
-        self.tag = util.tag_from_path(__file__, self.__class__.__name__)
-        self.jar_service = service_manager.jar_service
-        self.assist = Assist(service_manager.rpc, service_manager.rest)
-        self.fee = 100
-        self.register_producers_list = []
-        self.update_producers_list = []
-        self.cancel_producers_list = []
-        self.redeem_producers_list = list()
-        self.voter_list = list()
-        self.vote_producers_list = list()
+    TX_VERSION_DEFAULT = 0x00
+    TX_VERSION_09 = 0x09
 
-    def ordinary_single_sign(self, input_keystore, output_addresses: list, amount: int, mode="privatekey"):
-        inputs, utxos_value = self.assist.gen_inputs_utxo_value(
-            input_keystore=input_keystore,
-            amount=amount,
-            mode=mode
-        )
+    COIN_BASE = 0x00
+    REGISTER_ASSET = 0x01
+    TRANSFER_ASSET = 0x02
+    RECORD = 0x03
+    DEPLOY = 0x04
 
-        outputs = self.assist.gen_usual_outputs(
-            output_addresses=output_addresses,
-            change_address=input_keystore.address,
-            utxo_value=utxos_value,
-            amount=amount
-        )
+    SIDE_CHAIN_POW = 0x05
+    RECHARGE_TO_SIDE_CHAIN = 0x06
+    WITHDRAW_FROM_SIDE_CHAIN = 0x07
+    TRANSFER_CROSS_CHAIN_ASSET = 0x08
 
-        jar_response = self.jar_service.gen_tx(inputs, outputs)
-        raw_data = jar_response["rawtx"]
-        txid = jar_response["txhash"].lower()
-        resp = self.assist.rpc.send_raw_transaction(data=raw_data)
-        result = util.assert_equal(txid, resp)
-        if not result:
-            Logger.error("{} Ordinary single sign transaction txid is not equal resp".format(self.tag))
-            return result
+    REGISTER_PRODUCER = 0x09
+    CANCEL_PRODUCER = 0x0a
+    UPDATE_PRODUCER = 0x0b
+    RETURN_DEPOSIT_CHAIN = 0x0c
+    ACTIVATE_PRODUCER = 0x0d
 
-        self.assist.rpc.discrete_mining(1)
-        return True
+    ILLEGAL_PROPOSAL_EVIDENCE = 0x0e
+    ILLEGAL_VOTE_EVIDENCE = 0x0f
+    ILLEGAL_BLOCK_EVIDENCE = 0x10
+    ILLEGAL_SIDE_CHAIN_EVIDENCE = 0x11
+    INACTIVE_ARBITRATORS = 0x12
 
-    def ordinary_multi_sign(self):
-        pass
+    UPDATE_VERSION = 0x13
 
-    def cross_chain_transaction(self, input_keystore: KeyStore, lock_address, output_address, amount, port: int):
-        balance1 = 0
-        balance2 = 0
-        if port == self.assist.rpc.DEFAULT_PORT:
-            Logger.info("{} before cross transaction input address address: {} ELAs".format(
-                self.tag,
-                self.assist.rpc.get_balance_by_address(input_keystore.address, port)
-            ))
+    def __init__(self):
+        self.version = 0
+        self.tx_type = 0
+        self.payload_version = 0
+        self.payload = None
+        self.attributes = None
+        self.inputs = None
+        self.outputs = None
+        self.lock_time = 0
+        self.programs = None
+        self.fee = 0
+        self.fee_per_kb = 0
+        self.tx_hash = ""
 
-            balance1 = self.assist.rpc.get_balance_by_address(output_address, port + 20)
-            Logger.info("{} before cross transaction output address address: {} ELAs".format(
-                self.tag,
-                balance1
-            ))
-        else:
-            Logger.info("{} before cross transaction input address address: {} ELAs".format(
-                self.tag,
-                self.assist.rpc.get_balance_by_address(input_keystore.address, port)
-            ))
+    def __repr__(self):
+        return "Transaction {" + "\n\t" \
+                + "version: " + str(self.version) + "\n\t" \
+                + "tx_type: " + str(self.tx_type) + "\n\t" \
+                + "payload_version: " + str(self.payload_version) + "\n\t" \
+                + "attributes: ".format(self.attributes) + "\n\t" \
+                + "inputs: ".format(self.inputs) + "\n\t" \
+                + "outputs: ".format(self.outputs) + "\n\t" \
+                + "lock_time: " + str(self.lock_time) + "\n\t" \
+                + "programs: ".format(self.programs) + "\n\t" \
+                + "fee: " + str(self.fee) + "\n\t" \
+                + "fee_per_kb: " + str(self.fee_per_kb) + "\n\t" \
+                + "tx_hash: " + self.tx_hash + "\n\t" \
+                + "}"
 
-            balance1 = self.assist.rpc.get_balance_by_address(output_address, port - 20)
-            Logger.info("{} before cross transaction output address address: {} ELAs".format(
-                self.tag,
-                balance2
-            ))
+    def serialize(self):
+        r = self.serialize_unsigned()
+        r += serialize.write_var_uint(len(self.programs))
 
-        inputs, utxo_value = self.assist.gen_inputs_utxo_value(
-            input_keystore=input_keystore,
-            amount=amount,
-            deposit_address="",
-            port=port
-        )
+        for program in self.programs:
+            r += program.serialize()
 
-        outputs = self.assist.gen_usual_outputs(
-            output_addresses=[lock_address],
-            amount=amount,
-            change_address=input_keystore.address,
-            utxo_value=utxo_value
-        )
+        return r
 
-        private_key_sign = self.assist.gen_private_sign(input_keystore.private_key.hex())
+    # serialize the Transaction data without contracts
+    def serialize_unsigned(self):
+        # version
+        r = b""
+        if self.version >= self.TX_VERSION_09:
+            r += struct.pack(">B", self.version)
 
-        cross_chain_asset = self.assist.gen_cross_chain_asset(
-            address=output_address,
-            amount=amount,
-            utxo_value=utxo_value
-        )
+        # tx type
+        r += struct.pack(">B", self.tx_type)
 
-        jar_response = self.jar_service.gen_cross_chain_transaction(
-            inputs=inputs,
-            outputs=outputs,
-            privatekeysign=private_key_sign,
-            crosschainasset=cross_chain_asset
-        )
+        # payload version
+        r += struct.pack(">B", self.payload_version)
 
-        raw_data = jar_response["rawtx"]
-        txid = jar_response["txhash"].lower()
-        resp = self.assist.rpc.send_raw_transaction(data=raw_data, port=port)
-        Logger.info("{} jar txid = {}".format(self.tag, txid))
-        Logger.info("{} rpc resp = {}".format(self.tag, resp))
-        result = util.assert_equal(txid, resp)
-        if not result:
-            Logger.error("{} Ordinary single sign transaction txid is not equal resp".format(self.tag))
-            return result
+        # payload
+        if self.payload is None:
+            Logger.error("Transaction payload is None")
+            return None
 
-        if port == self.assist.rpc.DEFAULT_PORT:
-            for i in range(20):
-                self.assist.rpc.discrete_mining(1)
-                Logger.info("{} main chain height: {}, side chain height: {}".format(
-                    self.tag,
-                    self.assist.rpc.get_block_count(),
-                    self.assist.rpc.get_block_count(port + 20)
-                ))
-                if i > 7:
-                    time.sleep(8)
-                time.sleep(1)
+        r += self.payload.data(self.payload_version)
 
-        else:
-            for i in range(30):
-                self.assist.rpc.discrete_mining(1)
-                Logger.info("{} main chain height: {}, side chain height: {}".format(
-                    self.tag,
-                    self.assist.rpc.get_block_count(),
-                    self.assist.rpc.get_block_count(port)
-                ))
-                time.sleep(10)
+        # attributes
+        r += serialize.write_var_uint(len(self.attributes))
+        for attribute in self.attributes:
+            r += attribute.serialize()
 
-        if port == self.assist.rpc.DEFAULT_PORT:
-            Logger.info("{} after cross transaction input address address: {} ELAs".format(
-                self.tag,
-                self.assist.rpc.get_balance_by_address(input_keystore.address, port)
-            ))
+        # inputs
+        r += serialize.write_var_uint(len(self.inputs))
+        for input in self.inputs:
+            r += input.serialize()
 
-            balance2 = self.assist.rpc.get_balance_by_address(output_address, port + 20)
-            Logger.info("{} after cross transaction output address address: {} ELAs".format(
-                self.tag,
-                balance2
-            ))
-        else:
-            Logger.info("{} after cross transaction input address address: {} ELAs".format(
-                self.tag,
-                self.assist.rpc.get_balance_by_address(input_keystore.address, port)
-            ))
+        # outputs
+        r += serialize.write_var_uint(len(self.outputs))
+        for output in self.outputs:
+            r += output.serialize(self.version)
 
-            balance2 = self.assist.rpc.get_balance_by_address(output_address, port - 20)
-            Logger.info("{} after cross transaction output address address: {} ELAs".format(
-                self.tag,
-                self.assist.rpc.get_balance_by_address(output_address, port - 20)
-            ))
+        # lock_time
+        r += struct.pack("<I", self.lock_time)
 
-        print("balance2: {}".format(balance2))
-        print("balance1: {}".format(balance1))
-        print("amount: {}".format(amount))
+        return r
 
-        return float(balance2) - float(balance1) > float(amount - 3 * 10000) / constant.TO_SELA
-
-    def register_a_producer(self, node: ElaNode, without_mining=False):
-        producer = Producer(node, self.jar_service, self.assist)
-        if without_mining:
-            ret = producer.register_without_mining()
-            if ret:
-                self.register_producers_list.append(producer)
-        else:
-            ret = producer.register()
-            if ret:
-                self.register_producers_list.append(producer)
-                Logger.debug("{} node {} has registered a producer!".format(self.tag, node.index))
-
-        return ret
-
-    def update_a_producer(self, producer: Producer, payload: Payload):
-        producer.payload = payload
-        ret = producer.update()
-        if ret:
-            self.update_producers_list.append(producer)
-            Logger.info("{} node {} has updated a producer!".format(self.tag, producer.node.index))
-
-        return ret
-
-    def cancel_a_producer(self, producer: Producer):
-        ret = producer.cancel()
-        if ret:
-            self.cancel_producers_list.append(producer)
-            Logger.info("{} node {} has cancelled a producer!".format(self.tag, producer.node.index))
-
-        return ret
-
-    def redeem_a_producer(self, producer: Producer):
-        ret = producer.redeem()
-        if ret:
-            self.redeem_producers_list.append(producer)
-            Logger.info("{} node {} has redeemed a producer!".format(self.tag, producer.node.index))
-        return ret
-
-    def activate_a_producer(self, producer: Producer):
-        ret = producer.activate()
-        if ret:
-            Logger.debug("{} node {} has activated a producer!".format(self.tag, producer.node.index))
-        return ret
-
-    def vote_a_producer(self, vote_keystore: KeyStore, producer: Producer, vote_amount: int):
-        voter = Voter(vote_keystore, self.jar_service, self.assist)
-
-        ret = voter.vote([producer], vote_amount)
-        Logger.debug("{} register_vote result: {}".format(self.tag, ret))
-        return ret
-
-    def vote_producers(self, vote_keystore: KeyStore, producers: list, vote_amount: int):
-        voter = Voter(vote_keystore, self.jar_service, self.assist)
-
-        ret = voter.vote(producers, vote_amount)
-        Logger.debug("{} register_vote result: {}".format(self.tag, ret))
-        return ret
+    @staticmethod
+    def get_tx_type(tx_type: int):
+        if tx_type == 0x00:
+            return "COIN_BASE"
+        elif tx_type == 0x01:
+            return "REGISTER_ASSET"
+        elif tx_type == 0x02:
+            return "TRANSFER_ASSET"
+        elif tx_type == 0x03:
+            return "RECORD"
+        elif tx_type == 0x04:
+            return "DEPLOY"
+        elif tx_type == 0x05:
+            return "SIDE_CHAIN_POW"
+        elif tx_type == 0x06:
+            return "RECHARGE_TO_SIDE_CHAIN"
+        elif tx_type == 0x07:
+            return "WITHDRAW_FROM_SIDE_CHAIN"
+        elif tx_type == 0x08:
+            return "TRANSFER_CROSS_CHAIN_ASSET"
+        elif tx_type == 0x09:
+            return "REGISTER_PRODUCER"
+        elif tx_type == 0x0a:
+            return "CANCEL_PRODUCER"
+        elif tx_type == 0x0b:
+            return "UPDATE_PRODUCER"
+        elif tx_type == 0x0c:
+            return "RETURN_DEPOSIT_CHAIN"
+        elif tx_type == 0x0d:
+            return "ACTIVATE_PRODUCER"
+        elif tx_type == 0x0e:
+            return "ILLEGAL_PROPOSAL_EVIDENCE"
+        elif tx_type == 0x0f:
+            return "ILLEGAL_VOTE_EVIDENCE"
+        elif tx_type == 0x10:
+            return "ILLEGAL_BLOCK_EVIDENCE"
+        elif tx_type == 0x11:
+            return "ILLEGAL_SIDE_CHAIN_EVIDENCE"
+        elif tx_type == 0x12:
+            return "INACTIVE_ARBITRATORS"
+        elif tx_type == 0x13:
+            return "UPDATE_VERSION"
 
 
+if __name__ == '__main__':
 
+    version = Transaction.TX_VERSION_DEFAULT
+    tx_type = Transaction.ACTIVATE_PRODUCER
+    payload_version = 0x00
 
+    public_key_str = "02517f74990da8de27d0bc7c516c45ecbb9b2aa6a4d4d5ab552b537e638fcfe45f"
+    node_public_key = bytes.fromhex(public_key_str)
+    signature = keytool.sha256_hash(node_public_key, 2)
+    ap = ActiveProducer(node_public_key, signature)
 
+    payload = ap
 
+    usage = 0x81
+    r = struct.pack("B", usage)
+    data = bytes([1, 2, 3])
+    attribute = Attribute(usage, data)
 
+    attributes = [attribute]
 
+    hash = keytool.sha256_hash(bytes("hello".encode("utf-8")), 2)
+    index = 21
+
+    op = OutPoint(hash.hex(), index)
+    print(op)
+    serial = op.serialize()
+    input = Input(op, 100)
+
+    inputs = [input]
+
+    value = 12
+    output_lock = 567
+    output_type = 11
+    asset_id = keytool.sha256_hash("assetid".encode(), 2)
+    program_hash = keytool.sha256_hash("programhash".encode(), 2)[:21]
+    output = Output(
+        asset_id=asset_id,
+        value=value,
+        output_lock=output_lock,
+        program_hash=program_hash,
+        output_type=output_type,
+        output_payload=None
+    )
+
+    outputs = [output]
+    lock_time = 99
+
+    p = Program(bytes([1, 2]), bytes([3, 4, 5]))
+
+    programs = [p]
+    fee = 100
+    fee_per_kb = 10
+
+    tx = Transaction()
+    tx.version = version
+    tx.tx_type = tx_type
+    tx.payload_version = payload_version
+    tx.payload = payload
+    tx.attributes = attributes
+    tx.inputs = inputs
+    tx.outputs = outputs
+    tx.lock_time = lock_time
+    tx.programs = programs
+    tx.fee = fee
+    tx.fee_per_kb = fee_per_kb
+
+    s = tx.serialize()
+
+    print(tx)
+    print("tx serial: ", s.hex())

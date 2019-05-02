@@ -16,8 +16,7 @@ config = {
         "crc_number": 4,
         "pre_connect_offset": 5,
         "crc_dpos_height": 300,
-        "public_dpos_height": 320,
-        "max_inactivate_rounds": 20
+        "public_dpos_height": 320
     },
     "side": False,
     "times": 1

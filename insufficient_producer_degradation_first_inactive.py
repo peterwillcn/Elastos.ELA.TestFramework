@@ -89,7 +89,7 @@ def test_content():
 
             restart = True
 
-        if stop_height != 0 and current_height > stop_height + 100:
+        if stop_height != 0 and current_height > stop_height + 500:
             result = True
             break
 

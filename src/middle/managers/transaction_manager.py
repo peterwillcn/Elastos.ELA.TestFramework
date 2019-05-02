@@ -11,7 +11,7 @@ from src.middle.tools import constant
 from src.middle.tools.log import Logger
 from src.middle.managers.node_manager import NodeManager
 
-from src.bottom.tx.transaction import Transaction
+from src.bottom.tx.deal import Transaction
 from src.bottom.parameters.params import Parameter
 
 

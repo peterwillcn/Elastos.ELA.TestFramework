@@ -39,8 +39,12 @@ def test_content():
     # prepare  cancel producers, which number will be between 4 and 8
     cancel_height = 0
     cancel_count = random.randrange(4, 8)
-    stop_nodes = controller.middle.node_manager.ela_nodes[5: 5 + cancel_count]
+
+    # get cancel producer node
+    stop_nodes = list()
     cancel_producers = controller.middle.tx_manager.tx.register_producers_list[: cancel_count]
+    for producer in cancel_producers:
+        stop_nodes.append(producer.node)
 
     # mining the height to h1 - pre_connect_offset - 1
     current_height = controller.get_current_height()
@@ -79,7 +83,7 @@ def test_content():
             cancel_height = current_height
             Logger.debug("cancel height: {}".format(cancel_height))
 
-            time.sleep(2)
+            time.sleep(4)
             # stop the nodes relative to the producers
             for node in stop_nodes:
                 node.stop()

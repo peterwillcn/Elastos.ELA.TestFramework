@@ -15,8 +15,7 @@ config = {
         "crc_number": 4,
         "pre_connect_offset": 5,
         "crc_dpos_height": 300,
-        "public_dpos_height": 308,
-        "max_inactivate_rounds": 20
+        "public_dpos_height": 308
     },
     "side": False,
     "times": 1
@@ -65,7 +64,7 @@ def test_content():
                 )
             )
 
-        if stop_height != 0 and current_height >= stop_height + config["ela"]["max_inactivate_rounds"] + 5:
+        if stop_height != 0 and current_height >= stop_height + 25:
             deposit_address = controller.middle.tx_manager.tx.register_producers_list[1].deposit_address
             balance = controller.middle.service_manager.rpc.get_balance_by_address(deposit_address)
             Logger.info("[main] The balance of deposit address is {}".format(balance))

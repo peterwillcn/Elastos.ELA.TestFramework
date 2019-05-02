@@ -8,6 +8,7 @@
 
 import os
 import json
+import struct
 from src.middle.tools.log import Logger
 from src.middle.tools import constant
 
@@ -96,4 +97,19 @@ def write_config_file(config_dict, config_file_path):
     with open(config_file_path, "w", encoding="utf8") as f:
         json.dump(config_dict, f, indent=4)
 
+
+def deser_uint256(f):
+    r = 0
+    for i in range(8):
+        t = struct.unpack("<I", f.read(4))[0]
+        r += t << (i * 32)
+    return r
+
+
+def ser_uint256(u):
+    rs = b""
+    for i in range(8):
+        rs += struct.pack("<I", u & 0xFFFFFFFF)
+        u >>= 32
+    return rs
 

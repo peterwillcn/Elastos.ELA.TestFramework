@@ -11,7 +11,7 @@
     "ip_address": "127.0.0.1",
     "inactive_penalty": 0,
     "emergency_inactive_penalty": 0,
-    "max_inactivate_rounds" : 1440,
+    "max_inactivate_rounds" : 0,
     "pre_connect_offset": 20,
     "check_address_height": 101,
     "vote_start_height": 100,

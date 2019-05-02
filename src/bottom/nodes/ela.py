@@ -85,6 +85,8 @@ class ElaNode(Node):
             self.params.max_inactivate_rounds
 
     def start(self):
+        if self.running:
+            return
         if self.params.arbiter_enable and self.index != 0:
             self.process = subprocess.Popen(
                 "./ela{} -p {}".format(self.index, self.password),
