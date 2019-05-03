@@ -5,6 +5,9 @@
 
 import os
 import json
+import random
+
+from ecdsa import ecdsa
 from Crypto.Hash import SHA256
 from Crypto.Hash import RIPEMD160
 from Crypto.PublicKey import ECC
@@ -123,5 +126,26 @@ def ripemd160_hash(data_bytes, times: int):
     times = times - 1
     return ripemd160_hash(hash_value_bytes, times)
 
+
+def ecdsa_sign(private_key: bytes, data: bytes):
+
+    data_hash = sha256_hash(data, 1)
+
+    g = ecdsa.generator_256
+    n = g.order()
+
+    randrange = random.SystemRandom().randrange
+    secret = int.from_bytes(private_key, byteorder="big", signed=False)
+    digest = int.from_bytes(data_hash, byteorder="big", signed=False)
+    pub_key = ecdsa.Public_key(g, g * secret)
+    # pub_key = ecdsa.Public_key(g, g * secret)
+    pri_key = ecdsa.Private_key(pub_key, secret)
+
+    signature = pri_key.sign(digest, randrange(1, n))
+    r = signature.r.to_bytes(32, byteorder="big", signed=False)
+    s = signature.s.to_bytes(32, byteorder="big", signed=False)
+    b = r + s
+
+    return b
 
 

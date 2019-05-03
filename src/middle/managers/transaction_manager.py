@@ -11,7 +11,7 @@ from src.middle.tools import constant
 from src.middle.tools.log import Logger
 from src.middle.managers.node_manager import NodeManager
 
-from src.bottom.tx.deal import Transaction
+from src.bottom.tx.deal import Deal
 from src.bottom.parameters.params import Parameter
 
 
@@ -20,7 +20,7 @@ class TransactionManager(object):
         self.tag = util.tag_from_path(__file__, self.__class__.__name__)
         self.params = params
         self.node_manager = node_manager
-        self.tx = Transaction(self.node_manager.service_manager)
+        self.tx = Deal(self.node_manager.service_manager)
         self.general_producer_public_keys = list()
         self.candidate_public_keys = list()
 

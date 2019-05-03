@@ -30,16 +30,5 @@ class OutPoint(object):
         return "OutPoint(hash=%s index=%i)" % (self.hash, self.index)
 
 
-if __name__ == '__main__':
-
-    hash = keytool.sha256_hash(bytes("hello".encode()), 2)
-    print("hash: ", list(hash))
-    index = 21
-
-    op = OutPoint(hash.hex(), index)
-    print(op)
-    serial = op.serialize()
-    print("serial: ", serial.hex())
-
 
 

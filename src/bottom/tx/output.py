@@ -43,34 +43,3 @@ class Output(object):
                 + "output_payload: " + "" + "\n" \
                 + "}"
 
-
-if __name__ == '__main__':
-
-    value = 12
-    value_serial = struct.pack("q", value)
-    print("value serial: ", value_serial.hex())
-
-    output_lock = 567
-    lock_serial = struct.pack("I", output_lock)
-    print("lock  serial: ", lock_serial.hex())
-
-    output_type = 11
-    type_serial = struct.pack("B", output_type)
-    print("output type serial: ", type_serial.hex())
-
-    asset_id = keytool.sha256_hash("assetid".encode(), 2)
-    program_hash = keytool.sha256_hash("programhash".encode(), 2)[:21]
-
-    output = Output(
-        asset_id=asset_id,
-        value=value,
-        output_lock=output_lock,
-        program_hash=program_hash,
-        output_type=output_type,
-        output_payload=None
-    )
-
-    r = output.serialize(0x00)
-
-    print("output: ", output)
-    print("output serial: ", r.hex())

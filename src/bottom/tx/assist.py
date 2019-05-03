@@ -166,3 +166,4 @@ class Assist(object):
     @staticmethod
     def gen_cancel_producer_payload(privatekey, owner_publickey):
         return {"privatekey": privatekey, "ownerpublickey": owner_publickey}
+

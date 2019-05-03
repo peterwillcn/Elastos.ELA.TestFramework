@@ -77,7 +77,7 @@ class Controller(object):
             print(current_time + Logger.COLOR_GREEN + " [PASS!] " + Logger.COLOR_END + case + "\n")
         else:
             print(current_time + Logger.COLOR_RED + " [NOT PASS!] " + Logger.COLOR_END + case + "\n")
-           # self.terminate_all_process()
+            self.terminate_all_process()
 
     def get_tap_keystore(self):
         return self.middle.keystore_manager.special_key_stores[4]

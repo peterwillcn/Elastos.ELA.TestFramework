@@ -23,6 +23,7 @@ config = {
 
 
 def test_content():
+    test_case = "More than 1/3 producers inactive and degenerate to CRC"
     controller = Controller(config)
     controller.middle.ready_for_dpos()
 
@@ -31,11 +32,16 @@ def test_content():
     h2 = controller.middle.params.ela_params.public_dpos_height
     pre_offset = config["ela"]["pre_connect_offset"]
 
-    test_case = "More than 1/3 producers inactive and degenerate to CRC"
-    inactive_producers_nodes = controller.middle.node_manager.ela_nodes[crc_number * 2 + 1:]
+    # get inactive producers [9,10,11,12]
+    inactive_producers = controller.middle.tx_manager.tx.register_producers_list[crc_number: crc_number * 2]
 
+    # get inactive nodes related to inactive producers
+    inactive_producers_nodes = list()
+    for producer in inactive_producers:
+        inactive_producers_nodes.append(producer.node)
+
+    # get inactive public keys related to inactive nodes
     inactive_public_keys = list()
-
     for node in inactive_producers_nodes:
         inactive_public_keys.append(node.node_keystore.public_key.hex())
 
@@ -50,7 +56,9 @@ def test_content():
 
     global result
     global restart
+    global activate
     restart = False
+    activate = False
 
     while True:
         current_height = controller.get_current_height()
@@ -89,8 +97,16 @@ def test_content():
 
             restart = True
 
-        if stop_height != 0 and current_height > stop_height + 500:
-            result = True
+        if not activate and stop_height != 0 and current_height > stop_height + 30:
+            for producer in inactive_producers:
+                ret = producer.activate_without_jar()
+                controller.test_result("activate producer {}".format(producer.payload.nickname), ret)
+            activate = True
+
+        if stop_height != 0 and current_height > stop_height + 200:
+            current_arbiter_public_keys = controller.get_current_arbiter_public_keys()
+            result = set(inactive_public_keys).issubset(set(current_arbiter_public_keys))
+
             break
 
         controller.discrete_mining_blocks(1)

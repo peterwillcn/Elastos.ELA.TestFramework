@@ -92,7 +92,7 @@ def test_content():
                 for i in range(4, 8):
                     inactive_producers_nodes[i].start()
 
-        if stop_height != 0 and current_height > stop_height + 100:
+        if stop_height != 0 and current_height > stop_height + 500:
             result = set(replace_public_keys).issubset(current_arbiter_public_keys)
             break
 

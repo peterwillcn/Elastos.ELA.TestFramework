@@ -29,6 +29,7 @@ class KeyStore(object):
     def _create_keystore(self):
         ecc_key_pair = keytool.create_ecc_pair("P-256")
         self.private_key = ecc_key_pair.d.to_bytes()
+
         self.ecc_public_key = ecc_key_pair.public_key()
         self.public_key = keytool.encode_point(True, self.ecc_public_key)
         self.sign_script = self._publickey_to_sign_script()

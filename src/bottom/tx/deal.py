@@ -16,10 +16,12 @@ from src.bottom.tx.assist import Assist
 from src.bottom.tx.register_vote.payload import Payload
 from src.bottom.tx.register_vote.voter import Voter
 from src.bottom.tx.register_vote.producer import Producer
+from src.bottom.tx.active_producer import ActiveProducer
+from src.bottom.tx.transaction import Transaction
 from src.bottom.wallet.keystore import KeyStore
 
 
-class Transaction(object):
+class Deal(object):
 
     def __init__(self, service_manager: ServiceManager):
         self.tag = util.tag_from_path(__file__, self.__class__.__name__)
@@ -235,6 +237,26 @@ class Transaction(object):
         ret = voter.vote(producers, vote_amount)
         Logger.debug("{} register_vote result: {}".format(self.tag, ret))
         return ret
+
+    @staticmethod
+    def gen_activate_producer_transaction(node_key_store: KeyStore):
+        pub_key = node_key_store.public_key
+        pri_key = node_key_store.private_key
+
+        activate_producer = ActiveProducer(pub_key, pri_key)
+
+        tx = Transaction()
+        tx.version = Transaction.TX_VERSION_09
+        tx.tx_type = Transaction.ACTIVATE_PRODUCER
+        tx.payload = activate_producer
+        tx.attributes = None
+        tx.inputs = None
+        tx.outputs = None
+        tx.programs = list()
+        tx.lock_time = 0
+
+        return tx
+
 
 
 

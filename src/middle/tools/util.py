@@ -113,3 +113,7 @@ def ser_uint256(u):
         u >>= 32
     return rs
 
+
+def bytes_reverse(u: bytes):
+    return u[::-1]
+

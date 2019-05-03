@@ -12,7 +12,9 @@ from src.middle.tools.log import Logger
 from src.bottom.nodes.ela import ElaNode
 from src.bottom.services.jar import JarService
 from src.bottom.tx.assist import Assist
+from src.bottom.tx.transaction import Transaction
 from src.bottom.tx.register_vote.payload import Payload
+from src.bottom.tx.active_producer import ActiveProducer
 
 
 class Producer(object):
@@ -300,6 +302,34 @@ class Producer(object):
                 if height2 - height1 > 6:
                     break
         return result
+
+    def activate_without_jar(self):
+        pub_key = self.node.node_keystore.public_key
+        pri_key = self.node.node_keystore.private_key
+        activate_producer = ActiveProducer(pub_key, pri_key)
+
+        tx = Transaction()
+        tx.version = Transaction.TX_VERSION_09
+        tx.tx_type = Transaction.ACTIVATE_PRODUCER
+        tx.payload = activate_producer
+        tx.attributes = []
+        tx.inputs = []
+        tx.outputs = []
+        tx.programs = list()
+        tx.lock_time = 0
+
+        r = tx.serialize()
+        tx.hash()
+        Logger.debug("{} {}".format(self.tag, tx))
+        Logger.debug("{} tx serialize: {}".format(self.tag, r.hex()))
+
+        resp = self.assist.rpc.send_raw_transaction(data=r.hex())
+        if type(resp) is not dict:
+            resp = util.bytes_reverse(bytes.fromhex(resp)).hex()
+        Logger.debug("{} hash: {}".format(self.tag, tx.hash()))
+        Logger.debug("{} resp: {}".format(self.tag, resp))
+
+        return resp == tx.hash()
 
     def get_deposit_balance(self):
         balance = self.assist.rpc.get_balance_by_address(

@@ -49,13 +49,13 @@ def test_content():
         current_height = controller.get_current_height()
         times = controller.get_height_times(height_times, current_height)
         Logger.info("[main] current height: {}, times: {}".format(current_height, times))
-        if times > 100:
+        if times > 1000:
             result = False
             break
 
         if stop_height == 0 and current_height >= h2 + 1:
             controller.test_result("Ater H2", True)
-            controller.middle.node_manager.ela_nodes[inactive_producer_index + crc_number + 1].stop()
+            inactive_producer.node.stop()
             stop_height = current_height
             Logger.error(
                 "[main] node {} stopped at height {} on success!".format(
@@ -64,7 +64,7 @@ def test_content():
                 )
             )
 
-        if stop_height != 0 and current_height >= stop_height + 25:
+        if stop_height != 0 and current_height >= stop_height + 100:
             deposit_address = controller.middle.tx_manager.tx.register_producers_list[1].deposit_address
             balance = controller.middle.service_manager.rpc.get_balance_by_address(deposit_address)
             Logger.info("[main] The balance of deposit address is {}".format(balance))
@@ -72,13 +72,17 @@ def test_content():
             state = controller.get_producer_state(1)
             result = state == "Inactivate"
             controller.test_result("Before active producer, the stopped producer state is Inactive", result)
-            result = controller.middle.tx_manager.tx.activate_a_producer(inactive_producer)
-            Logger.info("[main] activate the producer result: {}".format(result))
+
+        if stop_height != 0 and current_height >= stop_height + 150:
+
+            result = inactive_producer.activate_without_jar()
+            Logger.info("activate the producer result: {}".format(result))
 
             state = controller.get_producer_state(1)
             result = state == "Activate"
             controller.test_result("After activate producer, the stopped producer state is active", result)
 
+        if stop_height != 0 and current_height > stop_height + 200:
             break
 
         time.sleep(1)

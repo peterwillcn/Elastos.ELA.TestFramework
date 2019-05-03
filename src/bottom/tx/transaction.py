@@ -66,14 +66,15 @@ class Transaction(object):
                 + "version: " + str(self.version) + "\n\t" \
                 + "tx_type: " + str(self.tx_type) + "\n\t" \
                 + "payload_version: " + str(self.payload_version) + "\n\t" \
+                + "payload{}".format(self.payload) + "\n\t"\
                 + "attributes: ".format(self.attributes) + "\n\t" \
-                + "inputs: ".format(self.inputs) + "\n\t" \
-                + "outputs: ".format(self.outputs) + "\n\t" \
+                + "inputs: {}".format(self.inputs) + "\n\t" \
+                + "outputs: {}".format(self.outputs) + "\n\t" \
                 + "lock_time: " + str(self.lock_time) + "\n\t" \
-                + "programs: ".format(self.programs) + "\n\t" \
+                + "programs: {}".format(self.programs) + "\n\t" \
                 + "fee: " + str(self.fee) + "\n\t" \
                 + "fee_per_kb: " + str(self.fee_per_kb) + "\n\t" \
-                + "tx_hash: " + self.tx_hash + "\n\t" \
+                + "tx_hash: " + self.tx_hash + "\n" \
                 + "}"
 
     def serialize(self):
@@ -106,24 +107,35 @@ class Transaction(object):
         r += self.payload.data(self.payload_version)
 
         # attributes
-        r += serialize.write_var_uint(len(self.attributes))
-        for attribute in self.attributes:
-            r += attribute.serialize()
+        if self.attributes is not None:
+            r += serialize.write_var_uint(len(self.attributes))
+            for attribute in self.attributes:
+                r += attribute.serialize()
 
         # inputs
-        r += serialize.write_var_uint(len(self.inputs))
-        for input in self.inputs:
-            r += input.serialize()
+        if self.inputs is not None:
+            r += serialize.write_var_uint(len(self.inputs))
+            for input in self.inputs:
+                r += input.serialize()
 
         # outputs
-        r += serialize.write_var_uint(len(self.outputs))
-        for output in self.outputs:
-            r += output.serialize(self.version)
+        if self.outputs is not None:
+            r += serialize.write_var_uint(len(self.outputs))
+            for output in self.outputs:
+                r += output.serialize(self.version)
 
         # lock_time
         r += struct.pack("<I", self.lock_time)
 
         return r
+
+    def hash(self):
+        if self.tx_hash is not "":
+            return self.tx_hash
+        r = self.serialize_unsigned()
+        tx_hash_str = keytool.sha256_hash(r, 2).hex()
+        self.tx_hash = tx_hash_str
+        return tx_hash_str
 
     @staticmethod
     def get_tx_type(tx_type: int):
@@ -168,74 +180,3 @@ class Transaction(object):
         elif tx_type == 0x13:
             return "UPDATE_VERSION"
 
-
-if __name__ == '__main__':
-
-    version = Transaction.TX_VERSION_DEFAULT
-    tx_type = Transaction.ACTIVATE_PRODUCER
-    payload_version = 0x00
-
-    public_key_str = "02517f74990da8de27d0bc7c516c45ecbb9b2aa6a4d4d5ab552b537e638fcfe45f"
-    node_public_key = bytes.fromhex(public_key_str)
-    signature = keytool.sha256_hash(node_public_key, 2)
-    ap = ActiveProducer(node_public_key, signature)
-
-    payload = ap
-
-    usage = 0x81
-    r = struct.pack("B", usage)
-    data = bytes([1, 2, 3])
-    attribute = Attribute(usage, data)
-
-    attributes = [attribute]
-
-    hash = keytool.sha256_hash(bytes("hello".encode("utf-8")), 2)
-    index = 21
-
-    op = OutPoint(hash.hex(), index)
-    print(op)
-    serial = op.serialize()
-    input = Input(op, 100)
-
-    inputs = [input]
-
-    value = 12
-    output_lock = 567
-    output_type = 11
-    asset_id = keytool.sha256_hash("assetid".encode(), 2)
-    program_hash = keytool.sha256_hash("programhash".encode(), 2)[:21]
-    output = Output(
-        asset_id=asset_id,
-        value=value,
-        output_lock=output_lock,
-        program_hash=program_hash,
-        output_type=output_type,
-        output_payload=None
-    )
-
-    outputs = [output]
-    lock_time = 99
-
-    p = Program(bytes([1, 2]), bytes([3, 4, 5]))
-
-    programs = [p]
-    fee = 100
-    fee_per_kb = 10
-
-    tx = Transaction()
-    tx.version = version
-    tx.tx_type = tx_type
-    tx.payload_version = payload_version
-    tx.payload = payload
-    tx.attributes = attributes
-    tx.inputs = inputs
-    tx.outputs = outputs
-    tx.lock_time = lock_time
-    tx.programs = programs
-    tx.fee = fee
-    tx.fee_per_kb = fee_per_kb
-
-    s = tx.serialize()
-
-    print(tx)
-    print("tx serial: ", s.hex())

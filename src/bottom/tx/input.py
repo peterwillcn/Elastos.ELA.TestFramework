@@ -30,17 +30,3 @@ class Input(object):
     def __repr__(self):
         return "Input(previous=%s sequence=%i)" % (repr(self.previous), self.sequence)
 
-
-if __name__ == '__main__':
-    hash = keytool.sha256_hash(bytes("hello".encode("utf-8")), 2)
-    index = 21
-
-    op = OutPoint(hash.hex(), index)
-    print(op)
-    serial = op.serialize()
-
-    input = Input(op, 100)
-    input_serial = input.serialize()
-    print("input: ", input)
-    print("serial : ", serial.hex())
-    print("input s: ", input_serial.hex())

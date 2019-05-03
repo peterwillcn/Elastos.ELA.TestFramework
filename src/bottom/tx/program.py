@@ -26,10 +26,3 @@ class Program(object):
         return "Program: {\n\t" + "code: " + self.code.hex() + "\n\t" + "parameter: " + self.parameter.hex() + "\n}"
 
 
-if __name__ == '__main__':
-
-    p = Program(bytes([1, 2]), bytes([3, 4, 5]))
-    print(p)
-
-    r = p.serialize()
-    print("program serial: ", r.hex())

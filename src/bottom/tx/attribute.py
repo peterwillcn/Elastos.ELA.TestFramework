@@ -61,17 +61,3 @@ class Attribute(object):
         return "Attribute(usage=%x data=%s)" % (self.usage, self.data.hex())
 
 
-if __name__ == '__main__':
-
-    usage = 0x81
-    r = struct.pack("B", usage)
-    print("r = ", r.hex())
-    data = bytes([1, 2, 3])
-    print("data: ", data, "length: ", len(data))
-
-    attribute = Attribute(usage, data)
-    serial = attribute.serialize()
-
-    print("attribute: ", attribute)
-    print("serial: ", serial.hex())
-
