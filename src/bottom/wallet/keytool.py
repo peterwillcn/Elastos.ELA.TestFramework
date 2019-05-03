@@ -23,9 +23,9 @@ def create_ecc_pair(curve_type: str):
     return ecc_key_pair
 
 
-def encode_point(is_compressed, ecc_publick_key):
-    public_key_x = ecc_publick_key._point._x
-    public_key_y = ecc_publick_key._point._y
+def encode_point(is_compressed, ecc_public_key):
+    public_key_x = ecc_public_key._point._x
+    public_key_y = ecc_public_key._point._y
 
     if public_key_x is None or public_key_y is None:
         infinity = []
@@ -44,6 +44,43 @@ def encode_point(is_compressed, ecc_publick_key):
             encoded_data[i] = y_bytes[i - 65 + len(y_bytes)]
 
     x_bytes = public_key_x.to_bytes()
+    x_len = len(x_bytes)
+    for i in range(33 - x_len, 33):
+        encoded_data[i] = x_bytes[i - 33 + x_len]
+
+    if is_compressed:
+        if public_key_y % 2 == 0:
+            encoded_data[0] = 0x02
+        else:
+            encoded_data[0] = 0x03
+    else:
+        encoded_data[0] = 0x04
+    return bytes(encoded_data)
+
+
+def encode_point2(is_compressed, public_key_point):
+    public_key_x = public_key_point.x()
+    print("type x()", type(public_key_x))
+    public_key_y = public_key_point.y()
+    print("type y()", type(public_key_y))
+
+    if public_key_x is None or public_key_y is None:
+        infinity = []
+        for i in range(1):
+            infinity.append(0x00)
+        return infinity
+    encoded_data = []
+    if is_compressed:
+        for i in range(33):
+            encoded_data.append(0x00)
+    else:
+        for i in range(65):
+            encoded_data.append(0x00)
+        y_bytes = public_key_y.to_bytes(32, byteorder="big")
+        for i in range(65 - len(y_bytes), 65):
+            encoded_data[i] = y_bytes[i - 65 + len(y_bytes)]
+
+    x_bytes = public_key_x.to_bytes(32, byteorder="big")
     x_len = len(x_bytes)
     for i in range(33 - x_len, 33):
         encoded_data[i] = x_bytes[i - 33 + x_len]
@@ -138,6 +175,10 @@ def ecdsa_sign(private_key: bytes, data: bytes):
     secret = int.from_bytes(private_key, byteorder="big", signed=False)
     digest = int.from_bytes(data_hash, byteorder="big", signed=False)
     pub_key = ecdsa.Public_key(g, g * secret)
+
+    pub_key_point = g * secret
+    pub_key_bytes = encode_point2(True, pub_key_point)
+    print("public key str: ", pub_key_bytes.hex())
     # pub_key = ecdsa.Public_key(g, g * secret)
     pri_key = ecdsa.Private_key(pub_key, secret)
 

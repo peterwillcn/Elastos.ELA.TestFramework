@@ -15,10 +15,11 @@ config = {
         "crc_number": 4,
         "pre_connect_offset": 5,
         "crc_dpos_height": 300,
-        "public_dpos_height": 308
+        "public_dpos_height": 308,
+        "max_inactivate_rounds": 100
     },
     "side": False,
-    "times": 1
+    "times": 3
 }
 
 
@@ -44,6 +45,8 @@ def test_content():
     height_times[current_height] = 1
 
     global result
+    global activate
+    activate = False
 
     while True:
         current_height = controller.get_current_height()
@@ -52,6 +55,13 @@ def test_content():
         if times > 1000:
             result = False
             break
+
+        if current_height > h1:
+            current_nicknames = controller.get_current_arbiter_nicknames()
+            next_nicknames = controller.get_next_arbiter_nicknames()
+
+            Logger.debug("current arbiter nicknames: {}".format(current_nicknames))
+            Logger.debug("next arbiter nicknames   : {}".format(next_nicknames))
 
         if stop_height == 0 and current_height >= h2 + 1:
             controller.test_result("Ater H2", True)
@@ -64,25 +74,18 @@ def test_content():
                 )
             )
 
-        if stop_height != 0 and current_height >= stop_height + 100:
-            deposit_address = controller.middle.tx_manager.tx.register_producers_list[1].deposit_address
-            balance = controller.middle.service_manager.rpc.get_balance_by_address(deposit_address)
-            Logger.info("[main] The balance of deposit address is {}".format(balance))
+        if not activate and stop_height != 0 and current_height >= stop_height + 150:
 
-            state = controller.get_producer_state(1)
+            state = controller.get_producer_state(inactive_producer_index)
             result = state == "Inactivate"
             controller.test_result("Before active producer, the stopped producer state is Inactive", result)
-
-        if stop_height != 0 and current_height >= stop_height + 150:
-
             result = inactive_producer.activate_without_jar()
             Logger.info("activate the producer result: {}".format(result))
-
-            state = controller.get_producer_state(1)
-            result = state == "Activate"
-            controller.test_result("After activate producer, the stopped producer state is active", result)
+            activate = True
 
         if stop_height != 0 and current_height > stop_height + 200:
+            state = controller.get_producer_state(inactive_producer_index)
+            result = state == "Activate"
             break
 
         time.sleep(1)

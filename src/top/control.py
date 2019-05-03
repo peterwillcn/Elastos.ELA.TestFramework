@@ -48,7 +48,6 @@ class Controller(object):
         Logger.info("{} terminal all the process and exit...".format(self.tag))
         self.middle.service_manager.jar_service.stop()
         self.middle.node_manager.stop_nodes()
-        exit(0)
 
     def reset_config(self, up_config: dict):
         for key in up_config.keys():
@@ -78,6 +77,7 @@ class Controller(object):
         else:
             print(current_time + Logger.COLOR_RED + " [NOT PASS!] " + Logger.COLOR_END + case + "\n")
             self.terminate_all_process()
+            exit(0)
 
     def get_tap_keystore(self):
         return self.middle.keystore_manager.special_key_stores[4]
