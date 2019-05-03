@@ -38,7 +38,7 @@ class ElaNode(Node):
         self.password = self.params.password
         self.rpc_port = self.reset_port(self.index, "ela", "json_port")
         self.err_output = open(os.path.join(self.cwd_dir, "error.log"), 'w')
-
+        self.arbiter_enable = False
         self.process = None
         self.running = False
 
@@ -46,10 +46,13 @@ class ElaNode(Node):
         Node.reset_config_common(self, self.index, "ela", self.params.number)
 
         _config = self.config[constant.CONFIG_TITLE]
-        if self.index == 0:
+        if self.index == 0 or self.params.later_start_number != 0 \
+            and self.index >= self.params.number - int(self.params.later_start_number / 2) + 1:
             _config[constant.CONFIG_ARBITER_CONFIGURATION][constant.CONFIG_ARBITER_ENABLE] = False
+            self.arbiter_enable = False
         else:
             _config[constant.CONFIG_ARBITER_CONFIGURATION][constant.CONFIG_ARBITER_ENABLE] = self.params.arbiter_enable
+            self.arbiter_enable = self.params.arbiter_enable
 
         _config[constant.CONFIG_MAGIC] = self.params.magic
         _config[constant.CONFIG_PRINT_LEVEL] = self.params.print_level
@@ -87,7 +90,7 @@ class ElaNode(Node):
     def start(self):
         if self.running:
             return
-        if self.params.arbiter_enable and self.index != 0:
+        if self.arbiter_enable:
             self.process = subprocess.Popen(
                 "./ela{} -p {}".format(self.index, self.password),
                 stdout=self.dev_null,

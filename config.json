@@ -5,6 +5,7 @@
     "password": "123",
     "number": 12,
     "crc_number": 4,
+    "later_start_number": 0,
     "print_level": 0,
     "auto_mining": false,
     "instant_block": true,

@@ -64,8 +64,10 @@ class Distribution(object):
         Logger.info("{} vote producer on success!".format(self.tag))
 
     def check_params(self):
-        if self.params.ela_params.number < 3 * self.params.ela_params.crc_number:
-            Logger.error("{} ela node number should be >= 3 * crc number, please check your config.json, exit...")
+        if self.params.ela_params.number < 3 * self.params.ela_params.crc_number + \
+                self.params.ela_params.later_start_number:
+            Logger.error("Ela node number should be >= 3 * crc number + later start number , " 
+                         "please check your config in the beginning of your test case or config.json, exit...")
             time.sleep(1)
             exit(-1)
 

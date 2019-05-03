@@ -66,7 +66,7 @@ class NodeManager(object):
 
     def start_nodes(self):
         if self.params.ela_params.enable:
-            for i in range(len(self.ela_nodes)):
+            for i in range(len(self.ela_nodes) - self.params.ela_params.later_start_number):
                 self.ela_nodes[i].start()
                 time.sleep(0.2)
             self.service_manager.wait_rpc_ready(self.ela_nodes[0].rpc_port)

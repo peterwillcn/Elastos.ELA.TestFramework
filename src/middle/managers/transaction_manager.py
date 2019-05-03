@@ -104,7 +104,10 @@ class TransactionManager(object):
 
     def register_producers_candidates(self):
         num = 0
-        for i in range(self.params.ela_params.crc_number + 1, self.params.ela_params.number + 1):
+        for i in range(
+                self.params.ela_params.crc_number + 1,
+                self.params.ela_params.number - round(self.params.ela_params.later_start_number / 2) + 1
+        ):
             ela_node = self.node_manager.ela_nodes[i]
             public_key = ela_node.node_keystore.public_key.hex()
             ret = self.tx.register_a_producer(ela_node)
@@ -116,10 +119,7 @@ class TransactionManager(object):
             else:
                 self.candidate_public_keys.append(public_key)
             Logger.info("{} register node-{} to be a producer on success!\n".format(self.tag, i))
-        Logger.info("{} general register public keys size: {}".format(self.tag, len(self.general_producer_public_keys)))
-        Logger.info("{} general register public keys: {}".format(self.tag, self.general_producer_public_keys))
-        Logger.info("{} candidate public keys size: {}".format(self.tag, len(self.candidate_public_keys)))
-        Logger.info("{} candidate public keys: {}".format(self.tag, self.candidate_public_keys))
+
         return True
 
     def register_producers(self, start: int, end: int, without_mining=False):
@@ -176,7 +176,10 @@ class TransactionManager(object):
         return True
 
     def vote_producers_candidates(self):
-        for i in range(self.params.ela_params.crc_number + 1, self.params.ela_params.number + 1):
+        for i in range(
+                self.params.ela_params.crc_number + 1,
+                self.params.ela_params.number - round(self.params.ela_params.later_start_number / 2) + 1
+        ):
             vote_amount = (self.params.ela_params.number - i + 1) * constant.TO_SELA
             ret = self.tx.vote_a_producer(
                 vote_keystore=self.node_manager.keystore_manager.owner_key_stores[i],
