@@ -5,16 +5,16 @@
 
 import struct
 
+from src.middle.tools import util
+
+from src.bottom.services.rpc import RPC
 from src.bottom.wallet import keytool
 from src.bottom.tx.outpoint import OutPoint
 
 
 class Input(object):
-    def __init__(self, outpoint=None, sequence=0):
-        if outpoint is None:
-            self.previous = OutPoint()
-        else:
-            self.previous = outpoint
+    def __init__(self, tx_id: bytes, index: int, sequence=0):
+        self.previous = OutPoint(tx_id, index)
         self.sequence = sequence
 
     def deserialize(self, f):
@@ -28,5 +28,27 @@ class Input(object):
         return r
 
     def __repr__(self):
-        return "Input(previous=%s sequence=%i)" % (repr(self.previous), self.sequence)
+        return "Input{" + "\n\t" \
+                + "previous: {}".format(repr(self.previous)) + "\n\t" \
+                + "sequence: {}".format(self.sequence) + "\n" \
+                + "}"
 
+
+if __name__ == '__main__':
+
+    # txid = "16c90c1e3a45cdf11f39fe0aa9f5eaea8fd0e6ab8bf5830c8cec4029c5964498"
+    # index = 2
+    # tx_id = util.bytes_reverse(bytes.fromhex(txid))
+    # input = Input(tx_id, index)
+    #
+    # r = input.serialize()
+    # print(input)
+    # print("input serial: ", r.hex())
+
+    rpc = RPC()
+    address = "EKpcRUrdJz1cs5zKNDj5WDXsv3TVN9qqco"
+    # address2 = "ETJSRdS4fTh89bdHmWbfSt7HAXpwweqykB"
+    amount = 10.0001
+    response = rpc.get_utxos_by_amount(address, str(amount))
+    print("type: ", type(response))
+    print("response: {}".format(response))

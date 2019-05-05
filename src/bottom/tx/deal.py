@@ -18,6 +18,10 @@ from src.bottom.tx.register_vote.voter import Voter
 from src.bottom.tx.register_vote.producer import Producer
 from src.bottom.tx.active_producer import ActiveProducer
 from src.bottom.tx.transaction import Transaction
+from src.bottom.tx.input import Input
+from src.bottom.tx.outpoint import OutPoint
+from src.bottom.tx.output import Output
+from src.bottom.tx import txbuild
 from src.bottom.wallet.keystore import KeyStore
 
 
@@ -27,13 +31,33 @@ class Deal(object):
         self.tag = util.tag_from_path(__file__, self.__class__.__name__)
         self.jar_service = service_manager.jar_service
         self.assist = Assist(service_manager.rpc, service_manager.rest)
-        self.fee = 100
+        self.fee = 10000
         self.register_producers_list = []
         self.update_producers_list = []
         self.cancel_producers_list = []
         self.redeem_producers_list = list()
         self.voter_list = list()
         self.vote_producers_list = list()
+
+    def transfer_asset(self, input_keystore: KeyStore, output_addresses: list, amount: int):
+        tx = txbuild.create_transaction(
+            keystore=input_keystore,
+            output_addresses=output_addresses,
+            amount=amount,
+            fee=self.fee,
+            output_lock=0
+        )
+
+        tx = txbuild.single_sign_transaction(input_keystore, tx)
+        tx.hash()
+
+        r = tx.serialize()
+        response = self.assist.rpc.send_raw_transaction(r.hex())
+        reverse_res = util.bytes_reverse(bytes.fromhex(response)).hex()
+        Logger.debug("{} tx hash : {}".format(self.tag, tx.hash()))
+        Logger.debug("{} response: {}".format(self.tag, reverse_res))
+
+        return tx.hash() == reverse_res
 
     def ordinary_single_sign(self, input_keystore, output_addresses: list, amount: int, mode="privatekey"):
         inputs, utxos_value = self.assist.gen_inputs_utxo_value(
@@ -186,6 +210,7 @@ class Deal(object):
             ret = producer.register_without_mining()
             if ret:
                 self.register_producers_list.append(producer)
+            Logger.debug("register a producer without mining blocks: {}".format(ret))
         else:
             ret = producer.register()
             if ret:
@@ -238,8 +263,11 @@ class Deal(object):
         Logger.debug("{} register_vote result: {}".format(self.tag, ret))
         return ret
 
+    def create_transaction(self, inputs: list, outputs: list):
+        pass
+
     @staticmethod
-    def gen_activate_producer_transaction(node_key_store: KeyStore):
+    def create_activate_producer_transaction(node_key_store: KeyStore):
         pub_key = node_key_store.public_key
         pri_key = node_key_store.private_key
 

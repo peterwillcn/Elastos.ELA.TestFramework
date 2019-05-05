@@ -6,20 +6,17 @@
 
 class OutputPayload(object):
 
-    def __init__(self):
-        pass
-
     def data(self):
-        pass
+        return None
 
     def serialize(self):
-        pass
+        return None
 
     def deserialize(self):
-        pass
+        return None
 
     def get_version(self):
-        pass
+        return 0
 
     def validate(self):
-        pass
+        return None

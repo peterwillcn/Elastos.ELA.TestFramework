@@ -124,6 +124,14 @@ class Controller(object):
         current_height = self.get_current_height()
         Logger.debug("{} current height: {}".format(self.tag, current_height))
 
+    def get_list_producers_nicknames(self):
+        list_producers = self.middle.service_manager.rpc.list_producers(0, 100)
+        producers = list_producers["producers"]
+        producers_nickname = list()
+        for producer in producers:
+            producers_nickname.append(producer["nickname"])
+        return producers_nickname
+
     def get_current_arbiter_public_keys(self):
         return self.middle.service_manager.rpc.get_arbiters_info()["arbiters"]
 

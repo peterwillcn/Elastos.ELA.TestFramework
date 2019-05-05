@@ -57,6 +57,15 @@ class Assist(object):
                                                                                         amount + fee))
         return {"value": utxo_value, "quantity": index + 1}
 
+    def get_utxos_by_amount(self, address: str, amount: int):
+        response = self.rpc.get_utxos_by_amount(address, str(amount))
+        if isinstance(response, dict):
+            return None
+        elif isinstance(response, list):
+            return response
+        else:
+            return None
+
     def gen_inputs_utxo_value(self, input_keystore: KeyStore, amount: int, deposit_address="",
                               fee=10000, mode="address", port=RPC.DEFAULT_PORT):
         if deposit_address != "":

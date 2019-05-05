@@ -6,14 +6,16 @@
 
 class Payload(object):
 
-    def __init__(self):
-        pass
-
     def data(self, r: bytes):
-        pass
+        return None
 
     def serialize(self, r: bytes, version: int):
-        pass
+        return None
 
     def deserialize(self, r: bytes, version: int):
-        pass
+        return None
+
+    def __repr__(self):
+        return ""
+
+

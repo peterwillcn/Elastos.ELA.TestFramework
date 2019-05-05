@@ -48,9 +48,10 @@ class Attribute(object):
 
         r = b""
         r += struct.pack("<B", self.usage)
-        r = serialize.write_var_bytes(r, self.data)
-        # r += serialize.write_var_uint(len(self.data))
-        # r += self.data
+        if self.data is None:
+            r = serialize.write_var_bytes(r, bytes(0))
+        else:
+            r = serialize.write_var_bytes(r, self.data)
 
         return r
 
@@ -58,6 +59,15 @@ class Attribute(object):
         pass
 
     def __repr__(self):
-        return "Attribute(usage=%x data=%s)" % (self.usage, self.data.hex())
+        if self.data is None:
+            arg1 = ""
+        else:
+            arg1 = self.data.hex()
+
+        return "Attribute {" + "\n\t" \
+                + "usage: " + str(self.usage) + "\n\t" \
+                + "data: " + arg1 + "\n" \
+                + "}"
+
 
 

@@ -19,7 +19,7 @@ config = {
         "max_inactivate_rounds": 100
     },
     "side": False,
-    "times": 3
+    "times": 5
 }
 
 
@@ -59,7 +59,8 @@ def test_content():
         if current_height > h1:
             current_nicknames = controller.get_current_arbiter_nicknames()
             next_nicknames = controller.get_next_arbiter_nicknames()
-
+            current_nicknames.sort()
+            next_nicknames.sort()
             Logger.debug("current arbiter nicknames: {}".format(current_nicknames))
             Logger.debug("next arbiter nicknames   : {}".format(next_nicknames))
 

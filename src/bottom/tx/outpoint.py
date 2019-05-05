@@ -5,29 +5,26 @@
 
 import struct
 
-from src.middle.tools import util
-
-from src.bottom.wallet import keytool
-
 
 class OutPoint(object):
-    def __init__(self, hash="", n=0):
-        self.hash = hash
+    def __init__(self, tx_id: bytes, n: int):
+        self.tx_id = tx_id
         self.index = n
 
     def deserialize(self, f):
-        hash = util.deser_uint256(f)
-        self.hash = hex(hash)[2:]
-        self.index = struct.unpack("<I", f.read(4))[0]
+        pass
 
     def serialize(self):
         r = b""
-        r += bytes.fromhex(self.hash)
+        r += self.tx_id
         r += struct.pack("<H", self.index)
         return r
 
     def __repr__(self):
-        return "OutPoint(hash=%s index=%i)" % (self.hash, self.index)
+        return "OutPoint{" + "\n\t" \
+                + "tx_hash: " + self.tx_id.hex() + "\n\t" \
+                + "index: " + str(self.index) + "\n" \
+                + "}"
 
 
 

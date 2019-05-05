@@ -6,6 +6,7 @@
 import os
 import json
 import random
+import base58
 
 from ecdsa import ecdsa
 from Crypto.Hash import SHA256
@@ -60,9 +61,7 @@ def encode_point(is_compressed, ecc_public_key):
 
 def encode_point2(is_compressed, public_key_point):
     public_key_x = public_key_point.x()
-    print("type x()", type(public_key_x))
     public_key_y = public_key_point.y()
-    print("type y()", type(public_key_y))
 
     if public_key_x is None or public_key_y is None:
         infinity = []
@@ -175,11 +174,6 @@ def ecdsa_sign(private_key: bytes, data: bytes):
     secret = int.from_bytes(private_key, byteorder="big", signed=False)
     digest = int.from_bytes(data_hash, byteorder="big", signed=False)
     pub_key = ecdsa.Public_key(g, g * secret)
-
-    pub_key_point = g * secret
-    pub_key_bytes = encode_point2(True, pub_key_point)
-    print("public key str: ", pub_key_bytes.hex())
-    # pub_key = ecdsa.Public_key(g, g * secret)
     pri_key = ecdsa.Private_key(pub_key, secret)
 
     signature = pri_key.sign(digest, randrange(1, n))
@@ -188,5 +182,28 @@ def ecdsa_sign(private_key: bytes, data: bytes):
     b = r + s
 
     return b
+
+
+def program_hash_to_address(program_hash):
+    data = program_hash
+    double_value = sha256_hash(data, 2)
+    flag = double_value[0:4]
+    data = data + flag
+    encoded = base58.b58encode(data)
+    return encoded
+
+
+def address_to_program_hash(address: str):
+    if len(address) != 34:
+        return None
+
+    decoded = base58.b58decode(bytes(address.encode()))
+    program_hash = decoded.hex()[:42]
+    address2 = program_hash_to_address(bytes.fromhex(program_hash))
+    if address2.decode() != address:
+        return None
+
+    return bytes.fromhex(program_hash)
+
 
 

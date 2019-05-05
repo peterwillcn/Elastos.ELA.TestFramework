@@ -30,7 +30,7 @@ def test_content():
     h2 = controller.middle.params.ela_params.public_dpos_height
     pre_offset = config["ela"]["pre_connect_offset"]
     test_case = "More than 1/3 crc inactive after 2 rotations restart crc can generate blocks"
-    inactive_crc_nodes = controller.middle.node_manager.ela_nodes[1: crc_number * 2 + 1]
+    inactive_crc_nodes = controller.middle.node_manager.ela_nodes[1: crc_number + 1]
     normal_arbiter_publickeys = list()
 
     for node in controller.middle.node_manager.ela_nodes[1: crc_number * 3 + 1]:
@@ -38,6 +38,9 @@ def test_content():
 
     stop_height = 0
     global result
+    global restart
+    result = False
+    restart = False
 
     current_height = controller.get_current_height()
     if current_height < h1 - pre_offset - 1:
@@ -50,9 +53,18 @@ def test_content():
         current_height = controller.get_current_height()
         times = controller.get_height_times(height_times, current_height)
         Logger.info("current height: {}, times: {}".format(current_height, times))
-        if times >= 200:
+        if times >= 1000:
             result = False
             break
+
+        if current_height > h1:
+            arbiters_nicknames = controller.get_current_arbiter_nicknames()
+            arbiters_nicknames.sort()
+            next_arbiter_nicknames = controller.get_next_arbiter_nicknames()
+            next_arbiter_nicknames.sort()
+            Logger.info("current arbiters nicknames: {}".format(arbiters_nicknames))
+            Logger.info("next    arbiters nicknames: {}".format(next_arbiter_nicknames))
+
         if stop_height == 0 and current_height >= h2 + 12:
             controller.test_result("Ater H2，the first round of consensus", True)
 
@@ -61,12 +73,11 @@ def test_content():
 
             stop_height = current_height
             print("stop_height : ", stop_height)
-            arbiters_nicknames = controller.get_current_arbiter_nicknames()
-            arbiters_nicknames.sort()
-            next_arbiter_nicknames = controller.get_next_arbiter_nicknames()
-            next_arbiter_nicknames.sort()
-            Logger.info("current arbiters nicknames: {}".format(arbiters_nicknames))
-            Logger.info("next    arbiters nicknames: {}".format(next_arbiter_nicknames))
+
+        if not restart and times >= 100:
+            for node in inactive_crc_nodes:
+                node.start()
+                restart = True
 
         if stop_height != 0 and current_height > stop_height + 36:
             arbiters_list = controller.middle.service_manager.rpc.get_arbiters_info()["arbiters"]

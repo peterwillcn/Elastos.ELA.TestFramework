@@ -41,6 +41,9 @@ class RPC(object):
         else:
             return self.post_request("listunspent", params={"addresses": [addresses], "assetid": assetid}, port=port)
 
+    def get_utxos_by_amount(self, address: str, amount: str, port=DEFAULT_PORT):
+        return self.post_request("getutxosbyamount", params={"address": address, "amount": amount}, port=port)
+
     def toggle_mining(self, mining: bool, port=DEFAULT_PORT):
         return self.post_request("togglemining", params={"mining": mining}, port=port)
 

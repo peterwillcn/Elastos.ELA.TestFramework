@@ -53,14 +53,16 @@ class KeyStore(object):
             program_hash = bytes([18]) + data
         return program_hash
 
+    # def _program_hash_to_address(self):
+    #     data = self.program_hash
+    #     double_value = keytool.sha256_hash(data, 2)
+    #     flag = double_value[0:4]
+    #     data = data + flag
+    #     encoded = base58.b58encode(data)
+    #     return encoded
+
     def _program_hash_to_address(self):
-        data = self.program_hash
-        # double_value = SHA256.new(SHA256.new(data).digest()).digest()
-        double_value = keytool.sha256_hash(data, 2)
-        flag = double_value[0:4]
-        data = data + flag
-        encoded = base58.b58encode(data)
-        return encoded
+        return keytool.program_hash_to_address(self.program_hash)
 
     def gen_keystore_dat(self, password: str):
         iv_bytes = keytool.create_urandom(16)
