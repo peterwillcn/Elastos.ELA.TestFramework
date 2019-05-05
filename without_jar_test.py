@@ -9,6 +9,8 @@ from src.top.control import Controller
 from src.middle.tools.log import Logger
 from src.middle.tools import constant
 
+from src.bottom.tx.producer import Producer
+
 
 config = {
     "ela": {
@@ -26,14 +28,16 @@ config = {
 def test_content():
 
     controller = Controller(config)
+    crc_number = controller.middle.params.ela_params.crc_number
 
     current_height = controller.get_current_height()
     Logger.debug("current height: {}".format(current_height))
 
+    # normal transaction test
     tap_keystore = controller.get_tap_keystore()
     output_addresses = list()
 
-    for keystore in controller.middle.keystore_manager.node_key_stores:
+    for keystore in controller.middle.keystore_manager.owner_key_stores:
         output_addresses.append(keystore.address)
 
     Logger.debug("before tap address value: {}".format(
@@ -48,7 +52,7 @@ def test_content():
     result = controller.middle.tx_manager.tx.transfer_asset(
         input_keystore=tap_keystore,
         output_addresses=output_addresses,
-        amount=100 * constant.TO_SELA
+        amount=10000 * constant.TO_SELA
     )
 
     controller.discrete_mining_blocks(1)
@@ -61,6 +65,13 @@ def test_content():
             controller.middle.service_manager.rpc.get_balance_by_address(address)
         ))
     controller.test_result("transfer asset", result)
+
+    # register transaction test
+    will_register_node = controller.middle.node_manager.ela_nodes[crc_number + 1]
+
+    producer = Producer(will_register_node)
+    ret = producer.register(True)
+    controller.test_result("register producer", ret)
     controller.terminate_all_process()
 
 

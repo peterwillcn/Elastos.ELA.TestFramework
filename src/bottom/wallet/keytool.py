@@ -14,6 +14,11 @@ from Crypto.Hash import RIPEMD160
 from Crypto.PublicKey import ECC
 from Crypto.Cipher import AES
 
+PREFIX_STANDARD = 0x21
+PREFIX_MULTI_SIGN = 0x12
+PREFIX_CROSS_CHAIN = 0x4B
+PREFIX_DEPOSIT = 0x1F
+
 
 def create_ecc_pair(curve_type: str):
     while True:
@@ -190,7 +195,7 @@ def program_hash_to_address(program_hash):
     flag = double_value[0:4]
     data = data + flag
     encoded = base58.b58encode(data)
-    return encoded
+    return encoded.decode()
 
 
 def address_to_program_hash(address: str):
@@ -200,10 +205,29 @@ def address_to_program_hash(address: str):
     decoded = base58.b58decode(bytes(address.encode()))
     program_hash = decoded.hex()[:42]
     address2 = program_hash_to_address(bytes.fromhex(program_hash))
-    if address2.decode() != address:
+    if address2 != address:
         return None
 
     return bytes.fromhex(program_hash)
 
 
+def gen_deposit_address(program_hash: bytes):
+    if program_hash[0] != PREFIX_STANDARD:
+        return None
 
+    prefix = PREFIX_DEPOSIT.to_bytes(1, byteorder="big", signed=False)
+    deposit_hash = prefix + program_hash[1:]
+    print("deposit hash: ", deposit_hash.hex())
+    deposit_encoded = program_hash_to_address(deposit_hash)
+    return deposit_encoded
+
+
+if __name__ == '__main__':
+
+    program_hash = bytes.fromhex("218cb669c4c446b82bb12dfab4eee3555c5d52260f")
+    deposit_address = gen_deposit_address(program_hash)
+    print("deposit address",  deposit_address)
+
+    program = address_to_program_hash(deposit_address)
+    print("program1: ", program_hash.hex())
+    print("program2: ", program.hex())

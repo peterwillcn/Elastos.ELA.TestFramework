@@ -6,6 +6,11 @@
 
 class Payload(object):
 
+    DEFAULT_VERSION = 0x00
+
+    def __init__(self, version: int):
+        self.version = version
+
     def data(self, r: bytes):
         return None
 

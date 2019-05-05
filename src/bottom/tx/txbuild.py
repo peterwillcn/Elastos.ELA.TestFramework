@@ -18,6 +18,7 @@ from src.bottom.tx.program import Program
 from src.bottom.tx.payload import Payload
 from src.bottom.tx.attribute import Attribute
 from src.bottom.tx.transaction import Transaction
+from src.bottom.tx.producer_info import ProducerInfo
 from src.bottom.tx.output_payload import OutputPayload
 from src.bottom.tx import serialize
 from src.bottom.wallet import keytool
@@ -62,7 +63,57 @@ def create_transaction(keystore: KeyStore, output_addresses: list, amount: int, 
     tx = Transaction()
     tx.version = Transaction.TX_VERSION_09
     tx.tx_type = Transaction.TRANSFER_ASSET
-    tx.payload = Payload()
+    tx.payload = Payload(Payload.DEFAULT_VERSION)
+    tx.attributes = attributes
+    tx.inputs = inputs
+    tx.outputs = outputs
+    tx.lock_time = 0
+    tx.programs = programs
+
+    return tx
+
+
+def create_register_transaction(keystore: KeyStore, output_addresses: list, amount: int,
+                                payload: ProducerInfo, fee=10000, output_lock=0):
+    # check output
+    if output_addresses is None or len(output_addresses) == 0:
+        Logger.error("Invalid output addresses")
+        return None
+
+    # create outputs
+    outputs, total_amount = create_normal_outputs(
+        output_addresses=output_addresses,
+        amount=amount,
+        fee=fee,
+        output_lock=output_lock
+    )
+
+    # create inputs
+    inputs, change_outputs = create_normal_inputs(keystore, total_amount)
+    if inputs is None or change_outputs is None:
+        Logger.error("Create normal inputs failed")
+        return None
+    outputs.extend(change_outputs)
+
+    # create program
+    programs = list()
+    redeem_script = keystore.sign_script
+    program = Program(code=redeem_script, params=None)
+    programs.append(program)
+
+    # create attributes
+    attributes = list()
+    attribute = Attribute(
+        usage=Attribute.NONCE,
+        data=bytes("attributes".encode())
+    )
+    attributes.append(attribute)
+
+    tx = Transaction()
+    tx.version = Transaction.TX_VERSION_09
+    tx.tx_type = Transaction.REGISTER_PRODUCER
+    tx.payload_version = 0
+    tx.payload = payload
     tx.attributes = attributes
     tx.inputs = inputs
     tx.outputs = outputs

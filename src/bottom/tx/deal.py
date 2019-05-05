@@ -12,6 +12,7 @@ from src.middle.tools.log import Logger
 from src.middle.managers.service_manager import ServiceManager
 
 from src.bottom.nodes.ela import ElaNode
+from src.bottom.services import rpc2
 from src.bottom.tx.assist import Assist
 from src.bottom.tx.register_vote.payload import Payload
 from src.bottom.tx.register_vote.voter import Voter
@@ -52,7 +53,7 @@ class Deal(object):
         tx.hash()
 
         r = tx.serialize()
-        response = self.assist.rpc.send_raw_transaction(r.hex())
+        response = rpc2.send_raw_transaction(r.hex())
         reverse_res = util.bytes_reverse(bytes.fromhex(response)).hex()
         Logger.debug("{} tx hash : {}".format(self.tag, tx.hash()))
         Logger.debug("{} response: {}".format(self.tag, reverse_res))

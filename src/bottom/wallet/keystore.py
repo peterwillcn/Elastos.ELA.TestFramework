@@ -34,7 +34,7 @@ class KeyStore(object):
         self.public_key = keytool.encode_point(True, self.ecc_public_key)
         self.sign_script = self._publickey_to_sign_script()
         self.program_hash = self._script_to_program_hash()
-        self.address = self._program_hash_to_address().decode()
+        self.address = self._program_hash_to_address()
 
     def _publickey_to_sign_script(self):
         return bytes([len(self.public_key)]) + self.public_key + bytes([0xac])
