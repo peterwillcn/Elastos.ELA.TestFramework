@@ -17,7 +17,7 @@ from src.bottom.tx.assist import Assist
 from src.bottom.tx.register_vote.payload import Payload
 from src.bottom.tx.register_vote.voter import Voter
 from src.bottom.tx.register_vote.producer import Producer
-from src.bottom.tx.active_producer import ActiveProducer
+from src.bottom.tx.process_producer import ProcessProducer
 from src.bottom.tx.transaction import Transaction
 from src.bottom.tx.input import Input
 from src.bottom.tx.outpoint import OutPoint
@@ -54,11 +54,37 @@ class Deal(object):
 
         r = tx.serialize()
         response = rpc2.send_raw_transaction(r.hex())
+        if isinstance(response, dict):
+            Logger.error("rpc send raw transaction failed")
+            return False
         reverse_res = util.bytes_reverse(bytes.fromhex(response)).hex()
         Logger.debug("{} tx hash : {}".format(self.tag, tx.hash()))
         Logger.debug("{} response: {}".format(self.tag, reverse_res))
 
         return tx.hash() == reverse_res
+
+    def vote_producer(self, keystore: KeyStore, amount: int, candidates_list):
+        tx = txbuild.create_vote_transaction(
+            keystore=keystore,
+            cancadites_list=candidates_list,
+            amount=amount,
+            fee=10000
+        )
+
+        tx = txbuild.single_sign_transaction(keystore, tx)
+        Logger.debug("vote transaction: \n{}".format(tx))
+        r = tx.serialize()
+
+        resp = rpc2.send_raw_transaction(r.hex())
+        if isinstance(resp, dict):
+            Logger.error("rpc send raw transaction failed")
+            return False
+
+        response = util.bytes_reverse(bytes.fromhex(resp)).hex()
+        Logger.debug("tx hash : {}".format(tx.hash()))
+        Logger.debug("response: {}".format(response))
+
+        return tx.hash() == response
 
     def ordinary_single_sign(self, input_keystore, output_addresses: list, amount: int, mode="privatekey"):
         inputs, utxos_value = self.assist.gen_inputs_utxo_value(
@@ -272,7 +298,7 @@ class Deal(object):
         pub_key = node_key_store.public_key
         pri_key = node_key_store.private_key
 
-        activate_producer = ActiveProducer(pub_key, pri_key)
+        activate_producer = ProcessProducer(pub_key, pri_key)
 
         tx = Transaction()
         tx.version = Transaction.TX_VERSION_09

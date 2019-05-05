@@ -17,7 +17,7 @@ from src.bottom.tx.outpoint import OutPoint
 from src.bottom.tx.program import Program
 from src.bottom.tx.payload import Payload
 from src.bottom.tx.output_payload import OutputPayload
-from src.bottom.tx.active_producer import ActiveProducer
+from src.bottom.tx.process_producer import ProcessProducer
 from src.bottom.tx import serialize
 
 

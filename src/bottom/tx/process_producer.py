@@ -9,14 +9,14 @@ from src.bottom.tx import serialize
 from src.bottom.wallet import keytool
 
 
-class ActiveProducer(Payload):
+class ProcessProducer(Payload):
 
-    ACTIVATE_PRODUCER_VERSION = 0x00
+    PROCESS_PRODUCER_VERSION = 0x00
 
     def __init__(self, pub_key=None, pri_key=None, signature=None):
-        Payload.__init__(self)
-        self.node_public_key = pub_key
-        self.node_private_key = pri_key
+        Payload.__init__(self, self.PROCESS_PRODUCER_VERSION)
+        self.public_key = pub_key
+        self.private_key = pri_key
         if pub_key is not None and pri_key is not None:
             self.signature = self.set_signature()
 
@@ -31,7 +31,7 @@ class ActiveProducer(Payload):
         return r
 
     def serialize_unsigned(self, r: bytes, version: int):
-        r = serialize.write_var_bytes(r, self.node_public_key)
+        r = serialize.write_var_bytes(r, self.public_key)
         return r
 
     def deserialize(self, r: bytes, version: int):
@@ -39,19 +39,19 @@ class ActiveProducer(Payload):
 
     def set_signature(self):
         data = b""
-        data = self.serialize_unsigned(data, self.ACTIVATE_PRODUCER_VERSION)
-        return keytool.ecdsa_sign(self.node_private_key, data)
+        data = self.serialize_unsigned(data, self.PROCESS_PRODUCER_VERSION)
+        return keytool.ecdsa_sign(self.private_key, data)
 
     def __repr__(self):
-        if self.node_public_key is None:
+        if self.public_key is None:
             arg1 = ""
         else:
-            arg1 = self.node_public_key.hex()
+            arg1 = self.public_key.hex()
 
-        if self.node_private_key is None:
+        if self.private_key is None:
             arg2 = ""
         else:
-            arg2 = self.node_private_key.hex()
+            arg2 = self.private_key.hex()
 
         if self.signature is None:
             arg3 = ""

@@ -49,7 +49,7 @@ class Output(object):
                 + "output_lock: " + str(self.output_lock) + "\n\t" \
                 + "program_hash: " + self.program_hash.hex() + "\n\t" \
                 + "type: " + str(self.type) + "\n\t" \
-                + "output_payload: " + "" + "\n" \
+                + "output_payload: {}".format(self.output_payload) + "\n" \
                 + "}"
 
 

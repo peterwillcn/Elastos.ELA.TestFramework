@@ -3,8 +3,6 @@
 # date: 2019/4/3 4:49 PM
 # author: liteng
 
-import time
-
 from src.middle.tools import constant
 from src.middle.tools import util
 from src.middle.tools.log import Logger
@@ -13,9 +11,7 @@ from src.bottom.nodes.ela import ElaNode
 from src.bottom.services import rpc2
 from src.bottom.wallet import keytool
 from src.bottom.tx.producer_info import ProducerInfo
-from src.bottom.tx.transaction import Transaction
 from src.bottom.tx import txbuild
-from src.bottom.tx.active_producer import ActiveProducer
 
 
 class Producer(object):
@@ -68,37 +64,82 @@ class Producer(object):
             rpc2.discrete_mining(1)
         return resp == tx.hash()
 
-    def activate(self):
-        pub_key = self.node.node_keystore.public_key
-        pri_key = self.node.node_keystore.private_key
-        activate_producer = ActiveProducer(pub_key, pri_key)
+    def update(self):
+        tx = txbuild.create_update_transaction(
+            keystore=self.node.owner_keystore,
+            payload=self.info,
+        )
 
-        tx = Transaction()
-        tx.version = Transaction.TX_VERSION_09
-        tx.tx_type = Transaction.ACTIVATE_PRODUCER
-        tx.payload = activate_producer
-        tx.attributes = []
-        tx.inputs = []
-        tx.outputs = []
-        tx.programs = list()
-        tx.lock_time = 0
+        tx = txbuild.single_sign_transaction(self.node.owner_keystore, tx)
 
         r = tx.serialize()
         tx.hash()
         Logger.debug("{} {}".format(self.tag, tx))
         Logger.debug("{} tx serialize: {}".format(self.tag, r.hex()))
 
-        resp = rpc2.send_raw_transaction(data=r.hex())
+        resp = rpc2.send_raw_transaction(r.hex())
+        Logger.debug("{} resp: {}".format(self.tag, resp))
         if type(resp) is not dict:
             resp = util.bytes_reverse(bytes.fromhex(resp)).hex()
-        Logger.debug("{} hash: {}".format(self.tag, tx.hash()))
-        Logger.debug("{} resp: {}".format(self.tag, resp))
+        rpc2.discrete_mining(1)
 
         return resp == tx.hash()
 
-    def get_deposit_balance(self):
-        balance = rpc2.get_balance_by_address(
-            address=self.deposit_address
-        )
-        Logger.debug("{} deposit balance: {}".format(self.tag, balance))
-        return balance
+    def cancel(self):
+        tx = txbuild.create_cancel_transaction(self.node.owner_keystore)
+        tx = txbuild.single_sign_transaction(self.node.owner_keystore, tx)
+
+        r = tx.serialize()
+        resp = rpc2.send_raw_transaction(r.hex())
+        Logger.debug("{} resp: {}".format(self.tag, resp))
+        if isinstance(resp, dict):
+            Logger.error("{} send raw transaction error".format(self.tag))
+            return False
+
+        response = util.bytes_reverse(bytes.fromhex(resp)).hex()
+        rpc2.discrete_mining(1)
+        Logger.debug("{} tx hash : {}".format(self.tag, tx.hash()))
+        Logger.debug("{} response: {}".format(self.tag, response))
+
+        return tx.hash() == response
+
+    def redeem(self):
+
+        tx = txbuild.create_redeem_transaction(self.node.owner_keystore, amount=200 * constant.TO_SELA)
+        tx = txbuild.single_sign_transaction(self.node.owner_keystore, tx)
+        Logger.debug("{} redeem transaction: \n{}".format(self.tag, tx))
+        r = tx.serialize()
+        resp = rpc2.send_raw_transaction(r.hex())
+        Logger.debug("{} resp: {}".format(self.tag, resp))
+
+        if isinstance(resp, dict):
+            Logger.error("{} send raw transaction error".format(self.tag))
+            return False
+
+        response = util.bytes_reverse(bytes.fromhex(resp)).hex()
+        rpc2.discrete_mining(1)
+        Logger.debug("{} tx hash : {}".format(self.tag, tx.hash()))
+        Logger.debug("{} response: {}".format(self.tag, response))
+
+        return tx.hash() == response
+
+    def activate(self):
+
+        # note activate producer transaction needn't to sign the whole transaction
+        tx = txbuild.create_activate_producer(self.node.node_keystore)
+
+        r = tx.serialize()
+
+        resp = rpc2.send_raw_transaction(r.hex())
+        Logger.debug("{} resp: {}".format(self.tag, resp))
+
+        if isinstance(resp, dict):
+            Logger.error("{} send raw transaction error".format(self.tag))
+            return False
+
+        response = util.bytes_reverse(bytes.fromhex(resp)).hex()
+        rpc2.discrete_mining(1)
+        Logger.debug("{} tx hash : {}".format(self.tag, tx.hash()))
+        Logger.debug("{} response: {}".format(self.tag, response))
+
+        return resp == tx.hash()

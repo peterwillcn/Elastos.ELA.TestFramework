@@ -14,7 +14,7 @@ from src.bottom.services.jar import JarService
 from src.bottom.tx.assist import Assist
 from src.bottom.tx.transaction import Transaction
 from src.bottom.tx.register_vote.payload import Payload
-from src.bottom.tx.active_producer import ActiveProducer
+from src.bottom.tx.process_producer import ProcessProducer
 
 
 class Producer(object):
@@ -306,7 +306,7 @@ class Producer(object):
     def activate_without_jar(self):
         pub_key = self.node.node_keystore.public_key
         pri_key = self.node.node_keystore.private_key
-        activate_producer = ActiveProducer(pub_key, pri_key)
+        activate_producer = ProcessProducer(pub_key, pri_key)
 
         tx = Transaction()
         tx.version = Transaction.TX_VERSION_09

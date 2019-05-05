@@ -33,6 +33,7 @@ class ProducerInfo(Payload):
         r = self.serialize_unsigned(r, self.version)
         signature = keytool.ecdsa_sign(self.private_key, r)
         Logger.debug("{} len signature: {}".format(self.tag, len(signature)))
+        self.signature = signature
         return signature
 
     def data(self, version):
