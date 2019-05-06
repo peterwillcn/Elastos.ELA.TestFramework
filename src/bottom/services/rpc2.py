@@ -6,7 +6,7 @@
 from src.bottom.services import net
 
 DEFAULT_HOST = "http://127.0.0.1"
-DEFAULT_PORT = 10014
+DEFAULT_PORT = 10016
 
 
 def post_request(method, params, port: int):

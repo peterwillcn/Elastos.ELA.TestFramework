@@ -62,6 +62,7 @@ class ArbiterNode(Node):
         Node.reset_config_common(self, self.index, "arbiter", self.params.number)
         _config = self.config[constant.CONFIG_TITLE]
         _config[constant.CONFIG_MAGIC] = self.params.magic
+        _config[constant.CONFIG_ACTIVE_NET] = self.params.active_net
         _config[constant.CONFIG_PRINT_LEVEL] = self.params.print_level
         _config[constant.CONFIG_SPV_PRINT_LEVEL] = self.params.spv_print_level
         _config[constant.CONFIG_ARBITER_MAIN_NODE] = self.gen_main_node()
@@ -96,6 +97,7 @@ class ArbiterNode(Node):
         )
         rpc_config[constant.CONFIG_RPC_USER] = ""
         rpc_config[constant.CONFIG_RPC_PASS] = ""
+        rpc_config[constant.CONFIG_RPC_WHITE_LIST] = ["0.0.0.0"]
         main_node[constant.CONFIG_SPV_SEED_LIST] = list()
         main_node[constant.CONFIG_SPV_SEED_LIST].append("127.0.0.1:" + str(self.reset_port(
             index=index,

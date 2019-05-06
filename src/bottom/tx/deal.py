@@ -181,7 +181,7 @@ class Deal(object):
             return result
 
         if port == self.assist.rpc.DEFAULT_PORT:
-            for i in range(20):
+            for i in range(15):
                 self.assist.rpc.discrete_mining(1)
                 Logger.info("{} main chain height: {}, side chain height: {}".format(
                     self.tag,
@@ -189,18 +189,18 @@ class Deal(object):
                     self.assist.rpc.get_block_count(port + 20)
                 ))
                 if i > 7:
-                    time.sleep(8)
+                    time.sleep(2)
                 time.sleep(1)
 
         else:
-            for i in range(30):
+            for i in range(20):
                 self.assist.rpc.discrete_mining(1)
                 Logger.info("{} main chain height: {}, side chain height: {}".format(
                     self.tag,
                     self.assist.rpc.get_block_count(),
                     self.assist.rpc.get_block_count(port)
                 ))
-                time.sleep(10)
+                time.sleep(3)
 
         if port == self.assist.rpc.DEFAULT_PORT:
             Logger.info("{} after cross transaction input address address: {} ELAs".format(

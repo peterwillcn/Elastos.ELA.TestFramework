@@ -15,7 +15,7 @@ config = {
         "crc_number": 4,
         "pre_connect_offset": 5,
         "crc_dpos_height": 400,
-        "public_dpos_height": 520
+        "public_dpos_height": 500
     },
     "side": True,
     "arbiter": {
@@ -48,6 +48,7 @@ def test_content():
     token_enable = config["token"]["enable"]
 
     global test_case
+    before_h1 = False
     # test_case = "cross recharge before H1"
     current_height = controller.get_current_height()
     # Logger.debug("current height: {}".format(current_height))
@@ -84,7 +85,8 @@ def test_content():
             result = False
             break
 
-        if current_height > h1 + 4:
+        if not before_h1 and current_height > h1 + 4:
+            before_h1 = True
             test_case = "cross chain recharge did between H1 and H2"
             Logger.info("### Testing {} ###".format(test_case))
             result = controller.middle.tx_manager.cross_chain_transaction("did", True)

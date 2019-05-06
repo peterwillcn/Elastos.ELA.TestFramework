@@ -63,7 +63,7 @@ if __name__ == '__main__':
 
 	while True:
 		for i in range(int(node_num)):
-			port = (100 + i) * 100 + 14
+			port = (100 + i) * 100 + 16
 			height = get_node_height(port)
 			tx_size = get_txpool_size(port)
 			if i == 0:

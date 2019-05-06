@@ -9,12 +9,12 @@ from src.bottom.services import net
 
 class RPC(object):
 
-    DEFAULT_PORT = 10014
+    DEFAULT_PORT = 10016
 
     def __init__(self):
         self.tag = util.tag_from_path(__file__, self.__class__.__name__)
         self.host = "http://127.0.0.1"
-        self.default_port = 10014
+        self.default_port = 10016
 
     def post_request(self, method, params, port: int):
         url = self.host + ":" + str(port)

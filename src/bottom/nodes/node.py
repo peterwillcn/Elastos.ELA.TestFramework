@@ -25,12 +25,12 @@ class Node(object):
         }
 
         self.port_type_dict = {
-            "info_port": 1,
-            "rest_port": 2,
-            "ws_port": 3,
-            "json_port": 4,
-            "node_port": 5,
-            "arbiter_node_port": 6
+            "info_port": 3,
+            "rest_port": 4,
+            "ws_port": 5,
+            "json_port": 6,
+            "node_port": 8,
+            "arbiter_node_port": 9
         }
 
     def start(self):
@@ -40,6 +40,9 @@ class Node(object):
         pass
 
     def reset_config_common(self, index, node_type: str, num):
+        if node_type is "did":
+            return
+
         _config = self.config[constant.CONFIG_TITLE]
         _config[constant.CONFIG_PORT_JSON] = self.reset_port(index, node_type, "json_port")
         _config[constant.CONFIG_PORT_NODE] = self.reset_port(index, node_type, "node_port")
@@ -47,7 +50,7 @@ class Node(object):
         if node_type is not "arbiter":
             _config[constant.CONFIG_SEED_LIST] = []
             if node_type == "ela":
-                _config[constant.CONFIG_PP_LIST] = []
+                _config[constant.CONFIG_PERMANENT_PEERS] = []
             for i in range(num):
                 if i == 10:
                     break
@@ -61,7 +64,7 @@ class Node(object):
                     )
                 )
                 if node_type == "ela":
-                    _config[constant.CONFIG_PP_LIST].append(
+                    _config[constant.CONFIG_PERMANENT_PEERS].append(
                         "127.0.0.1:" + str(
                             self.reset_port(
                                 i,

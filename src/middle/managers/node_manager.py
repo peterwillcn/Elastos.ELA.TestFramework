@@ -256,6 +256,7 @@ class NodeManager(object):
     def create_side_info(self, node_type: str):
         self.params.arbiter_params.side_info[node_type] = dict()
         side_port = util.reset_port(0, node_type, "json_port")
+        Logger.warn("{} side port: {}".format(self.tag, side_port))
         side_chain_genesis_hash = self.service_manager.rpc.get_block_hash_by_height(0, side_port)
         Logger.debug("{} {} genesis hash: {}".format(
             self.tag,

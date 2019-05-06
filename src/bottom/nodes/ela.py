@@ -56,6 +56,8 @@ class ElaNode(Node):
 
         _config[constant.CONFIG_MAGIC] = self.params.magic
         _config[constant.CONFIG_PRINT_LEVEL] = self.params.print_level
+        _config[constant.CONFIG_ACTIVE_NET] = self.params.active_net
+        _config[constant.CONFIG_DISABLE_DNS] = self.params.disable_dns
         _config[constant.CONFIG_FOUNDATION_ADDRESS] = self.keystore_manager.special_key_stores[0].address
         _config[constant.CONFIG_POW][constant.CONFIG_PAY_TO_ADDR] = self.keystore_manager.special_key_stores[1].address
         _config[constant.CONFIG_POW][constant.CONFIG_AUTO_MINING] = self.params.auto_mining

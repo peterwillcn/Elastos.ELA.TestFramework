@@ -23,12 +23,12 @@ node_type_dict = {
 
 
 port_type_dict = {
-    "info_port": 1,
-    "rest_port": 2,
-    "ws_port": 3,
-    "json_port": 4,
-    "node_port": 5,
-    "arbiter_node_port": 6
+    "info_port": 3,
+    "rest_port": 4,
+    "ws_port": 5,
+    "json_port": 6,
+    "node_port": 8,
+    "arbiter_node_port": 9
 }
 
 

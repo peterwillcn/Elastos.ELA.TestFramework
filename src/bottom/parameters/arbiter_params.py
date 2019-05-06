@@ -16,6 +16,7 @@ class ArbiterParams(object):
         self.spv_magic = constant.CONFIG_MAGIC_ELA
         self.enable = config["enable"]
         self.number = config["number"]
+        self.active_net = config["active_net"]
         self.pow_chain = config["pow_chain"]
         self.print_level = config["print_level"]
         self.spv_print_level = config["spv_print_level"]

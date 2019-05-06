@@ -56,21 +56,57 @@ class DidNode(Node):
 
     def reset_config(self):
         Node.reset_config_common(self, self.index, "did", self.params.number)
-        _config = self.config[constant.CONFIG_TITLE]
+        _config = self.config
+        _config[constant.CONFIG_ACTIVE_NET] = self.params.active_net
         _config[constant.CONFIG_MAGIC] = self.params.magic
-        _config[constant.CONFIG_SPV_MAGIC] = self.params.spv_magic
-        _config[constant.CONFIG_SPV_SEED_LIST] = self.gen_spv_seed_list()
-        _config[constant.CONFIG_MAIN_CHAIN_FOUNDATION_ADDRESS] = self.keystore_manager.special_key_stores[0].address
-        _config[constant.CONFIG_FOUNDATION_ADDRESS] = self.keystore_manager.special_key_stores[1].address
-        _config[constant.CONFIG_POW][constant.CONFIG_PAY_TO_ADDR] = self.keystore_manager.special_key_stores[3].address
-        _config[constant.CONFIG_POW][constant.CONFIG_INSTANT_BLOCK] = self.params.instant_block
-        _config[constant.CONFIG_PORT_MAIN_CHAIN_DEFAULT] = self.reset_port(
+        _config[constant.CONFIG_PORT_NODE] = self.reset_port(
             index=self.index,
-            node_type="ela",
+            node_type="did",
             port_type="node_port"
         )
 
-    def gen_spv_seed_list(self):
+        #_config[constant.CONFIG_SPV_MAGIC] = self.params.spv_magic
+        _config[constant.CONFIG_DISABLE_DNS] = self.params.disable_dns
+        _config[constant.CONFIG_PERMANENT_PEERS] = self.gen_permanent_list()
+        _config[constant.CONFIG_DID_SPV_DISABLE_DNS] = self.params.spv_disable_dns
+        _config[constant.CONFIG_DID_SPV_PERMANENT_PEERS] = self.gen_spv_permanent_list()
+        _config[constant.CONFIG_DID_ENABLE_REST] = self.params.rest_port_enable
+        _config[constant.CONFIG_DID_PORT_REST] = self.reset_port(
+            index=self.index,
+            node_type="did",
+            port_type="rest_port"
+        )
+        _config[constant.CONFIG_DID_ENABLE_WS] = self.params.ws_port_enable
+        _config[constant.CONFIG_DID_PORT_WS] = self.reset_port(
+            index=self.index,
+            node_type="did",
+            port_type="ws_port"
+        )
+
+        _config[constant.CONFIG_DID_ENABLE_RPC] = self.params.rpc_port_enable
+        _config[constant.CONFIG_DID_PORT_RPC] = self.reset_port(
+            index=self.index,
+            node_type="did",
+            port_type="json_port"
+        )
+
+        _config[constant.CONFIG_DID_RPC_USER] = ""
+        _config[constant.CONFIG_DID_RPC_PASS] = ""
+        _config[constant.CONFIG_DID_RPC_WHITE_LIST] = ["0.0.0.0"]
+        _config[constant.CONFIG_DID_LOG_LEVEL] = self.params.log_level
+        _config[constant.CONFIG_DID_ENABLE_MINING] = self.params.mining_enable
+        _config[constant.CONFIG_INSTANT_BLOCK] = self.params.instant_block
+        _config[constant.CONFIG_PAY_TO_ADDR] = self.keystore_manager.special_key_stores[3].address
+
+        # _config[constant.CONFIG_MAIN_CHAIN_FOUNDATION_ADDRESS] = self.keystore_manager.special_key_stores[0].address
+        _config[constant.CONFIG_FOUNDATION_ADDRESS] = self.keystore_manager.special_key_stores[0].address
+        # _config[constant.CONFIG_PORT_MAIN_CHAIN_DEFAULT] = self.reset_port(
+        #     index=self.index,
+        #     node_type="ela",
+        #     port_type="node_port"
+        # )
+
+    def gen_spv_permanent_list(self):
         spv_seed_list = list()
         for i in range(self.params.number):
             spv_seed_list.append("127.0.0.1:" + str(self.reset_port(
@@ -80,3 +116,12 @@ class DidNode(Node):
             )))
         return spv_seed_list
 
+    def gen_permanent_list(self):
+        permanent_list = list()
+        for i in range(self.params.number):
+            permanent_list.append("127.0.0.1:" + str(self.reset_port(
+                index=i,
+                node_type="did",
+                port_type="node_port"
+            )))
+        return permanent_list
