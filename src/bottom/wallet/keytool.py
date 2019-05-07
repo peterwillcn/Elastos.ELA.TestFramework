@@ -5,6 +5,7 @@
 
 import os
 import json
+import struct
 import random
 import base58
 
@@ -222,12 +223,28 @@ def gen_deposit_address(program_hash: bytes):
     return deposit_encoded
 
 
+def gen_cross_chain_address(genesis_hash: bytes):
+    reverse_hash = genesis_hash[::-1]
+    r = b""
+    r += struct.pack("<B", len(reverse_hash))
+    r += reverse_hash
+    r += struct.pack("<B", 0xAF)
+    once_hash = sha256_hash(r, 1)
+    r_hash = ripemd160_hash(once_hash, 1)
+    program_hash = PREFIX_CROSS_CHAIN.to_bytes(1, byteorder="big") + r_hash
+    cross_address = program_hash_to_address(program_hash)
+
+    return cross_address
+
+
 if __name__ == '__main__':
 
-    program_hash = bytes.fromhex("218cb669c4c446b82bb12dfab4eee3555c5d52260f")
-    deposit_address = gen_deposit_address(program_hash)
-    print("deposit address",  deposit_address)
-
-    program = address_to_program_hash(deposit_address)
-    print("program1: ", program_hash.hex())
-    print("program2: ", program.hex())
+    genesis_hash = bytes.fromhex("56be936978c261b2e649d58dbfaf3f23d4a868274f5522cd2adb4308a955c4a3")
+    gen_cross_chain_address(genesis_hash)
+    # program_hash = bytes.fromhex("218cb669c4c446b82bb12dfab4eee3555c5d52260f")
+    # deposit_address = gen_deposit_address(program_hash)
+    # print("deposit address",  deposit_address)
+    #
+    # program = address_to_program_hash(deposit_address)
+    # print("program1: ", program_hash.hex())
+    # print("program2: ", program.hex())

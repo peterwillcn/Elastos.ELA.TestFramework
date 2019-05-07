@@ -63,6 +63,33 @@ class Deal(object):
 
         return tx.hash() == reverse_res
 
+    def transfer_cross_chain_asset(self, input_keystore: KeyStore, lock_address: str, cross_adddress: str, amount: int):
+        tx = txbuild.create_cross_chain_asset(
+            keystore=input_keystore,
+            lock_address=lock_address,
+            cross_chain_address=cross_adddress,
+            amount=amount
+        )
+
+        Logger.debug("transfer cross chain: \n{}".format(tx))
+        tx = txbuild.single_sign_transaction(input_keystore, tx)
+        tx.hash()
+        r1 = tx.serialize_unsigned()
+        Logger.debug("after single sign, transfer cross chain: \n{}".format(tx))
+
+        Logger.debug("cross chain asset serial unsigned: {}".format(r1.hex()))
+        r = tx.serialize()
+        response = rpc2.send_raw_transaction(r.hex())
+        if isinstance(response, dict):
+            Logger.error("rpc send raw transaction failed")
+            Logger.error("response: {}".format(response))
+            return False
+        reverse_res = util.bytes_reverse(bytes.fromhex(response)).hex()
+        Logger.debug("{} tx hash : {}".format(self.tag, tx.hash()))
+        Logger.debug("{} response: {}".format(self.tag, reverse_res))
+
+        return tx.hash() == reverse_res
+
     def vote_producer(self, keystore: KeyStore, amount: int, candidates_list):
         tx = txbuild.create_vote_transaction(
             keystore=keystore,

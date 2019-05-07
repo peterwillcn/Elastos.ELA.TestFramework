@@ -11,7 +11,7 @@ class Payload(object):
     def __init__(self, version: int):
         self.version = version
 
-    def data(self, r: bytes):
+    def data(self, version: int):
         return None
 
     def serialize(self, r: bytes, version: int):

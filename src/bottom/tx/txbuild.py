@@ -22,6 +22,7 @@ from src.bottom.tx.output_payload import OutputPayload
 from src.bottom.tx.vote_content import VoteContent
 from src.bottom.tx.vote_info import VoteInfo
 from src.bottom.tx.process_producer import ProcessProducer
+from src.bottom.tx.cross_chain_asset import TransferCrossChainAsset
 from src.bottom.wallet import keytool
 from src.bottom.wallet.keystore import KeyStore
 
@@ -65,6 +66,62 @@ def create_transaction(keystore: KeyStore, output_addresses: list, amount: int, 
     tx.version = Transaction.TX_VERSION_09
     tx.tx_type = Transaction.TRANSFER_ASSET
     tx.payload = Payload(Payload.DEFAULT_VERSION)
+    tx.attributes = attributes
+    tx.inputs = inputs
+    tx.outputs = outputs
+    tx.lock_time = 0
+    tx.programs = programs
+
+    return tx
+
+
+def create_cross_chain_asset(keystore: KeyStore, lock_address: str, cross_chain_address: str, amount: int):
+    if lock_address is None or lock_address is "":
+        Logger.error("Invalid lock address")
+        return None
+
+    if cross_chain_address is None or cross_chain_address is "":
+        Logger.error("Invalid cross chain address")
+        return None
+
+    # create outputs:
+    outputs, total_amount = create_normal_outputs(
+        output_addresses=[lock_address],
+        amount=amount,
+        fee=10000,
+        output_lock=0
+    )
+
+    # create inputs:
+    inputs, change_outputs = create_normal_inputs(keystore.address, total_amount)
+    if inputs is None or change_outputs is None:
+        Logger.error("Create normal inputs failed")
+        return None
+    outputs.extend(change_outputs)
+
+    # create program
+    programs = list()
+    redeem_script = keystore.sign_script
+    program = Program(code=redeem_script, params=None)
+    programs.append(program)
+
+    # create attributes
+    attributes = list()
+    attribute = Attribute(
+        usage=Attribute.NONCE,
+        data=bytes("attributes".encode())
+    )
+    attributes.append(attribute)
+
+    cross_chain_asset = TransferCrossChainAsset()
+    cross_chain_asset.cross_chain_addresses = [cross_chain_address]
+    cross_chain_asset.output_indexes = [0]
+    cross_chain_asset.cross_chain_amounts = [amount - 10000]
+
+    tx = Transaction()
+    tx.version = Transaction.TX_VERSION_09
+    tx.tx_type = Transaction.TRANSFER_CROSS_CHAIN_ASSET
+    tx.payload = cross_chain_asset
     tx.attributes = attributes
     tx.inputs = inputs
     tx.outputs = outputs

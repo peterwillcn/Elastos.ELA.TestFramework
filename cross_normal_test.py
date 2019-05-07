@@ -111,7 +111,7 @@ def test_content():
                 result = controller.middle.tx_manager.cross_chain_transaction("token", False)
                 controller.test_result(test_case, result)
 
-        if current_height > h2 + 12:
+        if current_height > h2 + 1:
             test_case = "cross chain recharge did after H2"
             Logger.info("### Testing {} ###".format(test_case))
             result = controller.middle.tx_manager.cross_chain_transaction("did", True)

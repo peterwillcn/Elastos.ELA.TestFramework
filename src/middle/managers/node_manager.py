@@ -265,13 +265,14 @@ class NodeManager(object):
             )
         )
 
+
         recharge_address = self.service_manager.jar_service.gen_genesis_address(
             block_hash=side_chain_genesis_hash
         )
         self.params.arbiter_params.recharge_address = recharge_address
         self.params.arbiter_params.withdraw_address = "0000000000000000000000000000000000"
         self.params.arbiter_params.side_chain_genesis_hash = side_chain_genesis_hash
-
+        Logger.info("{} side genesis hash:{}".format(self.tag, side_chain_genesis_hash))
         Logger.info("{} recharge address: {}".format(self.tag, self.params.arbiter_params.recharge_address))
         Logger.info("{} withdraw address: {}".format(self.tag, self.params.arbiter_params.withdraw_address))
 
