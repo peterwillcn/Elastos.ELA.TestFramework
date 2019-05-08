@@ -5,16 +5,16 @@
 
 import time
 
-from src.middle.tools.log import Logger
-from src.top.control import Controller
+from src.tools.log import Logger
+from src.control import Controller
 
 config = {
     "ela": {
         "enable": True,
         "password": "123",
-        "number": 16,
+        "number": 12,
         "crc_number": 4,
-        "later_start_number": 4,
+        "later_start_number": 0,
         "pre_connect_offset": 5,
         "crc_dpos_height": 300,
         "public_dpos_height": 308
@@ -26,16 +26,16 @@ config = {
 
 def test_content():
     controller = Controller(config)
-    controller.middle.ready_for_dpos()
-    h1 = controller.middle.params.ela_params.crc_dpos_height
-    h2 = controller.middle.params.ela_params.public_dpos_height
+    controller.ready_for_dpos()
+    h1 = controller.params.ela_params.crc_dpos_height
+    h2 = controller.params.ela_params.public_dpos_height
     pre_offset = config["ela"]["pre_connect_offset"]
-    number = controller.middle.params.ela_params.number
-    crc_number = controller.middle.params.ela_params.crc_number
-    later_start_number = controller.middle.params.ela_params.later_start_number
+    number = controller.params.ela_params.number
+    crc_number = controller.params.ela_params.crc_number
+    later_start_number = controller.params.ela_params.later_start_number
 
     # init later start nodes include both registered and normal
-    later_start_nodes = controller.middle.node_manager.ela_nodes[number - later_start_number + 1: number + 1]
+    later_start_nodes = controller.node_manager.ela_nodes[number - later_start_number + 1: number + 1]
 
     current_height = controller.get_current_height()
     if current_height < h1 - pre_offset - 1:

@@ -45,8 +45,5 @@ do
     kill -9 $id
 done
 
-echo "kill process jar"
-ps -ef | grep old.jar | awk '{print $2}' | xargs kill -9
-ps -ef | grep ela_tool.jar | awk '{print $2}' | xargs kill -9
 
 echo "kill all processes!"

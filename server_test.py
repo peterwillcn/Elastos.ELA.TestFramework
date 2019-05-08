@@ -5,7 +5,7 @@
 
 from tests.dpos_test import DposTest
 
-from src.middle.tools.log import Logger
+from src.tools.log import Logger
 
 
 if __name__ == '__main__':

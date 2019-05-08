@@ -7,11 +7,10 @@ import time
 
 from datetime import datetime
 
-from src.top.control import Controller
+from src.control import Controller
 
-from src.middle.tools import util
-from src.middle.tools import constant
-from src.middle.tools.log import Logger
+from src.tools import util, constant
+from src.tools.log import Logger
 
 
 class DposTest(object):
@@ -64,8 +63,8 @@ class DposTest(object):
 
     def before_test(self):
         self.controller = Controller(self.config)
-        self.controller.middle.ready_for_dpos()
-        self.tap_keystore = self.controller.get_tap_keystore()
+        self.controller.ready_for_dpos()
+        self.tap_keystore = self.controller.keystore_manager.tap_key_store
 
     def normal_test(self):
         test_case = "1、dpos normal test"

@@ -5,9 +5,9 @@
 
 import time
 
-from src.top.control import Controller
-
-from src.middle.tools.log import Logger
+from src.control import Controller
+from src.core.services import rpc
+from src.tools.log import Logger
 
 config = {
     "ela": {
@@ -29,19 +29,19 @@ def test_content():
     # init controller for deploy, start nodes and recharges some nodes for registered as producers
     controller = Controller(config)
     # register and vote producers ready for h2 phase
-    controller.middle.ready_for_dpos()
+    controller.ready_for_dpos()
 
     # get some important parameters for later use
-    number = controller.middle.params.ela_params.number
-    crc_number = controller.middle.params.ela_params.crc_number
-    h1 = controller.middle.params.ela_params.crc_dpos_height
-    h2 = controller.middle.params.ela_params.public_dpos_height
+    number = controller.params.ela_params.number
+    crc_number = controller.params.ela_params.crc_number
+    h1 = controller.params.ela_params.crc_dpos_height
+    h2 = controller.params.ela_params.public_dpos_height
     pre_offset = config["ela"]["pre_connect_offset"]
 
     # prepare inactive producer nodes [9, 10, 11, 12, 13, 14, 15, 16]
-    inactive_producers_nodes = controller.middle.node_manager.ela_nodes[crc_number * 2 + 1: crc_number * 4 + 1]
+    inactive_producers_nodes = controller.node_manager.ela_nodes[crc_number * 2 + 1: crc_number * 4 + 1]
     # prepare replace candidate nodes [17, 18, 19, 20]
-    replace_cadidates_nodes = controller.middle.node_manager.ela_nodes[crc_number * 4 + 1: number + 1]
+    replace_cadidates_nodes = controller.node_manager.ela_nodes[crc_number * 4 + 1: number + 1]
 
     # get inactive node public key
     inactive_public_keys = list()
@@ -82,6 +82,15 @@ def test_content():
             result = False
             break
 
+        # after h1, will show current and next current arbiters info
+        if current_height >= h1:
+            arbiters_nicknames = controller.get_current_arbiter_nicknames()
+            arbiters_nicknames.sort()
+            next_arbiter_nicknames = controller.get_next_arbiter_nicknames()
+            next_arbiter_nicknames.sort()
+            Logger.info("current arbiters nicknames: {}".format(arbiters_nicknames))
+            Logger.info("next    arbiters nicknames: {}".format(next_arbiter_nicknames))
+
         # when current height is equal h2 + 12(320), then will stop the inactive \
         # producer nodes[9, 10, 11, 12, 13, 14, 15, 16]
         if stop_height == 0 and current_height >= h2 + 12:
@@ -93,18 +102,9 @@ def test_content():
             controller.test_result("Ater H2，stop 1/3 producers and candidates", True)
             Logger.debug("stop_height: {}".format(stop_height))
 
-        # when current height is higher than stop height(320), will show current and next current arbiters info
-        if stop_height != 0 and current_height >= stop_height:
-            arbiters_nicknames = controller.get_current_arbiter_nicknames()
-            arbiters_nicknames.sort()
-            next_arbiter_nicknames = controller.get_next_arbiter_nicknames()
-            next_arbiter_nicknames.sort()
-            Logger.info("current arbiters nicknames: {}".format(arbiters_nicknames))
-            Logger.info("next    arbiters nicknames: {}".format(next_arbiter_nicknames))
-
         # when current is not equal stop height, that means replace candidate promoted to producer and consensus
         if stop_height != 0 and current_height > stop_height + 36:
-            arbiters_set = set(controller.middle.service_manager.rpc.get_arbiters_info()["arbiters"])
+            arbiters_set = set(rpc.get_arbiters_info()["arbiters"])
             result = not inactive_set.issubset(arbiters_set) and replace_set.issubset(arbiters_set)
             break
 

@@ -6,9 +6,9 @@
 import time
 import random
 
-from src.top.control import Controller
+from src.control import Controller
 
-from src.middle.tools.log import Logger
+from src.tools.log import Logger
 
 config = {
     "ela": {
@@ -29,11 +29,11 @@ def test_content():
     test_case = "After h2 normal change and producers are not enough"
     # init for the controller that will deploy start nodes and recharge register vote producers before h1
     controller = Controller(config)
-    controller.middle.ready_for_dpos()
+    controller.ready_for_dpos()
 
     # get some important params for later use
-    h1 = controller.middle.params.ela_params.crc_dpos_height
-    h2 = controller.middle.params.ela_params.public_dpos_height
+    h1 = controller.params.ela_params.crc_dpos_height
+    h2 = controller.params.ela_params.public_dpos_height
     pre_offset = config["ela"]["pre_connect_offset"]
 
     # prepare  cancel producers, which number will be between 4 and 8
@@ -42,7 +42,7 @@ def test_content():
 
     # get cancel producer node
     stop_nodes = list()
-    cancel_producers = controller.middle.tx_manager.tx.register_producers_list[: cancel_count]
+    cancel_producers = controller.tx_manager.register_producers_list[: cancel_count]
     for producer in cancel_producers:
         stop_nodes.append(producer.node)
 
@@ -69,6 +69,15 @@ def test_content():
             result = False
             break
 
+        # after h1, show the current and next arbiters nicknames by sort
+        if current_height >= h1:
+            arbiters_nicknames = controller.get_current_arbiter_nicknames()
+            arbiters_nicknames.sort()
+            next_arbiter_nicknames = controller.get_next_arbiter_nicknames()
+            next_arbiter_nicknames.sort()
+            Logger.info("current arbiters nicknames: {}".format(arbiters_nicknames))
+            Logger.info("next    arbiters nicknames: {}".format(next_arbiter_nicknames))
+
         # mining the height after h2 + 12(320), cancel producers and stop nodes \
         # which number is between 4 and 8 by random
         if cancel_height == 0 and current_height >= h2 + 12:
@@ -77,8 +86,8 @@ def test_content():
 
             # cancel producers
             for producer in cancel_producers:
-                ret = producer.cancel()
-                controller.test_result("Cancel Producer {}".format(producer.payload.nickname), ret)
+                ret = controller.tx_manager.cancel_producer(producer)
+                controller.test_result("Cancel Producer {}".format(producer.info.nickname), ret)
 
             cancel_height = current_height
             Logger.debug("cancel height: {}".format(cancel_height))
@@ -88,18 +97,9 @@ def test_content():
             for node in stop_nodes:
                 node.stop()
 
-        # after the cancel height(320), show the current and next arbiters nicknames by sort
-        if cancel_height != 0 and current_height >= cancel_height:
-            arbiters_nicknames = controller.get_current_arbiter_nicknames()
-            arbiters_nicknames.sort()
-            next_arbiter_nicknames = controller.get_next_arbiter_nicknames()
-            next_arbiter_nicknames.sort()
-            Logger.info("current arbiters nicknames: {}".format(arbiters_nicknames))
-            Logger.info("next    arbiters nicknames: {}".format(next_arbiter_nicknames))
-
         # after the cancel_height + 36(356), will check the result and break to finish this test
         if cancel_height != 0 and current_height > cancel_height + 36:
-            crc_public_keys = controller.middle.keystore_manager.crc_public_keys
+            crc_public_keys = controller.keystore_manager.crc_public_keys
             current_arbiter_public_keys = controller.get_current_arbiter_public_keys()
             result = set(crc_public_keys) == set(current_arbiter_public_keys)
             break

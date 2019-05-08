@@ -4,11 +4,10 @@
 # author: liteng
 
 import os
-import sys
 import time
 
-from src.middle.tools import util
-from src.middle.tools.log import Logger
+from src.tools import util
+from src.tools.log import Logger
 from src.middle.distribute import Distribution
 
 

@@ -5,10 +5,10 @@
 
 import time
 
-from src.top.control import Controller
-
-from src.middle.tools import constant
-from src.middle.tools.log import Logger
+from src.control import Controller
+from src.core.services import rpc
+from src.tools import constant
+from src.tools.log import Logger
 
 
 config = {
@@ -30,16 +30,16 @@ def test_content():
 
     test_case = "Arbiter Whole Retation Test"
     controller = Controller(config)
-    controller.middle.ready_for_dpos()
+    controller.ready_for_dpos()
 
-    h1 = controller.middle.params.ela_params.crc_dpos_height
-    h2 = controller.middle.params.ela_params.public_dpos_height
+    h1 = controller.params.ela_params.crc_dpos_height
+    h2 = controller.params.ela_params.public_dpos_height
 
     pre_offset = config["ela"]["pre_connect_offset"]
-    number = controller.middle.params.ela_params.number
-    crc_number = controller.middle.params.ela_params.crc_number
-    tap_keystore = controller.get_tap_keystore()
-    register_producers = controller.middle.tx_manager.tx.register_producers_list
+    number = controller.params.ela_params.number
+    crc_number = controller.params.ela_params.crc_number
+    tap_keystore = controller.keystore_manager.tap_key_store
+    register_producers = controller.tx_manager.tx.register_producers_list
 
     vote_height = 0
 
@@ -64,10 +64,10 @@ def test_content():
         if vote_height == 0 and current_height > h2 + 5:
             before_rotation_nicknames = controller.get_current_arbiter_nicknames()
             before_rotation_nicknames.sort()
-            tap_balance = controller.middle.service_manager.rpc.get_balance_by_address(tap_keystore.address)
+            tap_balance = rpc.get_balance_by_address(tap_keystore.address)
             Logger.info("[test] tap_balance: {}".format(tap_balance))
 
-            ret = controller.middle.tx_manager.tx.vote_producers(
+            ret = controller.tx_manager.tx.vote_producers(
                 vote_keystore=tap_keystore,
                 producers=register_producers[crc_number * 2: len(register_producers)],
                 vote_amount=number * constant.TO_SELA
@@ -83,11 +83,11 @@ def test_content():
         if vote_height > 0 and current_height > vote_height + crc_number * 3 * 2:
             after_rotation_nicknames = controller.get_current_arbiter_nicknames()
             after_rotation_nicknames.sort()
-            arbiter_info = controller.middle.service_manager.rpc.get_arbiters_info()
+            arbiter_info = rpc.get_arbiters_info()
             arbiter = arbiter_info["arbiters"]
             arbiter_set = set(arbiter)
-            candidate_public_key_set = set(controller.middle.tx_manager.candidate_public_keys)
-            general_public_key_set = set(controller.middle.tx_manager.general_producer_public_keys)
+            candidate_public_key_set = set(controller.tx_manager.candidate_public_keys)
+            general_public_key_set = set(controller.tx_manager.general_producer_public_keys)
             Logger.info("before rotation register producers: {}".format(before_rotation_nicknames))
             Logger.info("after  rotation register producers: {}".format(after_rotation_nicknames))
             if not general_public_key_set.issubset(arbiter_set) and candidate_public_key_set.issubset(arbiter_set):

@@ -5,9 +5,9 @@
 
 import time
 
-from src.top.control import Controller
+from src.control import Controller
 
-from src.middle.tools.log import Logger
+from src.tools.log import Logger
 
 config = {
     "ela": {
@@ -25,15 +25,15 @@ config = {
 def test_content():
     test_case = "More than 1/3 producers inactive and degenerate to CRC"
     controller = Controller(config)
-    controller.middle.ready_for_dpos()
+    controller.ready_for_dpos()
 
-    crc_number = controller.middle.params.ela_params.crc_number
-    h1 = controller.middle.params.ela_params.crc_dpos_height
-    h2 = controller.middle.params.ela_params.public_dpos_height
+    crc_number = controller.params.ela_params.crc_number
+    h1 = controller.params.ela_params.crc_dpos_height
+    h2 = controller.params.ela_params.public_dpos_height
     pre_offset = config["ela"]["pre_connect_offset"]
 
     # get inactive producers [9,10,11,12]
-    inactive_producers = controller.middle.tx_manager.tx.register_producers_list[crc_number: crc_number * 2]
+    inactive_producers = controller.tx_manager.register_producers_list[crc_number: crc_number * 2]
 
     # get inactive nodes related to inactive producers
     inactive_producers_nodes = list()
@@ -68,6 +68,15 @@ def test_content():
             result = False
             break
 
+        # after h1, show the current and next arbiters info by sort
+        if current_height >= h1:
+            arbiters_nicknames = controller.get_current_arbiter_nicknames()
+            arbiters_nicknames.sort()
+            next_arbiter_nicknames = controller.get_next_arbiter_nicknames()
+            next_arbiter_nicknames.sort()
+            Logger.info("current arbiters nicknames: {}".format(arbiters_nicknames))
+            Logger.info("next    arbiters nicknames: {}".format(next_arbiter_nicknames))
+
         if stop_height == 0 and current_height >= h2 + 12:
             for node in inactive_producers_nodes:
                 node.stop()
@@ -76,16 +85,8 @@ def test_content():
             stop_height = current_height
             Logger.debug("stop height: {}".format(stop_height))
 
-        if stop_height != 0 and current_height >= stop_height:
-            arbiters_nicknames = controller.get_current_arbiter_nicknames()
-            arbiters_nicknames.sort()
-            next_arbiter_nicknames = controller.get_next_arbiter_nicknames()
-            next_arbiter_nicknames.sort()
-            Logger.info("current arbiters nicknames: {}".format(arbiters_nicknames))
-            Logger.info("next    arbiters nicknames: {}".format(next_arbiter_nicknames))
-
         if not restart and stop_height != 0 and current_height > stop_height + 24:
-            crc_public_keys = controller.middle.keystore_manager.crc_public_keys
+            crc_public_keys = controller.keystore_manager.crc_public_keys
             current_arbiter_public_keys = controller.get_current_arbiter_public_keys()
             result = set(crc_public_keys) == set(current_arbiter_public_keys)
 
@@ -99,11 +100,11 @@ def test_content():
 
         if not activate and stop_height != 0 and current_height > stop_height + 30:
             for producer in inactive_producers:
-                ret = producer.activate_without_jar()
-                controller.test_result("activate producer {}".format(producer.payload.nickname), ret)
+                ret = controller.tx_manager.activate_producer(producer)
+                controller.test_result("activate producer {}".format(producer.info.nickname), ret)
             activate = True
 
-        if stop_height != 0 and current_height > stop_height + 200:
+        if stop_height != 0 and current_height > stop_height + 400:
             current_arbiter_public_keys = controller.get_current_arbiter_public_keys()
             result = set(inactive_public_keys).issubset(set(current_arbiter_public_keys))
 

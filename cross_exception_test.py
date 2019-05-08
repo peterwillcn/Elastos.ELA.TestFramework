@@ -5,8 +5,8 @@
 
 import time
 
-from src.top.control import Controller
-from src.middle.tools.log import Logger
+from src.control import Controller
+from src.tools.log import Logger
 
 
 config = {
@@ -36,10 +36,10 @@ config = {
 if __name__ == '__main__':
 
     controller = Controller(config)
-    controller.middle.ready_for_dpos()
+    controller.ready_for_dpos()
 
-    h1 = controller.middle.params.ela_params.crc_dpos_height
-    h2 = controller.middle.params.ela_params.public_dpos_height
+    h1 = controller.params.ela_params.crc_dpos_height
+    h2 = controller.params.ela_params.public_dpos_height
     pre_offset = config["ela"]["pre_connect_offset"]
 
     current_height = controller.get_current_height()
@@ -59,12 +59,12 @@ if __name__ == '__main__':
 
         if current_height > h2 + 12:
 
-            controller.middle.node_manager.arbiter_nodes[1].stop()
-            ret = controller.middle.tx_manager.cross_chain_transaction("did", True)
+            controller.node_manager.arbiter_nodes[1].stop()
+            ret = controller.tx_manager.cross_chain_transaction("did", True)
             controller.test_result("stop one arbiter, test cross recharge", ret)
 
-            controller.middle.node_manager.did_nodes[1].stop()
-            ret = controller.middle.tx_manager.cross_chain_transaction("did", True)
+            controller.node_manager.did_nodes[1].stop()
+            ret = controller.tx_manager.cross_chain_transaction("did", True)
             controller.test_result("stop one did , test cross recharge", ret)
 
             # ret = controller.middle.tx_manager.cross_chain_transaction(False)

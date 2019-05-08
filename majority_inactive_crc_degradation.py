@@ -5,9 +5,9 @@
 
 import time
 
-from src.top.control import Controller
+from src.control import Controller
 
-from src.middle.tools.log import Logger
+from src.tools.log import Logger
 
 config = {
     "ela": {
@@ -24,33 +24,28 @@ config = {
 
 def test_content():
     controller = Controller(config)
-    controller.middle.ready_for_dpos()
+    controller.ready_for_dpos()
 
-    number = controller.middle.params.ela_params.number
-    crc_number = controller.middle.params.ela_params.crc_number
-    h1 = controller.middle.params.ela_params.crc_dpos_height
-    h2 = controller.middle.params.ela_params.public_dpos_height
+    number = controller.params.ela_params.number
+    crc_number = controller.params.ela_params.crc_number
+    h1 = controller.params.ela_params.crc_dpos_height
+    h2 = controller.params.ela_params.public_dpos_height
     pre_offset = config["ela"]["pre_connect_offset"]
 
     test_case = "More than 1/3 producers inactive both first and second rotation failed and finally degenerate to CRC"
-    inactive_producers_nodes = controller.middle.node_manager.ela_nodes[crc_number * 2 + 1: number + 1]
+    inactive_producers = controller.tx_manager.register_producers_list[4:]
+
+    target_arbiters = controller.keystore_manager.node_key_stores[1: 13]
+    target_public_keys = list()
+    for keystore in target_arbiters:
+        target_public_keys.append(keystore.public_key.hex())
 
     stop_height = 0
+
     global result
+    global activate
     global current_arbiter_public_keys
-
-    replace_public_keys = list()
-    first_rotation_public_keys = list()
-    second_rotation_public_keys = list()
-
-    for i in range(4):
-        replace_public_keys.append(inactive_producers_nodes[i].node_keystore.public_key.hex())
-
-    for i in range(4, 8):
-        first_rotation_public_keys.append(inactive_producers_nodes[i].node_keystore.public_key.hex())
-
-    for i in range(8, 12):
-        second_rotation_public_keys.append(inactive_producers_nodes[i].node_keystore.public_key.hex())
+    activate = False
 
     current_height = controller.get_current_height()
     if current_height < h1 - pre_offset - 1:
@@ -67,33 +62,32 @@ def test_content():
             result = False
             break
 
+        # after h1, show the current and next arbiters info
+        if current_height >= h1:
+            controller.show_current_next_info()
+
         if stop_height == 0 and current_height >= h2 + 12:
             controller.test_result("Ater H2，the first round of consensus", True)
 
-            for node in inactive_producers_nodes:
-                node.stop()
+            for producer in inactive_producers:
+                producer.node.stop()
 
             stop_height = current_height
             print("stop_height 1: ", stop_height)
-        if stop_height != 0 and current_height >= stop_height:
+
+        if not activate and stop_height != 0 and current_height > stop_height + 20:
+            inactive_producers = inactive_producers[:4]
+            for producer in inactive_producers:
+                producer.node.start()
+
+            for producer in inactive_producers:
+                ret = controller.tx_manager.activate_producer(producer)
+                controller.test_result("activate producer {}".format(producer.info.nickname), ret)
+            activate = True
+
+        if stop_height != 0 and current_height > stop_height + 200:
             current_arbiter_public_keys = controller.get_current_arbiter_public_keys()
-            arbiters_nicknames = controller.get_current_arbiter_nicknames()
-            arbiters_nicknames.sort()
-            next_arbiter_nicknames = controller.get_next_arbiter_nicknames()
-            next_arbiter_nicknames.sort()
-            Logger.info("current arbiters nicknames: {}".format(arbiters_nicknames))
-            Logger.info("next    arbiters nicknames: {}".format(next_arbiter_nicknames))
-
-            if set(first_rotation_public_keys).issubset(set(current_arbiter_public_keys)):
-                for i in range(4):
-                    inactive_producers_nodes[i].start()
-
-            if set(second_rotation_public_keys).issubset(set(current_arbiter_public_keys)):
-                for i in range(4, 8):
-                    inactive_producers_nodes[i].start()
-
-        if stop_height != 0 and current_height > stop_height + 500:
-            result = set(replace_public_keys).issubset(current_arbiter_public_keys)
+            result = set(target_public_keys).issubset(current_arbiter_public_keys)
             break
 
         controller.discrete_mining_blocks(1)

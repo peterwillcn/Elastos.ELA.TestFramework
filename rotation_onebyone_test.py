@@ -6,10 +6,10 @@
 
 import time
 
-from src.top.control import Controller
-
-from src.middle.tools import constant
-from src.middle.tools.log import Logger
+from src.control import Controller
+from src.core.services import rpc
+from src.tools import constant
+from src.tools.log import Logger
 
 config = {
     "ela": {
@@ -29,15 +29,15 @@ config = {
 def one_by_one_rotation_test():
     test_case = "Arbiter One by One Rotation Test"
     controller = Controller(config)
-    controller.middle.ready_for_dpos()
+    controller.ready_for_dpos()
     pre_offset = config["ela"]["pre_connect_offset"]
-    h1 = controller.middle.params.ela_params.crc_dpos_height
-    h2 = controller.middle.params.ela_params.public_dpos_height
-    number = controller.middle.params.ela_params.number
-    crc_number = controller.middle.params.ela_params.crc_number
+    h1 = controller.params.ela_params.crc_dpos_height
+    h2 = controller.params.ela_params.public_dpos_height
+    number = controller.params.ela_params.number
+    crc_number = controller.params.ela_params.crc_number
 
-    tap_keystore = controller.get_tap_keystore()
-    candidate_producers = controller.middle.tx_manager.tx.register_producers_list[crc_number * 2: (number - crc_number)]
+    tap_keystore = controller.tx_manager.tap_key_store
+    candidate_producers = controller.tx_manager.tx.register_producers_list[crc_number * 2: (number - crc_number)]
     voted = False
     global current_vote_height
     current_vote_height = 0
@@ -60,7 +60,7 @@ def one_by_one_rotation_test():
             if not voted:
                 candidate = candidate_producers[index]
                 vote_amount = (len(candidate_producers) - index) * constant.TO_SELA * 100
-                ret = controller.middle.tx_manager.tx.vote_a_producer(tap_keystore, candidate, vote_amount)
+                ret = controller.tx_manager.tx.vote_a_producer(tap_keystore, candidate, vote_amount)
                 if ret:
                     Logger.info(
                         "vote {} ElAs at {} on success!".format(
@@ -82,7 +82,7 @@ def one_by_one_rotation_test():
             Logger.debug("last vote candidate height: {}".format(current_vote_height + h2))
 
         if current_height > h2 + current_vote_height + crc_number * 3 * 2:
-            arbiters_list = controller.middle.service_manager.rpc.get_arbiters_info()["arbiters"]
+            arbiters_list = rpc.get_arbiters_info()["arbiters"]
             ret = candidate.node.node_keystore.public_key.hex() in arbiters_list
             controller.test_result("{} has rotated a producer!".format(candidate.payload.nickname), ret)
             if ret:

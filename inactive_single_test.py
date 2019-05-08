@@ -5,9 +5,9 @@
 
 import time
 
-from src.top.control import Controller
+from src.control import Controller
 
-from src.middle.tools.log import Logger
+from src.tools.log import Logger
 
 config = {
     "ela": {
@@ -25,17 +25,17 @@ config = {
 
 def test_content():
     controller = Controller(config)
-    controller.middle.ready_for_dpos()
+    controller.ready_for_dpos()
 
-    crc_number = controller.middle.params.ela_params.crc_number
-    h1 = controller.middle.params.ela_params.crc_dpos_height
-    h2 = controller.middle.params.ela_params.public_dpos_height
+    crc_number = controller.params.ela_params.crc_number
+    h1 = controller.params.ela_params.crc_dpos_height
+    h2 = controller.params.ela_params.public_dpos_height
     pre_offset = config["ela"]["pre_connect_offset"]
 
     stop_height = 0
     test_case = "Single inactive and arbiter rotation"
     inactive_producer_index = 0
-    inactive_producer = controller.middle.tx_manager.tx.register_producers_list[inactive_producer_index]
+    inactive_producer = controller.tx_manager.register_producers_list[inactive_producer_index]
 
     current_height = controller.get_current_height()
     if current_height < h1 - pre_offset - 1:
@@ -75,16 +75,16 @@ def test_content():
                 )
             )
 
-        if not activate and stop_height != 0 and current_height >= stop_height + 150:
+        if not activate and stop_height != 0 and current_height >= stop_height + 100:
 
             state = controller.get_producer_state(inactive_producer_index)
             result = state == "Inactivate"
             controller.test_result("Before active producer, the stopped producer state is Inactive", result)
-            result = inactive_producer.activate_without_jar()
+            result = controller.tx_manager.activate_producer(inactive_producer)
             Logger.info("activate the producer result: {}".format(result))
             activate = True
 
-        if stop_height != 0 and current_height > stop_height + 200:
+        if stop_height != 0 and current_height > stop_height + 150:
             state = controller.get_producer_state(inactive_producer_index)
             result = state == "Activate"
             break

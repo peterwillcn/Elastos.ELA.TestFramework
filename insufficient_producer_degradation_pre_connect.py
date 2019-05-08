@@ -6,9 +6,9 @@
 import time
 import random
 
-from src.top.control import Controller
+from src.control import Controller
 
-from src.middle.tools.log import Logger
+from src.tools.log import Logger
 
 config = {
     "ela": {
@@ -16,7 +16,7 @@ config = {
         "crc_number": 4,
         "pre_connect_offset": 5,
         "crc_dpos_height": 300,
-        "public_dpos_height": 320
+        "public_dpos_height": 308
     },
     "side": False,
     "times": 1
@@ -24,11 +24,12 @@ config = {
 
 
 def test_content():
+
     controller = Controller(config)
-    number = controller.middle.params.ela_params.number
-    crc_number = controller.middle.params.ela_params.crc_number
-    h1 = controller.middle.params.ela_params.crc_dpos_height
-    h2 = controller.middle.params.ela_params.public_dpos_height
+    number = controller.params.ela_params.number
+    crc_number = controller.params.ela_params.crc_number
+    h1 = controller.params.ela_params.crc_dpos_height
+    h2 = controller.params.ela_params.public_dpos_height
     pre_offset = config["ela"]["pre_connect_offset"]
     test_case = "Pre connect before h2 and producers are not enough"
 
@@ -38,14 +39,20 @@ def test_content():
     start2 = end
     end2 = number
     Logger.debug("The number will be registered a producer are: {}".format(will_register_count))
-    controller.middle.tx_manager.register_producers(start, end)
-    controller.middle.tx_manager.vote_producers(start, end)
+    controller.tx_manager.register_producers(start, end)
+    controller.tx_manager.vote_producers(start, end)
 
     global result
     global re_register
     re_register = False
-    crc_public_keys = controller.middle.keystore_manager.crc_public_keys
+
+    crc_public_keys = controller.keystore_manager.crc_public_keys
     crc_public_keys.sort()
+
+    arbiter_keystores = controller.keystore_manager.node_key_stores[1:13]
+    target_public_keys = list()
+    for keystore in arbiter_keystores:
+        target_public_keys.append(keystore.public_key.hex())
 
     current_height = controller.get_current_height()
     if current_height < h1 - pre_offset - 1:
@@ -79,11 +86,16 @@ def test_content():
             result = set(current_arbiters) == set(crc_public_keys)
             Logger.debug("crc_public_keys is equal current arbiters: {}".format(result))
 
-            controller.middle.tx_manager.register_producers(start2, end2, True)
-            controller.middle.tx_manager.vote_producers(start2, end2)
+            Logger.debug("will register producers number: {}".format(will_register_count))
+            time.sleep(3)
+
+            controller.tx_manager.register_producers(start2, end2, True)
+            controller.tx_manager.vote_producers(start2, end2)
             re_register = True
 
-        if current_height >= h2 + 200:
+        if current_height >= h2 + 100:
+            current_arbiter_keys = controller.get_current_arbiter_public_keys()
+            result = set(target_public_keys) == set(current_arbiter_keys)
             break
 
         controller.discrete_mining_blocks(1)

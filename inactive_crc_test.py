@@ -5,9 +5,9 @@
 
 import time
 
-from src.top.control import Controller
-
-from src.middle.tools.log import Logger
+from src.control import Controller
+from src.core.services import rpc
+from src.tools.log import Logger
 
 config = {
     "ela": {
@@ -24,16 +24,16 @@ config = {
 
 def test_content():
     controller = Controller(config)
-    controller.middle.ready_for_dpos()
-    crc_number = controller.middle.params.ela_params.crc_number
-    h1 = controller.middle.params.ela_params.crc_dpos_height
-    h2 = controller.middle.params.ela_params.public_dpos_height
+    controller.ready_for_dpos()
+    crc_number = controller.params.ela_params.crc_number
+    h1 = controller.params.ela_params.crc_dpos_height
+    h2 = controller.params.ela_params.public_dpos_height
     pre_offset = config["ela"]["pre_connect_offset"]
     test_case = "More than 1/3 crc inactive after 2 rotations restart crc can generate blocks"
-    inactive_crc_nodes = controller.middle.node_manager.ela_nodes[1: crc_number + 1]
+    inactive_crc_nodes = controller.node_manager.ela_nodes[1: crc_number + 1]
     normal_arbiter_publickeys = list()
 
-    for node in controller.middle.node_manager.ela_nodes[1: crc_number * 3 + 1]:
+    for node in controller.node_manager.ela_nodes[1: crc_number * 3 + 1]:
         normal_arbiter_publickeys.append(node.node_keystore.public_key.hex())
 
     stop_height = 0
@@ -80,7 +80,7 @@ def test_content():
                 restart = True
 
         if stop_height != 0 and current_height > stop_height + 36:
-            arbiters_list = controller.middle.service_manager.rpc.get_arbiters_info()["arbiters"]
+            arbiters_list = rpc.get_arbiters_info()["arbiters"]
             result = set(normal_arbiter_publickeys) == set(arbiters_list)
             break
 
