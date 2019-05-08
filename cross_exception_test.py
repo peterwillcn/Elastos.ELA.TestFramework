@@ -57,6 +57,10 @@ if __name__ == '__main__':
             controller.test_result("cross transaction stop a arbiter or a did", False)
             break
 
+        # after h1, show current and next arbiters info
+        if current_height > h1:
+            controller.show_current_next_info()
+
         if current_height > h2 + 12:
 
             controller.node_manager.arbiter_nodes[1].stop()

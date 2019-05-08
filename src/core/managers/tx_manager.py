@@ -93,6 +93,7 @@ class TransactionManager(object):
     def update_producer(self, producer: Producer, producer_info: ProducerInfo):
         tx = producer.update(producer_info)
 
+        print(tx)
         if tx is None:
             return False
 
@@ -132,7 +133,11 @@ class TransactionManager(object):
 
         return ret
 
-    def vote_producer(self, keystore: KeyStore, amount: int, candidates_list):
+    def vote_producer(self, keystore: KeyStore, amount: int, candidates: list):
+
+        candidates_list = list()
+        for producer in candidates:
+            candidates_list.append(producer.node.owner_keystore.public_key)
 
         tx = txbuild.create_vote_transaction(
             keystore=keystore,
@@ -353,7 +358,7 @@ class TransactionManager(object):
             ret = self.vote_producer(
                 keystore=self.node_manager.keystore_manager.owner_key_stores[i],
                 amount=vote_amount,
-                candidates_list=[producer.node.owner_keystore.public_key],
+                candidates=[producer],
             )
             if not ret:
                 return False
@@ -368,7 +373,7 @@ class TransactionManager(object):
             ret = self.vote_producer(
                 keystore=self.node_manager.keystore_manager.owner_key_stores[i],
                 amount=vote_amount,
-                candidates_list=[producer.node.owner_keystore.public_key]
+                candidates=[producer]
             )
             if not ret:
                 return False

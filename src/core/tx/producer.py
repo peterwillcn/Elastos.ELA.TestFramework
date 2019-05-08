@@ -61,7 +61,7 @@ class Producer(object):
 
         if tx is None:
             return None
-
+        producer_info.gen_signature()
         tx = txbuild.single_sign_transaction(self.node.owner_keystore, tx)
 
         return tx

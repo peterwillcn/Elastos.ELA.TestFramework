@@ -109,7 +109,7 @@ class DposTest(object):
 
     def rotation_onebyone_test(self):
         test_case = "2、ela node rotation one by one test"
-        candidate_producers = self.controller.middle.tx_manager.tx.register_producers_list[
+        candidate_producers = self.controller.middle.tx_manager.register_producers_list[
                               self.crc_number * 2: self.crc_number * 3]
         voted = False
         global current_vote_height
@@ -148,7 +148,7 @@ class DposTest(object):
                     before_rotation_nicknames.sort()
                     candidate = candidate_producers[index]
                     vote_amount = (len(candidate_producers) - index) * constant.TO_SELA * 100
-                    ret = self.controller.middle.tx_manager.tx.vote_a_producer(self.tap_keystore, candidate, vote_amount)
+                    ret = self.controller.middle.tx_manager.vote_producer(self.tap_keystore, vote_amount, [candidate])
                     if ret:
                         Logger.info("vote {} ElAs at {} on success!".format((vote_amount / constant.TO_SELA),
                                                                             candidate.payload.nickname))
@@ -358,9 +358,9 @@ class DposTest(object):
         height_times = dict()
         height_times[self.controller.get_current_height()] = 1
 
-        register_list = self.controller.middle.tx_manager.tx.register_producers_list
+        register_list = self.controller.middle.tx_manager.register_producers_list
         inactive_producer = register_list[len(register_list) - 1]
-        # replace_producer = self.controller.middle.tx_manager.tx.register_producers_list[]
+        # replace_producer = self.controller.middle.tx_manager.register_producers_list[]
 
         while True:
             current_height = self.controller.get_current_height()
@@ -375,7 +375,7 @@ class DposTest(object):
                                                                                   inactive_node_index, stop_height))
 
             if stop_height != 0 and current_height >= stop_height + self.config["ela"]["max_inactivate_rounds"] + 5:
-                deposit_address = self.controller.middle.tx_manager.tx.register_producers_list[1].deposit_address
+                deposit_address = self.controller.middle.tx_manager.register_producers_list[1].deposit_address
                 balance = self.controller.middle.service_manager.rpc.get_balance_by_address(deposit_address)
                 Logger.info("{} The balance of deposit address is {}".format(self.tag, balance))
 
@@ -383,7 +383,7 @@ class DposTest(object):
                 ret = state == "Inactivate"
                 self.controller.test_result("{} Before active producer, the stopped producer state is Inactive".format(
                     self.tag), ret)
-                ret = self.controller.middle.tx_manager.tx.activate_a_producer(inactive_producer)
+                ret = self.controller.middle.tx_manager.activate_producer(inactive_producer)
                 Logger.info("{} activate the producer result: {}".format(self.tag, ret))
 
                 state = self.controller.get_producer_state(1)

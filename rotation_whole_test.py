@@ -28,7 +28,7 @@ config = {
 
 def test_content():
 
-    test_case = "Arbiter Whole Retation Test"
+    test_case = "Arbiter Whole Rotation Test"
     controller = Controller(config)
     controller.ready_for_dpos()
 
@@ -38,8 +38,10 @@ def test_content():
     pre_offset = config["ela"]["pre_connect_offset"]
     number = controller.params.ela_params.number
     crc_number = controller.params.ela_params.crc_number
+
+    global tap_keystore
     tap_keystore = controller.keystore_manager.tap_key_store
-    register_producers = controller.tx_manager.tx.register_producers_list
+    register_producers = controller.tx_manager.register_producers_list
 
     vote_height = 0
 
@@ -53,31 +55,28 @@ def test_content():
     while True:
         current_height = controller.get_current_height()
         times = controller.get_height_times(height_times, current_height)
-        Logger.debug("[test] current height: {}, times: {}".format(current_height, times))
+        Logger.debug("current height: {}, times: {}".format(current_height, times))
         if times >= 100:
             controller.test_result(test_case, False)
             break
 
-        controller.discrete_mining_blocks(1)
         global before_rotation_nicknames
+
+        if current_height > h1:
+            controller.show_current_next_info()
 
         if vote_height == 0 and current_height > h2 + 5:
             before_rotation_nicknames = controller.get_current_arbiter_nicknames()
             before_rotation_nicknames.sort()
             tap_balance = rpc.get_balance_by_address(tap_keystore.address)
-            Logger.info("[test] tap_balance: {}".format(tap_balance))
+            Logger.info("tap_balance: {}".format(tap_balance))
 
-            ret = controller.tx_manager.tx.vote_producers(
-                vote_keystore=tap_keystore,
-                producers=register_producers[crc_number * 2: len(register_producers)],
-                vote_amount=number * constant.TO_SELA
+            ret = controller.tx_manager.vote_producer(
+                keystore=tap_keystore,
+                amount=number * constant.TO_SELA,
+                candidates=register_producers[crc_number * 2: len(register_producers)]
             )
-            if ret:
-                Logger.info("[test] candidate producers have voted on success again!!")
-            else:
-                Logger.error("[test] candidate producers have voted failed!!")
-                break
-
+            controller.test_result("vote the candidates result", ret)
             vote_height = current_height
 
         if vote_height > 0 and current_height > vote_height + crc_number * 3 * 2:
@@ -96,6 +95,7 @@ def test_content():
             else:
                 controller.test_result(test_case, False)
 
+        controller.discrete_mining_blocks(1)
         time.sleep(1)
 
     time.sleep(2)

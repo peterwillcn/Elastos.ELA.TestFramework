@@ -70,12 +70,7 @@ def test_content():
             break
 
         if current_height > h1:
-            current_nick_names = controller.get_current_arbiter_nicknames()
-            current_nick_names.sort()
-            next_nick_names = controller.get_next_arbiter_nicknames()
-            next_nick_names.sort()
-            Logger.debug("current arbiters: {}".format(current_nick_names))
-            Logger.debug("next    arbiters: {}".format(next_nick_names))
+            controller.show_current_next_info()
 
         if not re_register and current_height >= h2 + 12:
 

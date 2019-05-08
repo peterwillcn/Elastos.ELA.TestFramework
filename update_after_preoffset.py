@@ -15,9 +15,9 @@ config = {
         "number": 12,
         "crc_number": 4,
         "later_start_number": 0,
-        "pre_connect_offset": 5,
+        "pre_connect_offset": 30,
         "crc_dpos_height": 300,
-        "public_dpos_height": 308
+        "public_dpos_height": 350
     },
     "side": False,
     "times": 1
@@ -25,20 +25,18 @@ config = {
 
 
 def test_content():
+
+    test_case = "update producer after pre offset but before h2"
+
     controller = Controller(config)
     controller.ready_for_dpos()
     h1 = controller.params.ela_params.crc_dpos_height
     h2 = controller.params.ela_params.public_dpos_height
     pre_offset = config["ela"]["pre_connect_offset"]
-    number = controller.params.ela_params.number
-    crc_number = controller.params.ela_params.crc_number
-    later_start_number = controller.params.ela_params.later_start_number
 
-    # init later start nodes include both registered and normal
-    later_start_nodes = controller.node_manager.ela_nodes[number - later_start_number + 1: number + 1]
-
+    will_update_producer = controller.tx_manager.register_producers_list[0]
     current_height = controller.get_current_height()
-    if current_height < h1 - pre_offset - 1:
+    if current_height < h1 - 5:
         controller.discrete_mining_blocks(h1 - pre_offset - 1 - current_height)
 
     height_times = dict()
@@ -46,7 +44,7 @@ def test_content():
 
     global result
     global start_height
-    start_height = 0
+    update_height = 0
 
     while True:
         current_height = controller.get_current_height()
@@ -57,31 +55,30 @@ def test_content():
             result = False
             break
 
-        if current_height >= h1:
+        if current_height >= h2:
             controller.show_current_next_info()
 
-        if current_height == h1 + 1:
-            Logger.info("H1 PASS!")
-            Logger.info("H1 PASS!")
+        if update_height == 0 and current_height > h1 + 35:
+            producer_payload = will_update_producer.info
 
-        if current_height == h2 + 2:
-            Logger.info("H2 PASS!")
-            Logger.info("H2 PASS!")
+            # update nickname
+            producer_payload.nickname = "^_^ HAHA"
 
-        # current is equal 380, start the later nodes include two candidates and two normal nodes
-        if start_height == 0 and current_height > h2 + crc_number * 3 * 6:
-            for node in later_start_nodes:
-                node.start()
-            start_height = current_height
+            # update node public key
+            producer_payload.node_public_key = \
+                bytes.fromhex("0303710a960f04893281fe016ec7563a9c17fb8c7f0bea555b3a9349a6a1646479")
 
-        if current_height > start_height + 500:
-            result = True
+            result = controller.tx_manager.update_producer(will_update_producer, producer_payload)
+            controller.test_result(test_case, result)
+            update_height = current_height
+
+        if current_height > h2 + 12:
             break
 
         controller.discrete_mining_blocks(1)
         time.sleep(1)
 
-    controller.test_result("Dpos Normal Test", result)
+    controller.test_result(test_case, result)
     controller.terminate_all_process()
 
 

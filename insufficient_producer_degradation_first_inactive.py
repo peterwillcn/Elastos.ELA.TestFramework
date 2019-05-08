@@ -70,12 +70,7 @@ def test_content():
 
         # after h1, show the current and next arbiters info by sort
         if current_height >= h1:
-            arbiters_nicknames = controller.get_current_arbiter_nicknames()
-            arbiters_nicknames.sort()
-            next_arbiter_nicknames = controller.get_next_arbiter_nicknames()
-            next_arbiter_nicknames.sort()
-            Logger.info("current arbiters nicknames: {}".format(arbiters_nicknames))
-            Logger.info("next    arbiters nicknames: {}".format(next_arbiter_nicknames))
+            controller.show_current_next_info()
 
         if stop_height == 0 and current_height >= h2 + 12:
             for node in inactive_producers_nodes:
@@ -85,7 +80,7 @@ def test_content():
             stop_height = current_height
             Logger.debug("stop height: {}".format(stop_height))
 
-        if not restart and stop_height != 0 and current_height > stop_height + 24:
+        if not restart and stop_height != 0 and current_height > stop_height + 20:
             crc_public_keys = controller.keystore_manager.crc_public_keys
             current_arbiter_public_keys = controller.get_current_arbiter_public_keys()
             result = set(crc_public_keys) == set(current_arbiter_public_keys)

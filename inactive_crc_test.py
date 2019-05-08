@@ -58,12 +58,7 @@ def test_content():
             break
 
         if current_height > h1:
-            arbiters_nicknames = controller.get_current_arbiter_nicknames()
-            arbiters_nicknames.sort()
-            next_arbiter_nicknames = controller.get_next_arbiter_nicknames()
-            next_arbiter_nicknames.sort()
-            Logger.info("current arbiters nicknames: {}".format(arbiters_nicknames))
-            Logger.info("next    arbiters nicknames: {}".format(next_arbiter_nicknames))
+            controller.show_current_next_info()
 
         if stop_height == 0 and current_height >= h2 + 12:
             controller.test_result("Ater H2，the first round of consensus", True)

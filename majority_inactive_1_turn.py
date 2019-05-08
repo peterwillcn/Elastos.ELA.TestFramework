@@ -73,12 +73,7 @@ def test_content():
 
             # when current height is higher than h1,  will show current and next current arbiters info
         if current_height > h1:
-            arbiters_nicknames = controller.get_current_arbiter_nicknames()
-            arbiters_nicknames.sort()
-            next_arbiter_nicknames = controller.get_next_arbiter_nicknames()
-            next_arbiter_nicknames.sort()
-            Logger.info("current arbiters nicknames: {}".format(arbiters_nicknames))
-            Logger.info("next    arbiters nicknames: {}".format(next_arbiter_nicknames))
+            controller.show_current_next_info()
 
         # when current height is equal h2 + 12(320), then will stop the inactive producer nodes[9, 10, 11, 12]
         if stop_height == 0 and current_height >= h2 + 12:

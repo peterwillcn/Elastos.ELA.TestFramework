@@ -71,12 +71,7 @@ def test_content():
 
         # after h1, show the current and next arbiters nicknames by sort
         if current_height >= h1:
-            arbiters_nicknames = controller.get_current_arbiter_nicknames()
-            arbiters_nicknames.sort()
-            next_arbiter_nicknames = controller.get_next_arbiter_nicknames()
-            next_arbiter_nicknames.sort()
-            Logger.info("current arbiters nicknames: {}".format(arbiters_nicknames))
-            Logger.info("next    arbiters nicknames: {}".format(next_arbiter_nicknames))
+            controller.show_current_next_info()
 
         # mining the height after h2 + 12(320), cancel producers and stop nodes \
         # which number is between 4 and 8 by random

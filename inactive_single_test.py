@@ -57,12 +57,7 @@ def test_content():
             break
 
         if current_height > h1:
-            current_nicknames = controller.get_current_arbiter_nicknames()
-            next_nicknames = controller.get_next_arbiter_nicknames()
-            current_nicknames.sort()
-            next_nicknames.sort()
-            Logger.debug("current arbiter nicknames: {}".format(current_nicknames))
-            Logger.debug("next arbiter nicknames   : {}".format(next_nicknames))
+            controller.show_current_next_info()
 
         if stop_height == 0 and current_height >= h2 + 1:
             controller.test_result("Ater H2", True)

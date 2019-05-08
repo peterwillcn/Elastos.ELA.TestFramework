@@ -37,7 +37,7 @@ def one_by_one_rotation_test():
     crc_number = controller.params.ela_params.crc_number
 
     tap_keystore = controller.tx_manager.tap_key_store
-    candidate_producers = controller.tx_manager.tx.register_producers_list[crc_number * 2: (number - crc_number)]
+    candidate_producers = controller.tx_manager.register_producers_list[crc_number * 2: (number - crc_number)]
     voted = False
     global current_vote_height
     current_vote_height = 0
@@ -56,23 +56,27 @@ def one_by_one_rotation_test():
         times = controller.get_height_times(height_times, current_height)
         Logger.debug("[test] current height: {}, times: {}".format(current_height, times))
         controller.discrete_mining_blocks(1)
+
+        if current_height > h1:
+            controller.show_current_next_info()
+
         if current_height > h2 + current_vote_height + 1:
             if not voted:
                 candidate = candidate_producers[index]
                 vote_amount = (len(candidate_producers) - index) * constant.TO_SELA * 100
-                ret = controller.tx_manager.tx.vote_a_producer(tap_keystore, candidate, vote_amount)
+                ret = controller.tx_manager.vote_producer(tap_keystore, vote_amount, [candidate])
                 if ret:
                     Logger.info(
                         "vote {} ElAs at {} on success!".format(
                             vote_amount / constant.TO_SELA,
-                            candidate.payload.nickname
+                            candidate.info.nickname
                         )
                     )
                 else:
                     Logger.info(
                         "vote {} ElAs at {} failed!".format(
                             vote_amount / constant.TO_SELA,
-                            candidate.payload.nickname
+                            candidate.info.nickname
                         )
                     )
                     controller.terminate_all_process()
@@ -84,7 +88,7 @@ def one_by_one_rotation_test():
         if current_height > h2 + current_vote_height + crc_number * 3 * 2:
             arbiters_list = rpc.get_arbiters_info()["arbiters"]
             ret = candidate.node.node_keystore.public_key.hex() in arbiters_list
-            controller.test_result("{} has rotated a producer!".format(candidate.payload.nickname), ret)
+            controller.test_result("{} has rotated a producer!".format(candidate.info.nickname), ret)
             if ret:
                 voted = False
                 index += 1

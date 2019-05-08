@@ -68,7 +68,7 @@ def assert_equal(send_resp, jar_txid):
 def tag_from_path(path: str, class_name: str):
     elements = path.split("/")
     index = elements.index(constant.PROJECT_NAME)
-    tag = "【"
+    tag = "["
     for i in range(index + 1, len(elements)):
         if i == len(elements) - 1:
             tag += elements[i].split(".")[0]
@@ -78,7 +78,7 @@ def tag_from_path(path: str, class_name: str):
             break
         tag += elements[i]
         tag += "."
-    tag += "】"
+    tag += "]"
     return tag
 
 
