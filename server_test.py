@@ -4,12 +4,21 @@
 # author: liteng
 
 import os
-from tests.dpos_test import DposTest
+import time
+import sys
+import signal
 
 from src.tools.log import Logger
 
 
+def exit_handler(signum, frame):
+    print("Toggle the Exit Signal, Exit...")
+    time.sleep(1)
+    sys.exit("Sorry, Good Bye!")
+
+
 if __name__ == '__main__':
+    signal.signal(signal.SIGINT, exit_handler)
 
     test_cases = dict()
     test_cases["case1"] = "dpos_normal_test"
@@ -26,10 +35,18 @@ if __name__ == '__main__':
     test_cases["case12"] = "inactive_crc_test"
     test_cases["case13"] = "cross_normal_test"
 
+    current_time = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
+    path = os.path.join("./datas/server_test_result", current_time)
+    print(path)
+    if not os.path.exists(path):
+        os.makedirs(path)
+
     for i in range(1, 14):
+
         Logger.info("Begin testing case{}".format(i))
         case = test_cases["case{}".format(i)]
-        os.system("python3 {}.py > ./datas/server_test_result/{}.log".format(case, case))
+        os.system("python3 {}.py > ./datas/server_test_result/{}/{}.log".format(case, current_time, case))
         Logger.info("Finish testing case{}".format(i))
+        os.system("sh ./shell/killall.sh")
 
 
