@@ -29,7 +29,9 @@ class NodeManager(object):
         self.params = params
         self.env_manager = env_manager
         self.keystore_manager = keystore_manager
+        self.log_file_path = ""
         self.ela_nodes = []
+        self.later_start_nodes = []
         self.arbiter_nodes = []
         self.did_nodes = []
         self.token_nodes = []
@@ -52,6 +54,8 @@ class NodeManager(object):
         ret = False
         if self.params.ela_params.enable:
             ret = self._deploy_nodes("ela", self.params.ela_params.number)
+            self.later_start_nodes = \
+                self.ela_nodes[self.params.ela_params.number - self.params.ela_params.later_start_number + 1:]
         if self.params.did_params.enable:
             ret = self._deploy_nodes("did", self.params.did_params.number)
         if self.params.token_params.enable:
@@ -182,12 +186,14 @@ class NodeManager(object):
                     self.env_manager.current_date_time,
                     "miner"
                 )
+                self.log_file_path = os.path.abspath(os.path.join(dest_path, "../log.txt"))
+                print("######## log file path: ", self.log_file_path)
                 ela_type = ElaNode.TYPE_MINER
             elif category == "ela" and i <= self.params.ela_params.crc_number:
                 dest_path = os.path.join(
                     self.env_manager.test_path, category + "_nodes",
                     self.env_manager.current_date_time,
-                    "crc" + str(i)
+                                                "crc" + str(i)
                 )
 
                 ela_type = ElaNode.TYPE_CRC
@@ -196,7 +202,7 @@ class NodeManager(object):
                 dest_path = os.path.join(
                     self.env_manager.test_path, category + "_nodes",
                     self.env_manager.current_date_time,
-                    "producer" + str(i)
+                                                "producer" + str(i)
                 )
                 ela_type = ElaNode.TYPE_PRODUCER
             else:
@@ -207,8 +213,9 @@ class NodeManager(object):
                 dest_path = os.path.join(
                     self.env_manager.test_path, category + "_nodes",
                     self.env_manager.current_date_time,
-                    category + str(i)
+                                                category + str(i)
                 )
+
             Logger.debug("{} dest_path: {}".format(self.tag, dest_path))
             if not os.path.exists(dest_path):
                 os.makedirs(dest_path)
@@ -279,7 +286,7 @@ class NodeManager(object):
             self.tag,
             node_type,
             self.params.arbiter_params.side_chain_genesis_hash
-            )
+        )
         )
 
         recharge_address = keytool.gen_cross_chain_address(bytes.fromhex(side_chain_genesis_hash))

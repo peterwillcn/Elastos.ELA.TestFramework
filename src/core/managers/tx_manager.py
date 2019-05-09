@@ -24,10 +24,10 @@ from src.tools.log import Logger
 
 class TransactionManager(object):
 
-    def __init__(self, params: Parameter, node_manager: NodeManager):
+    def __init__(self, node_manager: NodeManager):
         self.tag = util.tag_from_path(__file__, self.__class__.__name__)
-        self.params = params
         self.node_manager = node_manager
+        self.params = self.node_manager.params
         self.fee = 10000
         self.register_producers_list = list()
         self.cancel_producers_list = list()
@@ -278,7 +278,7 @@ class TransactionManager(object):
             rpc.discrete_mining(7)
 
             status = rpc.producer_status(public_key)
-            result = status == "Activate"
+            result = status == "Active"
             if not result:
                 break
             num += 1

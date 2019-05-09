@@ -60,7 +60,7 @@ def test_content():
             controller.show_current_next_info()
 
         if stop_height == 0 and current_height >= h2 + 1:
-            controller.test_result("Ater H2", True)
+            controller.check_result("Ater H2", True)
             inactive_producer.node.stop()
             stop_height = current_height
             Logger.error(
@@ -74,7 +74,7 @@ def test_content():
 
             state = controller.get_producer_state(inactive_producer_index)
             result = state == "Inactivate"
-            controller.test_result("Before active producer, the stopped producer state is Inactive", result)
+            controller.check_result("Before active producer, the stopped producer state is Inactive", result)
             result = controller.tx_manager.activate_producer(inactive_producer)
             Logger.info("activate the producer result: {}".format(result))
             activate = True
@@ -87,7 +87,7 @@ def test_content():
         time.sleep(1)
         controller.discrete_mining_blocks(1)
 
-    controller.test_result(test_case, result)
+    controller.check_result(test_case, result)
     controller.terminate_all_process()
 
 

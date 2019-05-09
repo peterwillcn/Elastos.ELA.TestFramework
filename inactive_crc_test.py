@@ -61,7 +61,7 @@ def test_content():
             controller.show_current_next_info()
 
         if stop_height == 0 and current_height >= h2 + 12:
-            controller.test_result("Ater H2，the first round of consensus", True)
+            controller.check_result("Ater H2，the first round of consensus", True)
 
             for node in inactive_crc_nodes:
                 node.stop()
@@ -82,7 +82,7 @@ def test_content():
         controller.discrete_mining_blocks(1)
         time.sleep(1)
 
-    controller.test_result(test_case, result)
+    controller.check_result(test_case, result)
     controller.terminate_all_process()
 
 

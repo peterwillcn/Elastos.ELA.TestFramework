@@ -66,9 +66,9 @@ def test_content():
 
         # after h1, show the current and next arbiters nicknames by sort
         if current_height >= h1:
-            arbiters_nicknames = controller.get_current_arbiter_nicknames()
+            arbiters_nicknames = controller.rpc_manager.get_current_arbiter_nicknames()
             arbiters_nicknames.sort()
-            next_arbiter_nicknames = controller.get_next_arbiter_nicknames()
+            next_arbiter_nicknames = controller.rpc_manager.get_next_arbiter_nicknames()
             next_arbiter_nicknames.sort()
             Logger.info("current arbiters nicknames: {}".format(arbiters_nicknames))
             Logger.info("next    arbiters nicknames: {}".format(next_arbiter_nicknames))
@@ -79,7 +79,7 @@ def test_content():
             time.sleep(2)
             for producer in cancel_producers:
                 ret = controller.tx_manager.cancel_producer(producer)
-                controller.test_result("Cancel Producer {}".format(producer.info.nickname), ret)
+                controller.check_result("Cancel Producer {}".format(producer.info.nickname), ret)
 
             cancel_height = current_height
             Logger.debug("cancel height: {}".format(cancel_height))
@@ -95,7 +95,7 @@ def test_content():
         time.sleep(1)
 
     # check result and terminate all the processes
-    controller.test_result(test_case, result)
+    controller.check_result(test_case, result)
     controller.terminate_all_process()
 
 

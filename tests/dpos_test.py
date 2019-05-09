@@ -105,7 +105,7 @@ class DposTest(object):
                 result = True
                 break
 
-        self.controller.test_result(test_case, result)
+        self.controller.check_result(test_case, result)
 
     def rotation_onebyone_test(self):
         test_case = "2、ela node rotation one by one test"
@@ -144,7 +144,7 @@ class DposTest(object):
             self.controller.discrete_mining_blocks(1)
             if current_height > self.h2 + current_vote_height + 1:
                 if not voted:
-                    before_rotation_nicknames = self.controller.get_current_arbiter_nicknames()
+                    before_rotation_nicknames = self.controller.get_arbiter_nicknames()
                     before_rotation_nicknames.sort()
                     candidate = candidate_producers[index]
                     vote_amount = (len(candidate_producers) - index) * constant.TO_SELA * 100
@@ -162,13 +162,13 @@ class DposTest(object):
             #     Logger.debug("last vote candidate height: {}".format(current_vote_height + self.h2))
 
             if current_height > self.h2 + current_vote_height + self.crc_number * 3 * 2:
-                after_rotation_nicknames = self.controller.get_current_arbiter_nicknames()
+                after_rotation_nicknames = self.controller.get_arbiter_nicknames()
                 after_rotation_nicknames.sort()
                 arbiters_list = rpc.get_arbiters_info()["arbiters"]
                 ret = candidate.node.node_keystore.public_key.hex() in arbiters_list
                 Logger.debug("{} before rotation nicknames: {}".format(self.tag, before_rotation_nicknames))
                 Logger.debug("{} after  rotation nicknames: {}".format(self.tag, after_rotation_nicknames))
-                self.controller.test_result("{} has rotated a producer!".format(candidate.info.nickname), ret)
+                self.controller.check_result("{} has rotated a producer!".format(candidate.info.nickname), ret)
                 if ret:
                     voted = False
                     index += 1
@@ -177,7 +177,7 @@ class DposTest(object):
                 break
             time.sleep(1)
 
-        self.controller.test_result(test_case, result)
+        self.controller.check_result(test_case, result)
 
     def rotation_whole_test(self):
         test_case = "3、 ela node whole rotation test"
@@ -208,7 +208,7 @@ class DposTest(object):
             global before_rotation_nicknames
 
             if vote_height == 0 and current_height > self.h2:
-                before_rotation_nicknames = self.controller.get_current_arbiter_nicknames()
+                before_rotation_nicknames = self.controller.get_arbiter_nicknames()
                 before_rotation_nicknames.sort()
                 tap_balance = rpc.get_balance_by_address(self.tap_keystore.address)
                 Logger.info("[test] tap_balance: {}".format(tap_balance))
@@ -227,7 +227,7 @@ class DposTest(object):
                 vote_height = current_height
 
             if vote_height > 0 and current_height > vote_height + self.crc_number * 3 * 2:
-                after_rotation_nicknames = self.controller.get_current_arbiter_nicknames()
+                after_rotation_nicknames = self.controller.get_arbiter_nicknames()
                 after_rotation_nicknames.sort()
                 arbiter_info = rpc.get_arbiters_info()
                 arbiter = arbiter_info["arbiters"]
@@ -248,7 +248,7 @@ class DposTest(object):
 
             time.sleep(1)
 
-        self.controller.test_result(test_case, result)
+        self.controller.check_result(test_case, result)
 
     def minor_stop_test(self):
         test_case = "4、[stop minor ela nodes]"
@@ -294,7 +294,7 @@ class DposTest(object):
         if current_height >= stop_height:
             result = True
 
-        self.controller.test_result(test_case1, result)
+        self.controller.check_result(test_case1, result)
 
         index += 1
         test_case2 = "{} two nodes stop continue consensus".format(test_case)
@@ -319,7 +319,7 @@ class DposTest(object):
 
         if current_height >= stop_height:
             result = True
-        self.controller.test_result(test_case2, result)
+        self.controller.check_result(test_case2, result)
 
         index += 1
         test_case3 = "{} three nodes stop continue consensus".format(test_case)
@@ -347,7 +347,7 @@ class DposTest(object):
             for i in range(index + 1):
                 inactive_nodes[i].start()
             time.sleep(1)
-        self.controller.test_result(test_case3, result)
+        self.controller.check_result(test_case3, result)
 
     def inactive_single_test(self):
         inactive_node_index = self.crc_number + 2
@@ -368,7 +368,7 @@ class DposTest(object):
             Logger.info("{} current height: {}, times: {}".format(self.tag, current_height, times))
 
             if stop_height == 0 and current_height >= self.h2 + 1:
-                self.controller.test_result("{} Ater H2".format(self.tag), True)
+                self.controller.check_result("{} Ater H2".format(self.tag), True)
                 self.controller.node_manager.ela_nodes[inactive_node_index].stop()
                 stop_height = current_height
                 Logger.error("{} node {} stopped at height {} on success!".format(self.tag,
@@ -381,17 +381,17 @@ class DposTest(object):
 
                 state = self.controller.get_producer_state(1)
                 ret = state == "Inactivate"
-                self.controller.test_result("{} Before active producer, the stopped producer state is Inactive".format(
+                self.controller.check_result("{} Before active producer, the stopped producer state is Inactive".format(
                     self.tag), ret)
                 ret = self.controller.tx_manager.activate_producer(inactive_producer)
                 Logger.info("{} activate the producer result: {}".format(self.tag, ret))
 
                 state = self.controller.get_producer_state(1)
                 ret = state == "Activate"
-                self.controller.test_result("{} After activate producer, the stopped producer state is active".format(
+                self.controller.check_result("{} After activate producer, the stopped producer state is active".format(
                     self.tag), ret)
 
-                self.controller.test_result(test_case, ret)
+                self.controller.check_result(test_case, ret)
                 break
 
             time.sleep(1)
@@ -400,24 +400,24 @@ class DposTest(object):
     def inactivate_much_test(self):
         pass
 
-    def cross_normal_test(self):
-        test_case = "6、[normal]"
-        self.controller.show_current_height()
-        ret = self.controller.tx_manager.cross_chain_transaction("did", True)
-        self.controller.test_result("{} recharge to the side chain after H2".format(test_case), ret)
-        time.sleep(2)
-        ret = self.controller.tx_manager.cross_chain_transaction("did", False)
-        self.controller.test_result("{} withdraw from the side chain after H2".format(test_case), ret)
-        time.sleep(1)
-
-    def cross_stop_test(self):
-        test_case = "7、[exception]"
-        self.controller.node_manager.arbiter_nodes[1].stop()
-        self.controller.node_manager.did_nodes[1].stop()
-        ret = self.controller.tx_manager.cross_chain_transaction("did", True)
-        self.controller.test_result("{} stop one arbiter, test cross recharge".format(test_case), ret)
-
-        self.controller.node_manager.did_nodes[1].stop()
+    # def cross_normal_test(self):
+    #     test_case = "6、[normal]"
+    #     self.controller.show_current_height()
+    #     ret = self.controller.tx_manager.cross_chain_transaction("did", True)
+    #     self.controller.check_result("{} recharge to the side chain after H2".format(test_case), ret)
+    #     time.sleep(2)
+    #     ret = self.controller.tx_manager.cross_chain_transaction("did", False)
+    #     self.controller.check_result("{} withdraw from the side chain after H2".format(test_case), ret)
+    #     time.sleep(1)
+    #
+    # def cross_stop_test(self):
+    #     test_case = "7、[exception]"
+    #     self.controller.node_manager.arbiter_nodes[1].stop()
+    #     self.controller.node_manager.did_nodes[1].stop()
+    #     ret = self.controller.tx_manager.cross_chain_transaction("did", True)
+    #     self.controller.check_result("{} stop one arbiter, test cross recharge".format(test_case), ret)
+    #
+    #     self.controller.node_manager.did_nodes[1].stop()
 
     def after_test(self):
         self.controller.terminate_all_process()

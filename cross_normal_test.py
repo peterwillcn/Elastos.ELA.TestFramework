@@ -11,7 +11,7 @@ from src.control import Controller
 
 config = {
     "ela": {
-        "number": 12,
+        "number": 16,
         "crc_number": 4,
         "pre_connect_offset": 5,
         "crc_dpos_height": 400,
@@ -90,13 +90,13 @@ def test_content():
             test_case = "cross chain recharge did between H1 and H2"
             Logger.info("### Testing {} ###".format(test_case))
             result = controller.tx_manager.cross_chain_transaction("did", True)
-            controller.test_result(test_case, result)
+            controller.check_result(test_case, result)
 
             if token_enable:
                 test_case = "cross chain recharge token between H1 and H2"
                 Logger.info("### Testing {} ###".format(test_case))
                 result = controller.tx_manager.cross_chain_transaction("token", True)
-                controller.test_result(test_case, result)
+                controller.check_result(test_case, result)
 
             controller.discrete_mining_blocks(1)
             time.sleep(2)
@@ -106,39 +106,39 @@ def test_content():
             test_case = "cross chain withdraw did between H1 and H2"
             Logger.info("### Testing {} ###".format(test_case))
             result = controller.tx_manager.cross_chain_transaction("did", False)
-            controller.test_result(test_case, result)
+            controller.check_result(test_case, result)
 
             if token_enable:
                 controller.discrete_mining_blocks(1)
                 test_case = "cross chain withdraw token between H1 and H2"
                 Logger.info("### Testing {} ###".format(test_case))
                 result = controller.tx_manager.cross_chain_transaction("token", False)
-                controller.test_result(test_case, result)
+                controller.check_result(test_case, result)
 
         if current_height > h2 + 1:
             test_case = "cross chain recharge did after H2"
             Logger.info("### Testing {} ###".format(test_case))
             result = controller.tx_manager.cross_chain_transaction("did", True)
-            controller.test_result(test_case, result)
+            controller.check_result(test_case, result)
 
             if token_enable:
                 test_case = "cross chain recharge token after H2"
                 Logger.info("### Testing {} ###".format(test_case))
                 result = controller.tx_manager.cross_chain_transaction("token", True)
-                controller.test_result(test_case, result)
+                controller.check_result(test_case, result)
 
             controller.discrete_mining_blocks(1)
             test_case = "cross chain withdraw did after H2"
             Logger.info("### Testing {} ###".format(test_case))
             result = controller.tx_manager.cross_chain_transaction("did", False)
-            controller.test_result(test_case, result)
+            controller.check_result(test_case, result)
 
             if token_enable:
                 controller.discrete_mining_blocks(1)
                 test_case = "cross chain withdraw token after H2"
                 Logger.info("### Testing {} ###".format(test_case))
                 result = controller.tx_manager.cross_chain_transaction("token", False)
-                controller.test_result(test_case, result)
+                controller.check_result(test_case, result)
 
             if result:
                 break

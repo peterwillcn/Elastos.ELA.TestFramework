@@ -81,7 +81,7 @@ def test_content():
         controller.discrete_mining_blocks(1)
         time.sleep(1)
 
-    controller.test_result("Dpos Normal Test", result)
+    controller.check_result("Dpos Normal Test", result)
     controller.terminate_all_process()
 
 

@@ -80,7 +80,7 @@ def test_content():
         if stop_height == 0 and current_height >= h2 + 12:
             for producer in inactive_producers:
                 producer.node.stop()
-            controller.test_result("Ater H2，stop 1/3 producers", True)
+            controller.check_result("Ater H2，stop 1/3 producers", True)
 
             stop_height = current_height
             Logger.debug("stop height: {}".format(stop_height))
@@ -97,19 +97,20 @@ def test_content():
 
                 for producer in inactive_producers:
                     ret = controller.tx_manager.activate_producer(producer)
-                    controller.test_result("activate producer {}".format(producer.node.name), ret)
+                    controller.check_result("activate producer {}".format(producer.node.name), ret)
             activate = True
 
         if stop_height != 0 and current_height > stop_height + 100:
             current_pubkeys = controller.get_current_arbiter_public_keys()
-            result = set(controller.normal_dpos_pubkeys) == set(current_pubkeys)
+            result = set(controller.rpc_manager.normal_dpos_pubkeys) == set(current_pubkeys) \
+                     and controller.check_nodes_height()
             break
         # mining a block per second
         controller.discrete_mining_blocks(1)
         time.sleep(1)
 
     # check the result and exit
-    controller.test_result(test_case, result)
+    controller.check_result(test_case, result)
     controller.terminate_all_process()
 
 

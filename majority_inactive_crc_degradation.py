@@ -67,7 +67,7 @@ def test_content():
             controller.show_current_next_info()
 
         if stop_height == 0 and current_height >= h2 + 12:
-            controller.test_result("Ater H2，the first round of consensus", True)
+            controller.check_result("Ater H2，the first round of consensus", True)
 
             for producer in inactive_producers:
                 producer.node.stop()
@@ -82,18 +82,18 @@ def test_content():
 
             for producer in inactive_producers:
                 ret = controller.tx_manager.activate_producer(producer)
-                controller.test_result("activate producer {}".format(producer.info.nickname), ret)
+                controller.check_result("activate producer {}".format(producer.info.nickname), ret)
             activate = True
 
         if stop_height != 0 and current_height > stop_height + 200:
             current_arbiter_public_keys = controller.get_current_arbiter_public_keys()
-            result = set(target_public_keys).issubset(current_arbiter_public_keys)
+            result = set(target_public_keys).issubset(current_arbiter_public_keys) and controller.check_nodes_height()
             break
 
         controller.discrete_mining_blocks(1)
         time.sleep(1)
 
-    controller.test_result(test_case, result)
+    controller.check_result(test_case, result)
     controller.terminate_all_process()
 
 

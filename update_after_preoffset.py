@@ -67,7 +67,7 @@ def test_content():
             producer_payload.url = "127.0.0.1"
 
             result = controller.tx_manager.update_producer(update_producer, producer_payload)
-            controller.test_result(test_case, result)
+            controller.check_result(test_case, result)
             if result:
                 controller.node_info_dict[update_node_pubkey] = producer_payload.nickname
             update_height = current_height
@@ -78,7 +78,7 @@ def test_content():
         controller.discrete_mining_blocks(1)
         time.sleep(1)
 
-    controller.test_result(test_case, result)
+    controller.check_result(test_case, result)
     controller.terminate_all_process()
 
 

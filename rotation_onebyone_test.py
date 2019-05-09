@@ -88,7 +88,7 @@ def one_by_one_rotation_test():
         if current_height > h2 + current_vote_height + crc_number * 3 * 2:
             arbiters_list = rpc.get_arbiters_info()["arbiters"]
             ret = candidate.node.node_keystore.public_key.hex() in arbiters_list
-            controller.test_result("{} has rotated a producer!".format(candidate.info.nickname), ret)
+            controller.check_result("{} has rotated a producer!".format(candidate.info.nickname), ret)
             if ret:
                 voted = False
                 index += 1
@@ -96,7 +96,7 @@ def one_by_one_rotation_test():
             break
         time.sleep(1)
 
-    controller.test_result(test_case, True)
+    controller.check_result(test_case, True)
     controller.terminate_all_process()
 
 

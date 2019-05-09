@@ -54,7 +54,7 @@ if __name__ == '__main__':
         times = controller.get_height_times(height_times, current_height)
         Logger.debug("current height: {}, times: {}".format(current_height, times))
         if times > 100:
-            controller.test_result("cross transaction stop a arbiter or a did", False)
+            controller.check_result("cross transaction stop a arbiter or a did", False)
             break
 
         # after h1, show current and next arbiters info
@@ -65,11 +65,11 @@ if __name__ == '__main__':
 
             controller.node_manager.arbiter_nodes[1].stop()
             ret = controller.tx_manager.cross_chain_transaction("did", True)
-            controller.test_result("stop one arbiter, test cross recharge", ret)
+            controller.check_result("stop one arbiter, test cross recharge", ret)
 
             controller.node_manager.did_nodes[1].stop()
             ret = controller.tx_manager.cross_chain_transaction("did", True)
-            controller.test_result("stop one did , test cross recharge", ret)
+            controller.check_result("stop one did , test cross recharge", ret)
 
             # ret = controller.middle.tx_manager.cross_chain_transaction(False)
             # controller.test_result("stop one arbiter, test cross withdraw", ret)

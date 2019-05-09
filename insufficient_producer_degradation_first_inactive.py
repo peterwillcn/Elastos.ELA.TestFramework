@@ -75,7 +75,7 @@ def test_content():
         if stop_height == 0 and current_height >= h2 + 12:
             for node in inactive_producers_nodes:
                 node.stop()
-            controller.test_result("Ater H2，stop 1/3 producers", True)
+            controller.check_result("Ater H2，stop 1/3 producers", True)
 
             stop_height = current_height
             Logger.debug("stop height: {}".format(stop_height))
@@ -96,7 +96,7 @@ def test_content():
         if not activate and stop_height != 0 and current_height > stop_height + 30:
             for producer in inactive_producers:
                 ret = controller.tx_manager.activate_producer(producer)
-                controller.test_result("activate producer {}".format(producer.info.nickname), ret)
+                controller.check_result("activate producer {}".format(producer.info.nickname), ret)
             activate = True
 
         if stop_height != 0 and current_height > stop_height + 400:
@@ -108,7 +108,7 @@ def test_content():
         controller.discrete_mining_blocks(1)
         time.sleep(1)
 
-    controller.test_result(test_case, result)
+    controller.check_result(test_case, result)
     controller.terminate_all_process()
 
 

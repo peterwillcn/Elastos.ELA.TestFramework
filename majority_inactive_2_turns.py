@@ -94,7 +94,7 @@ def test_content():
 
             # stop height is equal h2 + 12 (320)
             stop_height = current_height
-            controller.test_result("Ater H2，stop 1/3 producers and candidates", True)
+            controller.check_result("Ater H2，stop 1/3 producers and candidates", True)
             Logger.debug("stop_height: {}".format(stop_height))
 
         # when current is not equal stop height, that means replace candidate promoted to producer and consensus
@@ -103,7 +103,7 @@ def test_content():
             result = not set(inactive_public_keys).issubset(arbiters_set) and \
                             set(replace_public_keys).issubset(arbiters_set)
 
-            controller.test_result("rotation check", result)
+            controller.check_result("rotation check", result)
 
             if result:
 
@@ -119,7 +119,7 @@ def test_content():
                 # second, ac ativate producers
                 for producer in activate_producers:
                     result = controller.tx_manager.activate_producer(producer)
-                    controller.test_result("activate producer {}".format(producer.node.name), result)
+                    controller.check_result("activate producer {}".format(producer.node.name), result)
 
                 activate = True
 
@@ -131,7 +131,8 @@ def test_content():
 
         if stop_height != 0 and current_height > stop_height + 100:
             current_pubkeys = controller.get_current_arbiter_public_keys()
-            result = set(controller.normal_dpos_pubkeys) == set(current_pubkeys)
+            result = set(controller.rpc_manager.normal_dpos_pubkeys) == set(current_pubkeys) \
+                     and controller.check_nodes_height()
             break
 
         # mining a block per second
@@ -139,7 +140,7 @@ def test_content():
         time.sleep(1)
 
     # Finally, output the test result and exit
-    controller.test_result(test_case, result)
+    controller.check_result(test_case, result)
     if result:
         controller.terminate_all_process()
 

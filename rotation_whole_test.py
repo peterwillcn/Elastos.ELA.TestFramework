@@ -57,7 +57,7 @@ def test_content():
         times = controller.get_height_times(height_times, current_height)
         Logger.debug("current height: {}, times: {}".format(current_height, times))
         if times >= 100:
-            controller.test_result(test_case, False)
+            controller.check_result(test_case, False)
             break
 
         global before_rotation_nicknames
@@ -66,7 +66,7 @@ def test_content():
             controller.show_current_next_info()
 
         if vote_height == 0 and current_height > h2 + 5:
-            before_rotation_nicknames = controller.get_current_arbiter_nicknames()
+            before_rotation_nicknames = controller.rpc_manager.get_current_arbiter_nicknames()
             before_rotation_nicknames.sort()
             tap_balance = rpc.get_balance_by_address(tap_keystore.address)
             Logger.info("tap_balance: {}".format(tap_balance))
@@ -76,11 +76,11 @@ def test_content():
                 amount=number * constant.TO_SELA,
                 candidates=register_producers[crc_number * 2: len(register_producers)]
             )
-            controller.test_result("vote the candidates result", ret)
+            controller.check_result("vote the candidates result", ret)
             vote_height = current_height
 
         if vote_height > 0 and current_height > vote_height + crc_number * 3 * 2:
-            after_rotation_nicknames = controller.get_current_arbiter_nicknames()
+            after_rotation_nicknames = controller.rpc_manager.get_current_arbiter_nicknames()
             after_rotation_nicknames.sort()
             arbiter_info = rpc.get_arbiters_info()
             arbiter = arbiter_info["arbiters"]
@@ -90,10 +90,10 @@ def test_content():
             Logger.info("before rotation register producers: {}".format(before_rotation_nicknames))
             Logger.info("after  rotation register producers: {}".format(after_rotation_nicknames))
             if not general_public_key_set.issubset(arbiter_set) and candidate_public_key_set.issubset(arbiter_set):
-                controller.test_result(test_case, True)
+                controller.check_result(test_case, True)
                 break
             else:
-                controller.test_result(test_case, False)
+                controller.check_result(test_case, False)
 
         controller.discrete_mining_blocks(1)
         time.sleep(1)
