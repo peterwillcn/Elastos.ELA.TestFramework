@@ -27,7 +27,7 @@ if __name__ == '__main__':
 
     for i in range(1, 14):
         Logger.info("Begin testing case{}".format(i))
-        os.system("python3 case{}.py > case{}.log".format(i, i))
+        os.system("python3 case{}.py > ./datas/server_test_result/case{}.log".format(i, i))
         Logger.info("Finish testing case{}".format(i))
 
 

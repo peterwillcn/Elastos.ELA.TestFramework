@@ -278,8 +278,9 @@ class TransactionManager(object):
             rpc.discrete_mining(7)
 
             status = rpc.producer_status(public_key)
-            result = status == "Active"
+            result = status == "Activate"
             if not result:
+                Logger.error("{} register producer {} failed".format(self.tag, ela_node.name))
                 break
             num += 1
             if num <= self.params.ela_params.crc_number * 2:
