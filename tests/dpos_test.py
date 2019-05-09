@@ -8,7 +8,7 @@ import time
 from datetime import datetime
 
 from src.control import Controller
-
+from src.core.services import rpc
 from src.tools import util, constant
 from src.tools.log import Logger
 
@@ -52,10 +52,10 @@ class DposTest(object):
 
     def run(self):
         self.before_test()
-        self.normal_test()
+        # self.normal_test()
         # self.rotation_onebyone_test()
         # self.rotation_whole_test()
-        self.minor_stop_test()
+        # self.minor_stop_test()
         self.inactive_single_test()
         self.cross_normal_test()
         self.cross_stop_test()
@@ -109,7 +109,7 @@ class DposTest(object):
 
     def rotation_onebyone_test(self):
         test_case = "2、ela node rotation one by one test"
-        candidate_producers = self.controller.middle.tx_manager.register_producers_list[
+        candidate_producers = self.controller.tx_manager.register_producers_list[
                               self.crc_number * 2: self.crc_number * 3]
         voted = False
         global current_vote_height
@@ -148,13 +148,13 @@ class DposTest(object):
                     before_rotation_nicknames.sort()
                     candidate = candidate_producers[index]
                     vote_amount = (len(candidate_producers) - index) * constant.TO_SELA * 100
-                    ret = self.controller.middle.tx_manager.vote_producer(self.tap_keystore, vote_amount, [candidate])
+                    ret = self.controller.tx_manager.vote_producer(self.tap_keystore, vote_amount, [candidate])
                     if ret:
                         Logger.info("vote {} ElAs at {} on success!".format((vote_amount / constant.TO_SELA),
-                                                                            candidate.payload.nickname))
+                                                                            candidate.info.nickname))
                     else:
                         Logger.info("vote {} ElAs at {} failed!".format((vote_amount / constant.TO_SELA),
-                                                                        candidate.payload.nickname))
+                                                                        candidate.info.nickname))
                         self.controller.terminate_all_process()
                     current_vote_height = current_height - self.h2
                     voted = True
@@ -164,11 +164,11 @@ class DposTest(object):
             if current_height > self.h2 + current_vote_height + self.crc_number * 3 * 2:
                 after_rotation_nicknames = self.controller.get_current_arbiter_nicknames()
                 after_rotation_nicknames.sort()
-                arbiters_list = self.controller.middle.service_manager.rpc.get_arbiters_info()["arbiters"]
+                arbiters_list = rpc.get_arbiters_info()["arbiters"]
                 ret = candidate.node.node_keystore.public_key.hex() in arbiters_list
                 Logger.debug("{} before rotation nicknames: {}".format(self.tag, before_rotation_nicknames))
                 Logger.debug("{} after  rotation nicknames: {}".format(self.tag, after_rotation_nicknames))
-                self.controller.test_result("{} has rotated a producer!".format(candidate.payload.nickname), ret)
+                self.controller.test_result("{} has rotated a producer!".format(candidate.info.nickname), ret)
                 if ret:
                     voted = False
                     index += 1
@@ -182,7 +182,7 @@ class DposTest(object):
     def rotation_whole_test(self):
         test_case = "3、 ela node whole rotation test"
         global result
-        register_producers = self.controller.middle.tx_manager.tx.register_producers_list
+        register_producers = self.controller.tx_manager.register_producers_list
         vote_height = 0
 
         height_times = dict()
@@ -210,13 +210,13 @@ class DposTest(object):
             if vote_height == 0 and current_height > self.h2:
                 before_rotation_nicknames = self.controller.get_current_arbiter_nicknames()
                 before_rotation_nicknames.sort()
-                tap_balance = self.controller.middle.service_manager.rpc.get_balance_by_address(self.tap_keystore.address)
+                tap_balance = rpc.get_balance_by_address(self.tap_keystore.address)
                 Logger.info("[test] tap_balance: {}".format(tap_balance))
 
-                ret = self.controller.middle.tx_manager.tx.vote_producers(
-                    vote_keystore=self.tap_keystore,
-                    producers=register_producers[self.crc_number * 3: len(register_producers)-1],
-                    vote_amount=self.number * 10 * constant.TO_SELA
+                ret = self.controller.tx_manager.vote_producer(
+                    keystore=self.tap_keystore,
+                    amount=self.number * 10 * constant.TO_SELA,
+                    candidates=register_producers[self.crc_number * 3: len(register_producers)-1],
                 )
                 if ret:
                     Logger.info("[test] candidate producers have voted on success again!!")
@@ -229,7 +229,7 @@ class DposTest(object):
             if vote_height > 0 and current_height > vote_height + self.crc_number * 3 * 2:
                 after_rotation_nicknames = self.controller.get_current_arbiter_nicknames()
                 after_rotation_nicknames.sort()
-                arbiter_info = self.controller.middle.service_manager.rpc.get_arbiters_info()
+                arbiter_info = rpc.get_arbiters_info()
                 arbiter = arbiter_info["arbiters"]
                 arbiter_set = set(arbiter)
 
@@ -256,8 +256,8 @@ class DposTest(object):
         if current_height < self.h2:
             return False
 
-        inactive_nodes = self.controller.middle.node_manager.ela_nodes[self.crc_number + 1: self.crc_number * 2]
-        # candidate_nodes = self.controller.middle.node_manager.ela_nodes_nodes[self.crc_number * 3 + 1: self.crc_number * 4]
+        inactive_nodes = self.controller.node_manager.ela_nodes[self.crc_number + 1: self.crc_number * 2]
+        # candidate_nodes = self.controller.node_manager.ela_nodes_nodes[self.crc_number * 3 + 1: self.crc_number * 4]
 
         index = 0
         global stop_height
@@ -358,9 +358,9 @@ class DposTest(object):
         height_times = dict()
         height_times[self.controller.get_current_height()] = 1
 
-        register_list = self.controller.middle.tx_manager.register_producers_list
+        register_list = self.controller.tx_manager.register_producers_list
         inactive_producer = register_list[len(register_list) - 1]
-        # replace_producer = self.controller.middle.tx_manager.register_producers_list[]
+        # replace_producer = self.controller.tx_manager.register_producers_list[]
 
         while True:
             current_height = self.controller.get_current_height()
@@ -369,21 +369,21 @@ class DposTest(object):
 
             if stop_height == 0 and current_height >= self.h2 + 1:
                 self.controller.test_result("{} Ater H2".format(self.tag), True)
-                self.controller.middle.node_manager.ela_nodes[inactive_node_index].stop()
+                self.controller.node_manager.ela_nodes[inactive_node_index].stop()
                 stop_height = current_height
                 Logger.error("{} node {} stopped at height {} on success!".format(self.tag,
                                                                                   inactive_node_index, stop_height))
 
-            if stop_height != 0 and current_height >= stop_height + self.config["ela"]["max_inactivate_rounds"] + 5:
-                deposit_address = self.controller.middle.tx_manager.register_producers_list[1].deposit_address
-                balance = self.controller.middle.service_manager.rpc.get_balance_by_address(deposit_address)
+            if stop_height != 0 and current_height >= stop_height + self.config["ela"]["max_inactivate_rounds"] + 12:
+                deposit_address = self.controller.tx_manager.register_producers_list[1].deposit_address
+                balance = rpc.get_balance_by_address(deposit_address)
                 Logger.info("{} The balance of deposit address is {}".format(self.tag, balance))
 
                 state = self.controller.get_producer_state(1)
                 ret = state == "Inactivate"
                 self.controller.test_result("{} Before active producer, the stopped producer state is Inactive".format(
                     self.tag), ret)
-                ret = self.controller.middle.tx_manager.activate_producer(inactive_producer)
+                ret = self.controller.tx_manager.activate_producer(inactive_producer)
                 Logger.info("{} activate the producer result: {}".format(self.tag, ret))
 
                 state = self.controller.get_producer_state(1)
@@ -403,21 +403,21 @@ class DposTest(object):
     def cross_normal_test(self):
         test_case = "6、[normal]"
         self.controller.show_current_height()
-        ret = self.controller.middle.tx_manager.cross_chain_transaction("did", True)
+        ret = self.controller.tx_manager.cross_chain_transaction("did", True)
         self.controller.test_result("{} recharge to the side chain after H2".format(test_case), ret)
         time.sleep(2)
-        ret = self.controller.middle.tx_manager.cross_chain_transaction("did", False)
+        ret = self.controller.tx_manager.cross_chain_transaction("did", False)
         self.controller.test_result("{} withdraw from the side chain after H2".format(test_case), ret)
         time.sleep(1)
 
     def cross_stop_test(self):
         test_case = "7、[exception]"
-        self.controller.middle.node_manager.arbiter_nodes[1].stop()
-        self.controller.middle.node_manager.did_nodes[1].stop()
-        ret = self.controller.middle.tx_manager.cross_chain_transaction("did", True)
+        self.controller.node_manager.arbiter_nodes[1].stop()
+        self.controller.node_manager.did_nodes[1].stop()
+        ret = self.controller.tx_manager.cross_chain_transaction("did", True)
         self.controller.test_result("{} stop one arbiter, test cross recharge".format(test_case), ret)
 
-        self.controller.middle.node_manager.did_nodes[1].stop()
+        self.controller.node_manager.did_nodes[1].stop()
 
     def after_test(self):
         self.controller.terminate_all_process()

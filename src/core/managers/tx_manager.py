@@ -356,7 +356,7 @@ class TransactionManager(object):
             producer = self.register_producers_list[i - self.params.ela_params.crc_number - 1]
             vote_amount = (self.params.ela_params.number - i + 1) * constant.TO_SELA
             ret = self.vote_producer(
-                keystore=self.node_manager.keystore_manager.owner_key_stores[i],
+                keystore=self.node_manager.keystore_manager.node_key_stores[i],
                 amount=vote_amount,
                 candidates=[producer],
             )
@@ -371,7 +371,7 @@ class TransactionManager(object):
             producer = self.register_producers_list[i - self.params.ela_params.crc_number - 1]
             vote_amount = (self.params.ela_params.number - i + 1) * constant.TO_SELA
             ret = self.vote_producer(
-                keystore=self.node_manager.keystore_manager.owner_key_stores[i],
+                keystore=self.node_manager.keystore_manager.node_key_stores[i],
                 amount=vote_amount,
                 candidates=[producer]
             )

@@ -39,8 +39,8 @@ class Controller(object):
 
         # init tap amount and register amount(unit: ELA)
         self.tap_amount = 20000000
-        self.register_amount = 10000
-
+        self.register_amount = 6000
+        self.node_amount = 5000
         # necessary keystore
         self.foundation_keystore = self.keystore_manager.special_key_stores[0]
         self.tap_keystore = self.keystore_manager.special_key_stores[4]
@@ -73,6 +73,14 @@ class Controller(object):
         )
 
         self.check_result("recharge owner keystore", ret)
+
+        ret = self.tx_manager.recharge_necessary_keystore(
+            input_keystore=self.tap_keystore,
+            keystores=self.keystore_manager.node_key_stores,
+            amount=self.node_amount * constant.TO_SELA
+        )
+
+        self.check_result("recharge node keystore", ret)
 
         Logger.info("{} recharge producer on success!".format(self.tag))
 
