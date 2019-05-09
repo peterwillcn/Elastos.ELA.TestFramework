@@ -11,7 +11,7 @@ from src.tools.log import Logger
 
 config = {
     "ela": {
-        "number": 12,
+        "number": 16,
         "crc_number": 4,
         "pre_connect_offset": 5,
         "crc_dpos_height": 300,
@@ -37,11 +37,11 @@ def test_content():
     h2 = controller.params.ela_params.public_dpos_height
     pre_offset = config["ela"]["pre_connect_offset"]
 
-    # prepare inactive producer nodes [9, 10, 11, 12]
-    inactive_producers_nodes = controller.node_manager.ela_nodes[crc_number * 2 + 1:]
+    # prepare inactive producers[5,6,7,8]
+    inactive_producers = controller.tx_manager.register_producers_list[4: 8]
     inactive_public_keys = list()
-    for node in inactive_producers_nodes:
-        inactive_public_keys.append(node.node_keystore.public_key.hex())
+    for producer in inactive_producers:
+        inactive_public_keys.append(producer.node.node_keystore.public_key.hex())
 
     inactive_set = set(inactive_public_keys)
 
@@ -56,10 +56,11 @@ def test_content():
 
     stop_height = 0
     global result
-    crc_public_keys = controller.keystore_manager.crc_public_keys
+    global activate
+    activate = False
+    result = False
 
     while True:
-
         # get current height and the number of times it appears
         current_height = controller.get_current_height()
         times = controller.get_height_times(height_times, current_height)
@@ -77,19 +78,32 @@ def test_content():
 
         # when current height is equal h2 + 12(320), then will stop the inactive producer nodes[9, 10, 11, 12]
         if stop_height == 0 and current_height >= h2 + 12:
-            for node in inactive_producers_nodes:
-                node.stop()
+            for producer in inactive_producers:
+                producer.node.stop()
             controller.test_result("Ater H2，stop 1/3 producers", True)
 
             stop_height = current_height
             Logger.debug("stop height: {}".format(stop_height))
 
-        # when current is not equal stop height, that means only crc dpos to confirm the block
-        if stop_height != 0 and current_height > stop_height + 60:
+        if not activate and stop_height != 0 and current_height > stop_height + 36:
             arbiters_set = set(rpc.get_arbiters_info()["arbiters"])
-            result = not inactive_set.issubset(arbiters_set) and set(crc_public_keys).issubset(arbiters_set)
-            break
+            result = not inactive_set.issubset(arbiters_set)
 
+            if result:
+                for producer in inactive_producers:
+                    producer.node.start()
+
+                controller.discrete_mining_blocks(1)
+
+                for producer in inactive_producers:
+                    ret = controller.tx_manager.activate_producer(producer)
+                    controller.test_result("activate producer {}".format(producer.node.name), ret)
+            activate = True
+
+        if stop_height != 0 and current_height > stop_height + 100:
+            current_pubkeys = controller.get_current_arbiter_public_keys()
+            result = set(controller.normal_dpos_pubkeys) == set(current_pubkeys)
+            break
         # mining a block per second
         controller.discrete_mining_blocks(1)
         time.sleep(1)

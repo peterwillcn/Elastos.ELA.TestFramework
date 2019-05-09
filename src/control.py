@@ -47,6 +47,7 @@ class Controller(object):
 
         self.init_for_testing()
         self.node_info_dict = self.get_pubkey_nodes()
+        self.normal_dpos_pubkeys = self.get_normal_dpos_public_keys()
 
     def init_for_testing(self):
         self.node_manager.deploy_nodes()
@@ -191,6 +192,14 @@ class Controller(object):
     def show_current_height(self):
         current_height = self.get_current_height()
         Logger.debug("{} current height: {}".format(self.tag, current_height))
+
+    def get_normal_dpos_public_keys(self):
+        public_keys_list = list()
+        nodes = self.node_manager.ela_nodes[1 : self.params.ela_params.crc_number * 3 + 1]
+        for node in nodes:
+            public_keys_list.append(node.node_keystore.public_key.hex())
+
+        return public_keys_list
 
     def get_pubkey_nodes(self):
         pubkey_node_name = dict()

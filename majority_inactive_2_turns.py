@@ -38,26 +38,26 @@ def test_content():
     h2 = controller.params.ela_params.public_dpos_height
     pre_offset = config["ela"]["pre_connect_offset"]
 
-    # prepare inactive producer nodes [9, 10, 11, 12, 13, 14, 15, 16]
-    inactive_producers_nodes = controller.node_manager.ela_nodes[crc_number * 2 + 1: crc_number * 4 + 1]
-    # prepare replace candidate nodes [17, 18, 19, 20]
-    replace_cadidates_nodes = controller.node_manager.ela_nodes[crc_number * 4 + 1: number + 1]
+    # prepare inactive producers [9, 10, 11, 12, 13, 14, 15, 16]
+    inactive_producers = controller.tx_manager.register_producers_list[crc_number: crc_number * 3]
+    # prepare replace candidate [17, 18, 19, 20]
+    replace_cadidates = controller.tx_manager.register_producers_list[crc_number * 3: crc_number * 4]
 
     # get inactive node public key
     inactive_public_keys = list()
-    for node in inactive_producers_nodes:
-        inactive_public_keys.append(node.node_keystore.public_key.hex())
+    for producer in inactive_producers:
+        inactive_public_keys.append(producer.node.node_keystore.public_key.hex())
 
     # get replace node public key
     replace_public_keys = list()
-    for node in replace_cadidates_nodes:
-        replace_public_keys.append(node.node_keystore.public_key.hex())
-
-    # set the list for the convenience of later use
-    inactive_set = set(inactive_public_keys)
-    replace_set = set(replace_public_keys)
+    for producer in replace_cadidates:
+        replace_public_keys.append(producer.node.node_keystore.public_key.hex())
 
     global result
+    global activate
+    global remaining_start
+    activate = False
+    remaining_start = False
     stop_height = 0
 
     # mining to the height h1 - pre_connect_offset - 1 (300 - 5 - 1 = 294)
@@ -89,8 +89,8 @@ def test_content():
         # when current height is equal h2 + 12(320), then will stop the inactive \
         # producer nodes[9, 10, 11, 12, 13, 14, 15, 16]
         if stop_height == 0 and current_height >= h2 + 12:
-            for node in inactive_producers_nodes:
-                node.stop()
+            for producer in inactive_producers:
+                producer.node.stop()
 
             # stop height is equal h2 + 12 (320)
             stop_height = current_height
@@ -98,9 +98,40 @@ def test_content():
             Logger.debug("stop_height: {}".format(stop_height))
 
         # when current is not equal stop height, that means replace candidate promoted to producer and consensus
-        if stop_height != 0 and current_height > stop_height + 36:
+        if not activate and stop_height != 0 and current_height > stop_height + 36:
             arbiters_set = set(rpc.get_arbiters_info()["arbiters"])
-            result = not inactive_set.issubset(arbiters_set) and replace_set.issubset(arbiters_set)
+            result = not set(inactive_public_keys).issubset(arbiters_set) and \
+                            set(replace_public_keys).issubset(arbiters_set)
+
+            controller.test_result("rotation check", result)
+
+            if result:
+
+                # activate producers [9,10,11,12]
+                activate_producers = inactive_producers[:4]
+
+                # first start activate producers nodes
+                for producer in activate_producers:
+                    producer.node.start()
+
+                controller.discrete_mining_blocks(1)
+
+                # second, ac ativate producers
+                for producer in activate_producers:
+                    result = controller.tx_manager.activate_producer(producer)
+                    controller.test_result("activate producer {}".format(producer.node.name), result)
+
+                activate = True
+
+        if not remaining_start and stop_height != 0 and current_height > stop_height + 80:
+            remaining_inactive_producers = inactive_producers[4:]
+            for producer in remaining_inactive_producers:
+                producer.node.start()
+            remaining_start = True
+
+        if stop_height != 0 and current_height > stop_height + 100:
+            current_pubkeys = controller.get_current_arbiter_public_keys()
+            result = set(controller.normal_dpos_pubkeys) == set(current_pubkeys)
             break
 
         # mining a block per second

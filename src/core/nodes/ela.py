@@ -47,13 +47,11 @@ class ElaNode(Node):
         if self.index == 0:
             self.name = "miner"
         elif self.index <= self.params.crc_number:
-            self.name = "CRC-{0:02d}".format(self.index)
-        elif self.index <= self.params.crc_number * 3:
-            self.name = "PRO-{0:02d}".format(self.index)
+            self.name = "CRC-{0:03d}".format(self.index)
         elif self.index <= self.params.number - round(self.params.later_start_number / 2):
-            self.name = "CAN-{0:02d}".format(self.index)
+            self.name = "PRO-{0:03d}".format(self.index)
         else:
-            self.name = "NOR-{0:02d}".format(self.index)
+            self.name = "NOR-{0:03d}".format(self.index)
 
     def reset_config(self):
         Node.reset_config_common(self, self.index, "ela", self.params.number)
