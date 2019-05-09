@@ -34,8 +34,9 @@ def test_content():
     h2 = controller.params.ela_params.public_dpos_height
     pre_offset = config["ela"]["pre_connect_offset"]
 
+    update_node_pubkey = "0303710a960f04893281fe016ec7563a9c17fb8c7f0bea555b3a9349a6a1646479"
     # update_producer_beforeh1 = controller.tx_manager.register_producers_list[0]
-    update_producer_beforeh2 = controller.tx_manager.register_producers_list[1]
+    update_producer = controller.tx_manager.register_producers_list[0]
     current_height = controller.get_current_height()
     if current_height < h1 - 5:
         controller.discrete_mining_blocks(h1 - 5 - current_height)
@@ -44,7 +45,7 @@ def test_content():
     height_times[current_height] = 1
 
     global result
-    global start_height
+    global update_height
     update_height = 0
 
     while True:
@@ -55,30 +56,20 @@ def test_content():
         if times >= 100:
             result = False
             break
-
-        # if update_height == 0 and current_height > h1 - pre_offset + 5:
-        #     producer_payload = update_producer_beforeh1.info
-        #     producer_payload.url = "127.0.0.1"
-        #     producer_payload.node_public_key = \
-        #         bytes.fromhex("03957afb4a77702ac243c127ba21d28509c054a4a516581a6e8e07bae169b6f1f2")
-        #
-        #     result = controller.tx_manager.update_producer(update_producer_beforeh1, producer_payload)
-        #     controller.test_result("update producer after pre offset but before h1", result)
-        #     update_height = current_height
-
         if current_height >= h1:
             controller.show_current_next_info()
 
         if update_height == 0 and current_height > h1 + 35:
-            producer_payload = update_producer_beforeh2.info
+            producer_payload = update_producer.info
             producer_payload.nickname = "^_^ HAHA"
-            producer_payload.node_public_key = \
-                bytes.fromhex("0303710a960f04893281fe016ec7563a9c17fb8c7f0bea555b3a9349a6a1646479")
+            producer_payload.node_public_key = bytes.fromhex(update_node_pubkey)
 
             producer_payload.url = "127.0.0.1"
 
-            result = controller.tx_manager.update_producer(update_producer_beforeh2, producer_payload)
+            result = controller.tx_manager.update_producer(update_producer, producer_payload)
             controller.test_result(test_case, result)
+            if result:
+                controller.node_info_dict[update_node_pubkey] = producer_payload.nickname
             update_height = current_height
 
         if current_height > h2 + 100:

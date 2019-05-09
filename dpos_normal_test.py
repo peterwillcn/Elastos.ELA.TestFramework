@@ -69,7 +69,7 @@ def test_content():
             Logger.info("H2 PASS!")
 
         # current is equal 380, start the later nodes include two candidates and two normal nodes
-        if start_height == 0 and current_height > h2 + crc_number * 3 * 6:
+        if later_start_number != 0 and start_height == 0 and current_height > h2 + crc_number * 3 * 6:
             for node in later_start_nodes:
                 node.start()
             start_height = current_height

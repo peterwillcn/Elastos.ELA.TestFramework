@@ -46,6 +46,7 @@ class Controller(object):
         self.tap_keystore = self.keystore_manager.special_key_stores[4]
 
         self.init_for_testing()
+        self.node_info_dict = self.get_pubkey_nodes()
 
     def init_for_testing(self):
         self.node_manager.deploy_nodes()
@@ -151,6 +152,73 @@ class Controller(object):
         balance = rpc.get_balance_by_address(foundation_address)
         Logger.debug("{} foundation address value: {}".format(self.tag, balance))
 
+    def get_register_nickname_public_key(self):
+        public_key_nickname = dict()
+        for i in range(self.params.ela_params.crc_number + 1):
+            if i == 0:
+                continue
+            public_key_nickname[self.keystore_manager.node_key_stores[i].public_key.hex()] = \
+                "CRC-{:0>3d}".format(i)
+        list_producers = rpc.list_producers(0, 100)
+        for producer in list_producers["producers"]:
+            public_key_nickname[producer["nodepublickey"]] = producer["nickname"]
+        # Logger.debug("{} node_publickey -> nickname: {}".format(self.tag, public_key_nickname))
+        return public_key_nickname
+
+    def get_current_arbiter_nicknames(self):
+        public_key_nickname = self.node_info_dict
+
+        # print(public_key_nickname)
+        arbiters = rpc.get_arbiters_info()["arbiters"]
+        # print(arbiters)
+        current_nicknames = list()
+        for public_key in arbiters:
+            current_nicknames.append(public_key_nickname[public_key])
+
+        return current_nicknames
+
+    def get_next_arbiter_nicknames(self):
+        public_key_nickname = self.node_info_dict
+        # print(public_key_nickname)
+        next_arbiters = rpc.get_arbiters_info()["nextarbiters"]
+        # print("next: ", next_arbiters)
+        current_nicknames = list()
+        for public_key in next_arbiters:
+            current_nicknames.append(public_key_nickname[public_key])
+
+        return current_nicknames
+
+    def show_current_height(self):
+        current_height = self.get_current_height()
+        Logger.debug("{} current height: {}".format(self.tag, current_height))
+
+    def get_pubkey_nodes(self):
+        pubkey_node_name = dict()
+        for node in self.node_manager.ela_nodes:
+            pubkey_node_name[node.node_keystore.public_key.hex()] = node.name
+        return pubkey_node_name
+
+    def show_current_next_info(self):
+        arbiters_nicknames = self.get_current_arbiter_nicknames()
+        arbiters_nicknames.sort()
+        next_arbiter_nicknames = self.get_next_arbiter_nicknames()
+        next_arbiter_nicknames.sort()
+        Logger.info("current arbiters nicknames: {}".format(arbiters_nicknames))
+        Logger.info("next    arbiters nicknames: {}".format(next_arbiter_nicknames))
+
+    def terminate_all_process(self):
+        Logger.info("{} terminal all the process and exit...".format(self.tag))
+        self.node_manager.stop_nodes()
+
+    def test_result(self, case: str, result: bool):
+        current_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        if result:
+            print(current_time + Logger.COLOR_GREEN + " [PASS!] " + Logger.COLOR_END + case + "\n")
+        else:
+            print(current_time + Logger.COLOR_RED + " [NOT PASS!] " + Logger.COLOR_END + case + "\n")
+            self.terminate_all_process()
+            exit(0)
+
     @staticmethod
     def get_current_height():
         return rpc.get_block_count()
@@ -173,73 +241,7 @@ class Controller(object):
         producers = list_producers["producers"]
         return producers[index]["state"]
 
-    def get_register_nickname_public_key(self):
-        public_key_nickname = dict()
-        for i in range(self.params.ela_params.crc_number + 1):
-            if i == 0:
-                continue
-            public_key_nickname[self.keystore_manager.node_key_stores[i].public_key.hex()] = \
-                "CRC-{:0>3d}".format(i)
-        list_producers = rpc.list_producers(0, 100)
-        for producer in list_producers["producers"]:
-            public_key_nickname[producer["nodepublickey"]] = producer["nickname"]
-        # Logger.debug("{} node_publickey -> nickname: {}".format(self.tag, public_key_nickname))
-        return public_key_nickname
-
-    def get_current_arbiter_nicknames(self):
-        public_key_nickname = self.get_register_nickname_public_key()
-        arbiters = rpc.get_arbiters_info()["arbiters"]
-        current_nicknames = list()
-        for public_key in arbiters:
-            current_nicknames.append(public_key_nickname[public_key])
-
-        return current_nicknames
-
-    def get_next_arbiter_nicknames(self):
-        public_key_nickname = self.get_register_nickname_public_key()
-        # print(public_key_nickname)
-        arbiters = rpc.get_arbiters_info()["nextarbiters"]
-        # print(arbiters)
-        current_nicknames = list()
-        for public_key in arbiters:
-            current_nicknames.append(public_key_nickname[public_key])
-
-        return current_nicknames
-
-    def show_current_height(self):
-        current_height = self.get_current_height()
-        Logger.debug("{} current height: {}".format(self.tag, current_height))
-
-    @staticmethod
-    def get_list_producers_nicknames():
-        list_producers = rpc.list_producers(0, 100)
-        producers = list_producers["producers"]
-        producers_nickname = list()
-        for producer in producers:
-            producers_nickname.append(producer["nickname"])
-        return producers_nickname
-
     @staticmethod
     def get_current_arbiter_public_keys():
         return rpc.get_arbiters_info()["arbiters"]
 
-    def show_current_next_info(self):
-        arbiters_nicknames = self.get_current_arbiter_nicknames()
-        arbiters_nicknames.sort()
-        next_arbiter_nicknames = self.get_next_arbiter_nicknames()
-        next_arbiter_nicknames.sort()
-        Logger.info("current arbiters nicknames: {}".format(arbiters_nicknames))
-        Logger.info("next    arbiters nicknames: {}".format(next_arbiter_nicknames))
-
-    def terminate_all_process(self):
-        Logger.info("{} terminal all the process and exit...".format(self.tag))
-        self.node_manager.stop_nodes()
-
-    def test_result(self, case: str, result: bool):
-        current_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-        if result:
-            print(current_time + Logger.COLOR_GREEN + " [PASS!] " + Logger.COLOR_END + case + "\n")
-        else:
-            print(current_time + Logger.COLOR_RED + " [NOT PASS!] " + Logger.COLOR_END + case + "\n")
-            self.terminate_all_process()
-            exit(0)

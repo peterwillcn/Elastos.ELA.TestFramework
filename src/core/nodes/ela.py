@@ -30,6 +30,7 @@ class ElaNode(Node):
         self.index = index
         self.params = params
         self.keystore_manager = keystore_manager
+        self.name = ""
         self.type = ela_type
         self.owner_keystore = keystore_manager.owner_key_stores[index]
         self.node_keystore = keystore_manager.node_key_stores[index]
@@ -40,13 +41,26 @@ class ElaNode(Node):
         self.arbiter_enable = False
         self.process = None
         self.running = False
+        self.set_name()
+
+    def set_name(self):
+        if self.index == 0:
+            self.name = "miner"
+        elif self.index <= self.params.crc_number:
+            self.name = "CRC-{0:02d}".format(self.index)
+        elif self.index <= self.params.crc_number * 3:
+            self.name = "PRO-{0:02d}".format(self.index)
+        elif self.index <= self.params.number - round(self.params.later_start_number / 2):
+            self.name = "CAN-{0:02d}".format(self.index)
+        else:
+            self.name = "NOR-{0:02d}".format(self.index)
 
     def reset_config(self):
         Node.reset_config_common(self, self.index, "ela", self.params.number)
 
         _config = self.config[constant.CONFIG_TITLE]
         if self.index == 0 or self.params.later_start_number != 0 \
-            and self.index >= self.params.number - int(self.params.later_start_number / 2) + 1:
+                and self.index >= self.params.number - int(self.params.later_start_number / 2) + 1:
             _config[constant.CONFIG_ARBITER_CONFIGURATION][constant.CONFIG_ARBITER_ENABLE] = False
             self.arbiter_enable = False
         else:
@@ -80,7 +94,7 @@ class ElaNode(Node):
         _config[constant.CONFIG_ARBITER_CONFIGURATION][constant.CONFIG_NORMAL_ARBITERS_COUNT] = \
             self.params.crc_number * 2
         _config[constant.CONFIG_ARBITER_CONFIGURATION][constant.CONFIG_EMERGENCY_INACTIVE_PENALTY] = \
-                                                                        self.params.emergency_inactive_penalty
+            self.params.emergency_inactive_penalty
         _config[constant.CONFIG_ARBITER_CONFIGURATION][constant.CONFIG_INACTIVE_PENALTY] = self.params.inactive_penalty
         _config[constant.CONFIG_ARBITER_CONFIGURATION][constant.CONFIG_CANDIDATES_COUNT] = self.params.crc_number * 6
         _config[constant.CONFIG_ARBITER_CONFIGURATION][constant.CONFIG_PRE_CONNECT_OFFSET] = \
