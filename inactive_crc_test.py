@@ -11,7 +11,7 @@ from src.tools.log import Logger
 
 config = {
     "ela": {
-        "number": 20,
+        "number": 16,
         "crc_number": 4,
         "pre_connect_offset": 3,
         "crc_dpos_height": 300,
@@ -31,10 +31,6 @@ def test_content():
     pre_offset = config["ela"]["pre_connect_offset"]
     test_case = "More than 1/3 crc inactive after 2 rotations restart crc can generate blocks"
     inactive_crc_nodes = controller.node_manager.ela_nodes[1: crc_number + 1]
-    normal_arbiter_publickeys = list()
-
-    for node in controller.node_manager.ela_nodes[1: crc_number * 3 + 1]:
-        normal_arbiter_publickeys.append(node.node_keystore.public_key.hex())
 
     stop_height = 0
     global result
@@ -76,9 +72,16 @@ def test_content():
 
         if stop_height != 0 and current_height > stop_height + 36:
             arbiters_list = rpc.get_arbiters_info()["arbiters"]
-            result = set(normal_arbiter_publickeys) == set(arbiters_list)
-            break
+            result = set(controller.rpc_manager.normal_dpos_pubkeys) == set(arbiters_list)
+            Logger.debug("normal arbiters dpos result: {}".format(result))
+            controller.check_result("normal arbiters consensus", result)
 
+        if stop_height != 0 and current_height > stop_height + 60:
+            controller.start_later_nodes()
+
+        if stop_height != 0 and current_height > stop_height + 100:
+            result = controller.check_nodes_height()
+            break
         controller.discrete_mining_blocks(1)
         time.sleep(1)
 

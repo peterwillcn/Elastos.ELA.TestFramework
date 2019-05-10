@@ -140,8 +140,11 @@ def test_content():
                 result = controller.tx_manager.cross_chain_transaction("token", False)
                 controller.check_result(test_case, result)
 
-            if result:
-                break
+        if current_height > h2 + 100:
+            controller.start_later_nodes()
+
+        if current_height > h2 + 120:
+            result = controller.check_nodes_height()
 
         controller.discrete_mining_blocks(1)
         time.sleep(1)

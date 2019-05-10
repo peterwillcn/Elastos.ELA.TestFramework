@@ -12,9 +12,9 @@ config = {
     "ela": {
         "enable": True,
         "password": "123",
-        "number": 12,
+        "number": 16,
         "crc_number": 4,
-        "later_start_number": 0,
+        "later_start_number": 4,
         "pre_connect_offset": 5,
         "crc_dpos_height": 300,
         "public_dpos_height": 308
@@ -70,12 +70,11 @@ def test_content():
 
         # current is equal 380, start the later nodes include two candidates and two normal nodes
         if later_start_number != 0 and start_height == 0 and current_height > h2 + crc_number * 3 * 6:
-            for node in later_start_nodes:
-                node.start()
+            controller.start_later_nodes()
             start_height = current_height
 
-        if current_height > start_height + 500:
-            result = True
+        if start_height != 0 and current_height > start_height + 60:
+            result = controller.check_nodes_height()
             break
 
         controller.discrete_mining_blocks(1)

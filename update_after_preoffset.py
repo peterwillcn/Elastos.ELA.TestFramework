@@ -69,7 +69,7 @@ def test_content():
             result = controller.tx_manager.update_producer(update_producer, producer_payload)
             controller.check_result(test_case, result)
             if result:
-                controller.node_info_dict[update_node_pubkey] = producer_payload.nickname
+                controller.rpc_manager.node_info_dict[update_node_pubkey] = producer_payload.nickname
             update_height = current_height
 
         if current_height > h2 + 100:

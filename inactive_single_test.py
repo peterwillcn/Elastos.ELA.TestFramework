@@ -11,15 +11,15 @@ from src.tools.log import Logger
 
 config = {
     "ela": {
-        "number": 14,
+        "number": 16,
         "crc_number": 4,
         "pre_connect_offset": 5,
         "crc_dpos_height": 300,
         "public_dpos_height": 308,
-        "max_inactivate_rounds": 100
+        "max_inactivate_rounds": 80
     },
     "side": False,
-    "times": 5
+    "times": 1
 }
 
 
@@ -35,6 +35,8 @@ def test_content():
     stop_height = 0
     test_case = "Single inactive and arbiter rotation"
     inactive_producer_index = 0
+
+    # producer[PRO-005]
     inactive_producer = controller.tx_manager.register_producers_list[inactive_producer_index]
 
     current_height = controller.get_current_height()
@@ -46,7 +48,11 @@ def test_content():
 
     global result
     global activate
+    global check
+
+    result = False
     activate = False
+    check = False
 
     while True:
         current_height = controller.get_current_height()
@@ -74,14 +80,22 @@ def test_content():
 
             state = controller.get_producer_state(inactive_producer_index)
             result = state == "Inactivate"
+            Logger.debug("get producer state: {}".format(state))
             controller.check_result("Before active producer, the stopped producer state is Inactive", result)
+            inactive_producer.node.start()
             result = controller.tx_manager.activate_producer(inactive_producer)
             Logger.info("activate the producer result: {}".format(result))
             activate = True
 
-        if stop_height != 0 and current_height > stop_height + 150:
+        if stop_height != 0 and current_height > stop_height + 124:
             state = controller.get_producer_state(inactive_producer_index)
             result = state == "Activate"
+            Logger.debug("activted producer state: {}".format(state))
+            controller.check_result("activated producer state is activate", result)
+            controller.start_later_nodes()
+
+        if stop_height != 0 and current_height > stop_height + 136:
+            result = controller.check_nodes_height()
             break
 
         time.sleep(1)
