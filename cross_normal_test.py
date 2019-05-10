@@ -48,7 +48,6 @@ def test_content():
     token_enable = config["token"]["enable"]
 
     global test_case
-    before_h1 = False
     # test_case = "cross recharge before H1"
     current_height = controller.get_current_height()
     # Logger.debug("current height: {}".format(current_height))
@@ -75,6 +74,8 @@ def test_content():
     height_times[current_height] = 1
 
     global result
+    global before_h1
+    before_h1 = False
 
     while True:
         current_height = controller.get_current_height()
@@ -140,15 +141,15 @@ def test_content():
                 result = controller.tx_manager.cross_chain_transaction("token", False)
                 controller.check_result(test_case, result)
 
-        if current_height > h2 + 100:
+            Logger.debug("Start later nodes and check all nodes height")
             controller.start_later_nodes()
-
-        if current_height > h2 + 120:
             result = controller.check_nodes_height()
+            break
 
         controller.discrete_mining_blocks(1)
         time.sleep(1)
 
+    controller.check_result(test_case, result)
     controller.terminate_all_process()
 
 

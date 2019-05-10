@@ -102,6 +102,7 @@ def test_content():
         time.sleep(1)
 
     time.sleep(2)
+    controller.check_result(test_case, result)
     controller.terminate_all_process()
 
 

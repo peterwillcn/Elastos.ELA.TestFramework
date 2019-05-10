@@ -113,7 +113,7 @@ def test_content():
 
     # check result and terminate all the processes
     controller.check_result(test_case, result)
-    controller.check_result("all nodes heights are same ?", controller.check_nodes_height())
+    controller.check_result("all nodes heights are same ", controller.check_nodes_height())
     controller.terminate_all_process()
 
 
