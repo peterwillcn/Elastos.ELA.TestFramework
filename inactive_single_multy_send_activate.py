@@ -16,7 +16,7 @@ config = {
         "pre_connect_offset": 5,
         "crc_dpos_height": 300,
         "public_dpos_height": 308,
-        "max_inactivate_rounds": 80
+        "max_inactivate_rounds": 50
     },
     "side": False,
     "times": 1
@@ -49,10 +49,12 @@ def test_content():
     global result
     global activate
     global check
+    global later_start
 
     result = False
     activate = False
     check = False
+    later_start = False
 
     while True:
         current_height = controller.get_current_height()
@@ -65,7 +67,7 @@ def test_content():
         if current_height > h1:
             controller.show_current_next_info()
 
-        if stop_height == 0 and current_height >= h2 + 1:
+        if stop_height == 0 and current_height >= h2 + 12:
             controller.check_result("Ater H2", True)
             inactive_producer.node.stop()
             stop_height = current_height
@@ -76,25 +78,44 @@ def test_content():
                 )
             )
 
-        if not activate and stop_height != 0 and current_height >= stop_height + 100:
+        if not activate and stop_height != 0 and current_height >= stop_height + 60:
 
             state = controller.get_producer_state(inactive_producer_index)
             result = state == "Inactivate"
             Logger.debug("get producer state: {}".format(state))
             controller.check_result("Before active producer, the stopped producer state is Inactive", result)
+
             inactive_producer.node.start()
             result = controller.tx_manager.activate_producer(inactive_producer)
             Logger.info("activate the producer result: {}".format(result))
+            controller.check_result("send activate producer transaction", result)
+
+            ret = controller.tx_manager.activate_producer(inactive_producer)
+            controller.check_result("1 same height and send activate producer again", not ret)
+
+            while True:
+                current_height2 = controller.get_current_height()
+                if current_height2 - current_height < 6:
+                    ret = controller.tx_manager.activate_producer(inactive_producer)
+                    controller.check_result("2 pending state and send activate producer again", not ret)
+                else:
+                    break
+                controller.discrete_mining_blocks(1)
+                time.sleep(1)
+
             activate = True
 
-        if stop_height != 0 and current_height > stop_height + 124:
+        if not later_start and stop_height != 0 and current_height > stop_height + 80:
             state = controller.get_producer_state(inactive_producer_index)
             result = state == "Activate"
             Logger.debug("activted producer state: {}".format(state))
             controller.check_result("activated producer state is activate", result)
+            ret = controller.tx_manager.activate_producer(inactive_producer)
+            controller.check_result("3 state is activated send activate producer again", not ret)
             controller.start_later_nodes()
+            later_start = True
 
-        if stop_height != 0 and current_height > stop_height + 136:
+        if stop_height != 0 and current_height > stop_height + 100:
             result = controller.check_nodes_height()
             break
 

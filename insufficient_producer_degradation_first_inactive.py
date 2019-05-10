@@ -11,7 +11,7 @@ from src.tools.log import Logger
 
 config = {
     "ela": {
-        "number": 12,
+        "number": 16,
         "crc_number": 4,
         "pre_connect_offset": 5,
         "crc_dpos_height": 300,
@@ -57,6 +57,7 @@ def test_content():
     global result
     global restart
     global activate
+    result = False
     restart = False
     activate = False
 
@@ -97,12 +98,14 @@ def test_content():
             for producer in inactive_producers:
                 ret = controller.tx_manager.activate_producer(producer)
                 controller.check_result("activate producer {}".format(producer.info.nickname), ret)
+            controller.start_later_nodes()
             activate = True
 
-        if stop_height != 0 and current_height > stop_height + 400:
+        if stop_height != 0 and current_height > stop_height + 100:
             current_arbiter_public_keys = controller.get_current_arbiter_public_keys()
-            result = set(inactive_public_keys).issubset(set(current_arbiter_public_keys))
+            controller.check_result("all nodes have the same height", controller.check_nodes_height())
 
+            result = set(inactive_public_keys).issubset(set(current_arbiter_public_keys))
             break
 
         controller.discrete_mining_blocks(1)

@@ -15,7 +15,7 @@ config = {
     "ela": {
         "enable": True,
         "password": "123",
-        "number": 20,
+        "number": 24,
         "crc_number": 4,
         "pre_connect_offset": 5,
         "crc_dpos_height": 300,
@@ -35,11 +35,15 @@ def one_by_one_rotation_test():
     h2 = controller.params.ela_params.public_dpos_height
     number = controller.params.ela_params.number
     crc_number = controller.params.ela_params.crc_number
+    later_start_number = controller.params.ela_params.later_start_number
 
     tap_keystore = controller.tx_manager.tap_key_store
-    candidate_producers = controller.tx_manager.register_producers_list[crc_number * 2: (number - crc_number)]
+    candidate_producers = controller.tx_manager.register_producers_list[
+                            crc_number * 2: (number - crc_number - later_start_number)]
     voted = False
     global current_vote_height
+    global result
+    result = False
     current_vote_height = 0
     index = 0
     candidate = None
@@ -65,21 +69,9 @@ def one_by_one_rotation_test():
                 candidate = candidate_producers[index]
                 vote_amount = (len(candidate_producers) - index) * constant.TO_SELA * 100
                 ret = controller.tx_manager.vote_producer(tap_keystore, vote_amount, [candidate])
-                if ret:
-                    Logger.info(
-                        "vote {} ElAs at {} on success!".format(
-                            vote_amount / constant.TO_SELA,
-                            candidate.info.nickname
-                        )
-                    )
-                else:
-                    Logger.info(
-                        "vote {} ElAs at {} failed!".format(
-                            vote_amount / constant.TO_SELA,
-                            candidate.info.nickname
-                        )
-                    )
-                    controller.terminate_all_process()
+                controller.check_result("vote {} ELAs to {}".format(vote_amount / constant.TO_SELA,
+                                                                    candidate.node.name), ret)
+
                 current_vote_height = current_height - h2
                 voted = True
         if current_vote_height > 0:
@@ -93,6 +85,8 @@ def one_by_one_rotation_test():
                 voted = False
                 index += 1
         if index == 8:
+            controller.start_later_nodes()
+            result = controller.check_nodes_height()
             break
         time.sleep(1)
 

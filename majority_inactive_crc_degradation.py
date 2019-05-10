@@ -11,7 +11,7 @@ from src.tools.log import Logger
 
 config = {
     "ela": {
-        "number": 20,
+        "number": 24,
         "crc_number": 4,
         "pre_connect_offset": 5,
         "crc_dpos_height": 300,
@@ -28,24 +28,24 @@ def test_content():
 
     number = controller.params.ela_params.number
     crc_number = controller.params.ela_params.crc_number
+    later_start_number = controller.params.ela_params.later_start_number
     h1 = controller.params.ela_params.crc_dpos_height
     h2 = controller.params.ela_params.public_dpos_height
     pre_offset = config["ela"]["pre_connect_offset"]
 
-    test_case = "More than 1/3 producers inactive both first and second rotation failed and finally degenerate to CRC"
-    inactive_producers = controller.tx_manager.register_producers_list[4:]
+    test_case = "Majority inactive degradation to CRC"
 
-    target_arbiters = controller.keystore_manager.node_key_stores[1: 13]
-    target_public_keys = list()
-    for keystore in target_arbiters:
-        target_public_keys.append(keystore.public_key.hex())
+    # init inactive producers [5,6,7,8, 9,10,11,12, 13,14,15,16]
+    inactive_producers = controller.tx_manager.register_producers_list[4: 16]
 
     stop_height = 0
 
     global result
     global activate
     global current_arbiter_public_keys
+    result = False
     activate = False
+    current_arbiter_public_keys = list()
 
     current_height = controller.get_current_height()
     if current_height < h1 - pre_offset - 1:
@@ -83,11 +83,15 @@ def test_content():
             for producer in inactive_producers:
                 ret = controller.tx_manager.activate_producer(producer)
                 controller.check_result("activate producer {}".format(producer.info.nickname), ret)
+
+            # start stopped nodes again and look at their height are sync them
+            controller.start_stop_nodes()
             activate = True
 
-        if stop_height != 0 and current_height > stop_height + 200:
+        if stop_height != 0 and current_height > stop_height + 100:
             current_arbiter_public_keys = controller.get_current_arbiter_public_keys()
-            result = set(target_public_keys).issubset(current_arbiter_public_keys) and controller.check_nodes_height()
+            controller.check_result("all nodes have the same height", controller.check_nodes_height())
+            result = set(controller.rpc_manager.normal_dpos_pubkeys).issubset(current_arbiter_public_keys)
             break
 
         controller.discrete_mining_blocks(1)

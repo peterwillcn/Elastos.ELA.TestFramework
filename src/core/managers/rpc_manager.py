@@ -64,7 +64,7 @@ class RpcManager(object):
 
     def check_nodes_height(self):
         Logger.debug("{} check the all nodes whether have the same height".format(self.tag))
-        time.sleep(2)
+        time.sleep(3)
         heights = list()
 
         for node in self.node_manager.ela_nodes:

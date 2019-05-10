@@ -12,7 +12,7 @@ from src.tools.log import Logger
 
 config = {
     "ela": {
-        "number": 12,
+        "number": 16,
         "crc_number": 4,
         "pre_connect_offset": 5,
         "crc_dpos_height": 300,
@@ -26,7 +26,7 @@ config = {
 def test_content():
 
     # test case title
-    test_case = "After h2 normal change and producers are not enough"
+    test_case = "Insufficient producers degradation cancel but not stop"
     # init for the controller that will deploy start nodes and recharge register vote producers before h1
     controller = Controller(config)
     controller.ready_for_dpos()
@@ -51,6 +51,9 @@ def test_content():
     height_times[current_height] = 1
 
     global result
+    global check
+    result = False
+    check = False
 
     while True:
 
@@ -66,12 +69,7 @@ def test_content():
 
         # after h1, show the current and next arbiters nicknames by sort
         if current_height >= h1:
-            arbiters_nicknames = controller.rpc_manager.get_current_arbiter_nicknames()
-            arbiters_nicknames.sort()
-            next_arbiter_nicknames = controller.rpc_manager.get_next_arbiter_nicknames()
-            next_arbiter_nicknames.sort()
-            Logger.info("current arbiters nicknames: {}".format(arbiters_nicknames))
-            Logger.info("next    arbiters nicknames: {}".format(next_arbiter_nicknames))
+            controller.show_current_next_info()
 
         # mining the height after h2 + 12, cancel producers which number is between 4 and 8 by random
         if cancel_height == 0 and current_height >= h2 + 12:
@@ -79,16 +77,23 @@ def test_content():
             time.sleep(2)
             for producer in cancel_producers:
                 ret = controller.tx_manager.cancel_producer(producer)
-                controller.check_result("Cancel Producer {}".format(producer.info.nickname), ret)
+                controller.check_result("Cancel Producer {}".format(producer.node.name), ret)
 
             cancel_height = current_height
             Logger.debug("cancel height: {}".format(cancel_height))
 
         # after the cancel_height + 36(356), will check the result and break to finish this test
-        if cancel_height != 0 and current_height > cancel_height + 36:
+        if not check and cancel_height != 0 and current_height > cancel_height + 36:
             crc_public_keys = controller.keystore_manager.crc_public_keys
             current_arbiter_public_keys = controller.get_current_arbiter_public_keys()
             result = set(crc_public_keys) == set(current_arbiter_public_keys)
+            controller.check_result("Degradation to only CRC to consensus", result)
+            controller.check_result("Degradation to only CRC to consensus", result)
+            controller.start_later_nodes()
+            check = True
+
+        if cancel_height != 0 and current_height > cancel_height + 60:
+            result = controller.check_nodes_height()
             break
 
         controller.discrete_mining_blocks(1)

@@ -11,7 +11,7 @@ from src.tools.log import Logger
 
 config = {
     "ela": {
-        "number": 16,
+        "number": 20,
         "crc_number": 4,
         "pre_connect_offset": 5,
         "crc_dpos_height": 300,
@@ -25,7 +25,7 @@ config = {
 def test_content():
 
     # test case title
-    test_case = "More than 1/3 producers inactive first rotation"
+    test_case = "Mojor producers inactive first rotation"
     # init controller for deploy, start nodes and recharges some nodes for registered as producers
     controller = Controller(config)
     # register and vote producers ready for h2 phase
@@ -80,30 +80,32 @@ def test_content():
         if stop_height == 0 and current_height >= h2 + 12:
             for producer in inactive_producers:
                 producer.node.stop()
-            controller.check_result("Ater H2，stop 1/3 producers", True)
 
             stop_height = current_height
             Logger.debug("stop height: {}".format(stop_height))
 
         if not activate and stop_height != 0 and current_height > stop_height + 36:
             arbiters_set = set(rpc.get_arbiters_info()["arbiters"])
-            result = not inactive_set.issubset(arbiters_set)
+            result = not inactive_set.issubset(arbiters_set) and \
+                set(controller.get_node_public_key(13, 17)).issubset(arbiters_set)
 
-            if result:
-                for producer in inactive_producers:
-                    producer.node.start()
+            controller.check_result("replace public key", result)
 
-                controller.discrete_mining_blocks(1)
+            for producer in inactive_producers:
+                producer.node.start()
 
-                for producer in inactive_producers:
-                    ret = controller.tx_manager.activate_producer(producer)
-                    controller.check_result("activate producer {}".format(producer.node.name), ret)
+            controller.discrete_mining_blocks(1)
+
+            for producer in inactive_producers:
+                ret = controller.tx_manager.activate_producer(producer)
+                controller.check_result("activate producer {}".format(producer.node.name), ret)
+            controller.start_later_nodes()
             activate = True
 
         if stop_height != 0 and current_height > stop_height + 100:
             current_pubkeys = controller.get_current_arbiter_public_keys()
-            result = set(controller.rpc_manager.normal_dpos_pubkeys) == set(current_pubkeys) \
-                     and controller.check_nodes_height()
+            controller.check_result("all nodes have the same height", controller.check_nodes_height())
+            result = set(controller.rpc_manager.normal_dpos_pubkeys) == set(current_pubkeys)
             break
         # mining a block per second
         controller.discrete_mining_blocks(1)

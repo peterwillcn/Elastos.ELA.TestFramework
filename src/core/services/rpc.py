@@ -94,7 +94,7 @@ def set_log_level( level: int, port=DEFAULT_PORT):
 
 
 def list_producers( start: int, limit: int, port=DEFAULT_PORT):
-    return post_request("listproducers", params={"start": start, "limit": limit}, port=port)
+    return post_request("listproducers", params={"start": start, "limit": limit, "state": "all"}, port=port)
 
 
 def vote_status( address: str, port=DEFAULT_PORT):

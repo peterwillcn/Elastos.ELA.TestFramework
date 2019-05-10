@@ -170,6 +170,18 @@ class Controller(object):
     def check_nodes_height(self):
         return self.rpc_manager.check_nodes_height()
 
+    def get_node_public_key(self, start: int, end: int):
+        public_key_list = list()
+        for i in range(start, end):
+            node = self.node_manager.ela_nodes[i]
+            public_key_list.append(node.get_node_public_key())
+        return public_key_list
+
+    def start_stop_nodes(self):
+        for node in self.node_manager.ela_nodes:
+            if not node.running:
+                node.start()
+
     @staticmethod
     def get_current_height():
         return rpc.get_block_count()

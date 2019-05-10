@@ -12,7 +12,7 @@ from src.tools.log import Logger
 
 config = {
     "ela": {
-        "number": 12,
+        "number": 16,
         "crc_number": 4,
         "pre_connect_offset": 5,
         "crc_dpos_height": 300,
@@ -26,7 +26,7 @@ config = {
 def test_content():
 
     # test case title
-    test_case = "After h2 normal change and producers are not enough"
+    test_case = "Insufficient producers degradation cancel and stop"
     # init for the controller that will deploy start nodes and recharge register vote producers before h1
     controller = Controller(config)
     controller.ready_for_dpos()
@@ -56,6 +56,9 @@ def test_content():
     height_times[current_height] = 1
 
     global result
+    global check
+    result = False
+    check = False
 
     while True:
 
@@ -82,7 +85,7 @@ def test_content():
             # cancel producers
             for producer in cancel_producers:
                 ret = controller.tx_manager.cancel_producer(producer)
-                controller.check_result("Cancel Producer {}".format(producer.info.nickname), ret)
+                controller.check_result("Cancel Producer {}".format(producer.node.name), ret)
 
             cancel_height = current_height
             Logger.debug("cancel height: {}".format(cancel_height))
@@ -93,12 +96,18 @@ def test_content():
                 node.stop()
 
         # after the cancel_height + 36(356), will check the result and break to finish this test
-        if cancel_height != 0 and current_height > cancel_height + 36:
+        if not check and cancel_height != 0 and current_height > cancel_height + 36:
             crc_public_keys = controller.keystore_manager.crc_public_keys
             current_arbiter_public_keys = controller.get_current_arbiter_public_keys()
             result = set(crc_public_keys) == set(current_arbiter_public_keys)
-            break
+            controller.check_result("degradation to only crc consensus", result)
+            controller.check_result("degradation to only crc consensus", result)
+            controller.start_later_nodes()
+            check = True
 
+        if cancel_height != 0 and current_height > cancel_height + 60:
+            result = controller.check_nodes_height()
+            break
         controller.discrete_mining_blocks(1)
         time.sleep(1)
 

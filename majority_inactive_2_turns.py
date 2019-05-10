@@ -11,7 +11,7 @@ from src.tools.log import Logger
 
 config = {
     "ela": {
-        "number": 20,
+        "number": 24,
         "crc_number": 4,
         "pre_connect_offset": 5,
         "crc_dpos_height": 300,
@@ -25,7 +25,7 @@ config = {
 def test_content():
 
     # test case title
-    test_case = "More than 1/3 producers inactive first rotation still failed but second rotation"
+    test_case = "Major producers inactive first rotation still failed but second rotation success"
     # init controller for deploy, start nodes and recharges some nodes for registered as producers
     controller = Controller(config)
     # register and vote producers ready for h2 phase
@@ -105,23 +105,22 @@ def test_content():
 
             controller.check_result("rotation check", result)
 
-            if result:
+            # activate producers [9,10,11,12]
+            activate_producers = inactive_producers[:4]
 
-                # activate producers [9,10,11,12]
-                activate_producers = inactive_producers[:4]
+            # first start activate producers nodes
+            for producer in activate_producers:
+                producer.node.start()
 
-                # first start activate producers nodes
-                for producer in activate_producers:
-                    producer.node.start()
+            controller.discrete_mining_blocks(1)
 
-                controller.discrete_mining_blocks(1)
+            # second, activate producers
+            for producer in activate_producers:
+                result = controller.tx_manager.activate_producer(producer)
+                controller.check_result("activate producer {}".format(producer.node.name), result)
 
-                # second, ac ativate producers
-                for producer in activate_producers:
-                    result = controller.tx_manager.activate_producer(producer)
-                    controller.check_result("activate producer {}".format(producer.node.name), result)
-
-                activate = True
+            controller.start_later_nodes()
+            activate = True
 
         if not remaining_start and stop_height != 0 and current_height > stop_height + 80:
             remaining_inactive_producers = inactive_producers[4:]
@@ -131,8 +130,9 @@ def test_content():
 
         if stop_height != 0 and current_height > stop_height + 100:
             current_pubkeys = controller.get_current_arbiter_public_keys()
-            result = set(controller.rpc_manager.normal_dpos_pubkeys) == set(current_pubkeys) \
-                     and controller.check_nodes_height()
+            controller.check_result("all nodes have the same height", controller.check_nodes_height())
+
+            result = set(controller.rpc_manager.normal_dpos_pubkeys) == set(current_pubkeys)
             break
 
         # mining a block per second

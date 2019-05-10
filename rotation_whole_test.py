@@ -15,7 +15,7 @@ config = {
     "ela": {
         "enable": True,
         "password": "123",
-        "number": 20,
+        "number": 24,
         "crc_number": 4,
         "pre_connect_offset": 5,
         "crc_dpos_height": 300,
@@ -40,6 +40,10 @@ def test_content():
     crc_number = controller.params.ela_params.crc_number
 
     global tap_keystore
+    global result
+    global check
+    check = False
+    result = False
     tap_keystore = controller.keystore_manager.tap_key_store
     register_producers = controller.tx_manager.register_producers_list
 
@@ -66,7 +70,7 @@ def test_content():
             controller.show_current_next_info()
 
         if vote_height == 0 and current_height > h2 + 5:
-            before_rotation_nicknames = controller.rpc_manager.get_current_arbiter_nicknames()
+            before_rotation_nicknames = controller.rpc_manager.get_arbiter_names("arbiters")
             before_rotation_nicknames.sort()
             tap_balance = rpc.get_balance_by_address(tap_keystore.address)
             Logger.info("tap_balance: {}".format(tap_balance))
@@ -74,26 +78,25 @@ def test_content():
             ret = controller.tx_manager.vote_producer(
                 keystore=tap_keystore,
                 amount=number * constant.TO_SELA,
-                candidates=register_producers[crc_number * 2: len(register_producers)]
+                candidates=register_producers[crc_number * 2: crc_number * 4]
             )
             controller.check_result("vote the candidates result", ret)
             vote_height = current_height
 
-        if vote_height > 0 and current_height > vote_height + crc_number * 3 * 2:
-            after_rotation_nicknames = controller.rpc_manager.get_current_arbiter_nicknames()
+        if not check and vote_height > 0 and current_height > vote_height + crc_number * 3 * 2:
+            after_rotation_nicknames = controller.rpc_manager.get_arbiter_names("arbiters")
             after_rotation_nicknames.sort()
-            arbiter_info = rpc.get_arbiters_info()
-            arbiter = arbiter_info["arbiters"]
-            arbiter_set = set(arbiter)
-            candidate_public_key_set = set(controller.tx_manager.candidate_public_keys)
-            general_public_key_set = set(controller.tx_manager.general_producer_public_keys)
+            arbiter_set = set(controller.get_current_arbiter_public_keys())
             Logger.info("before rotation register producers: {}".format(before_rotation_nicknames))
             Logger.info("after  rotation register producers: {}".format(after_rotation_nicknames))
-            if not general_public_key_set.issubset(arbiter_set) and candidate_public_key_set.issubset(arbiter_set):
-                controller.check_result(test_case, True)
-                break
-            else:
-                controller.check_result(test_case, False)
+            result = set(controller.get_node_public_key(13, 21)).issubset(arbiter_set)
+            controller.check_result(test_case, result)
+            check = True
+
+        if vote_height > 0 and current_height > vote_height + crc_number * 3 * 3:
+            controller.start_later_nodes()
+            result = controller.check_nodes_height()
+            break
 
         controller.discrete_mining_blocks(1)
         time.sleep(1)

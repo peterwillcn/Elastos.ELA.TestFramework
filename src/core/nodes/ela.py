@@ -157,3 +157,20 @@ class ElaNode(Node):
         for keystore in self.keystore_manager.arbiter_stores[:5]:
             origin_arbiters.append(keystore.public_key.hex())
         return origin_arbiters
+
+    def get_node_public_key(self):
+        return self.node_keystore.public_key.hex()
+
+    def get_owner_public_key(self):
+        return self.owner_keystore.public_key.hex()
+
+    def get_node_address(self):
+        return self.node_keystore.address
+
+    def get_owner_address(self):
+        return self.owner_keystore.address
+
+    def get_owner_private_key(self):
+        return self.owner_keystore.private_key.hex()
+
+

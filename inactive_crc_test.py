@@ -78,10 +78,9 @@ def test_content():
 
         if stop_height != 0 and current_height > stop_height + 60:
             controller.start_later_nodes()
-
-        if stop_height != 0 and current_height > stop_height + 100:
             result = controller.check_nodes_height()
             break
+
         controller.discrete_mining_blocks(1)
         time.sleep(1)
 
