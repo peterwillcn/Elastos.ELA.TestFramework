@@ -169,6 +169,10 @@ def ripemd160_hash(data_bytes, times: int):
     return ripemd160_hash(hash_value_bytes, times)
 
 
+def get_ecc_by_private_key(private_key_str: str):
+    return ECC.construct(curve='P-256', d=int(private_key_str, 16))
+
+
 def ecdsa_sign(private_key: bytes, data: bytes):
 
     data_hash = sha256_hash(data, 1)

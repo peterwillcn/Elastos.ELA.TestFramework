@@ -12,7 +12,7 @@ from src.core.wallet import keytool
 
 class KeyStore(object):
 
-    def __init__(self, password: str):
+    def __init__(self, password: str, ecc_key=None):
         self.tag = util.tag_from_path(__file__, self.__class__.__name__)
         self.password = password
         self.private_key = None
@@ -21,11 +21,14 @@ class KeyStore(object):
         self.sign_script = None
         self.program_hash = None
         self.address = None
-        self._create_keystore()
+        self.create_keystore(ecc_key)
         self.keystore_dat = self.gen_keystore_dat(self.password)
 
-    def _create_keystore(self):
-        ecc_key_pair = keytool.create_ecc_pair("P-256")
+    def create_keystore(self, ecc_key=None):
+        if ecc_key is None:
+            ecc_key_pair = keytool.create_ecc_pair("P-256")
+        else:
+            ecc_key_pair = ecc_key
         self.private_key = ecc_key_pair.d.to_bytes()
 
         self.ecc_public_key = ecc_key_pair.public_key()
@@ -103,3 +106,14 @@ class KeyStore(object):
             "address": self.address
         }
         return data
+
+
+if __name__ == '__main__':
+
+    private_key = "eb6a70ec334e4d64b1068e51af7ada8923303cc23e8bb77f49dc02a357400980"
+
+    k = KeyStore("123", keytool.get_ecc_by_private_key(private_key))
+
+    keytool.save_to_dat(k.keystore_dat, "aaa.dat")
+
+    print("keystore: ", k.to_dict())

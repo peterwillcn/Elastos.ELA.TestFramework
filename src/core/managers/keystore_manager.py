@@ -20,6 +20,7 @@ class KeyStoreManager(object):
         self.params = params
         self.password = params.ela_params.password
         self.keystore_saved_dir = ""
+        self.special_private_key = "7f24c750a43ff800e80edbe199a09847242b2a820f9cec29c32f540b85245afb"
         self.owner_key_stores = list()
         self.node_key_stores = list()
         self.special_key_stores = list()
@@ -27,6 +28,7 @@ class KeyStoreManager(object):
         self.sub_key_stores = list()
         self.sub_key_stores2 = list()
         self.crc_public_keys = list()
+
         self.init_keystore_files()
         self.foundation_key_store = self.special_key_stores[0]
         self.tap_key_store = self.special_key_stores[4]
@@ -109,7 +111,13 @@ class KeyStoreManager(object):
             else:
                 first_time = False
 
-            k = KeyStore(self.password)
+            if i == 5 and category == "owner":
+                if self.special_private_key is None or self.special_private_key == "":
+                    k = KeyStore(self.password)
+                else:
+                    k = KeyStore(self.password, ecc_key=keytool.get_ecc_by_private_key(self.special_private_key))
+            else:
+                k = KeyStore(self.password)
             category_list.append(k)
             keytool.save_to_json(
                 k,
