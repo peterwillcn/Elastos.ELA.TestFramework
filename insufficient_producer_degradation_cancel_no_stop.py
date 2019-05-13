@@ -92,7 +92,7 @@ def test_content():
             controller.start_later_nodes()
             check = True
 
-        if cancel_height != 0 and current_height > cancel_height + 60:
+        if cancel_height != 0 and current_height > cancel_height + 100:
             result = controller.check_nodes_height()
             controller.check_result("check all the nodes height", result)
             break

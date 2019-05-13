@@ -43,6 +43,7 @@ if __name__ == '__main__':
 
     for i in range(1, 14):
 
+        os.system("sh ./shell/killall.sh")
         Logger.info("Begin testing case{}".format(i))
         case = test_cases["case{}".format(i)]
         os.system("python3 {}.py > ./datas/server_test_result/{}/{}.log".format(case, current_time, case))

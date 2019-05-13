@@ -81,7 +81,7 @@ def test_content():
         if not activate and stop_height != 0 and current_height >= stop_height + 60:
 
             state = controller.get_producer_state(inactive_producer_index)
-            result = state == "Inactivate"
+            result = state == controller.PRODUCER_STATE_INACTIVE
             Logger.debug("get producer state: {}".format(state))
             controller.check_result("Before active producer, the stopped producer state is Inactive", result)
 
@@ -107,7 +107,7 @@ def test_content():
 
         if not later_start and stop_height != 0 and current_height > stop_height + 80:
             state = controller.get_producer_state(inactive_producer_index)
-            result = state == "Activate"
+            result = state == controller.PRODUCER_STATE_ACTIVE
             Logger.debug("activted producer state: {}".format(state))
             controller.check_result("activated producer state is activate", result)
             ret = controller.tx_manager.activate_producer(inactive_producer)

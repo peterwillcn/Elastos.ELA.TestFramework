@@ -20,6 +20,9 @@ from src.tools.log import Logger
 
 class Controller(object):
 
+    PRODUCER_STATE_ACTIVE = "Active"
+    PRODUCER_STATE_INACTIVE = "Inactive"
+
     def __init__(self, up_config: dict):
         self.tag = util.tag_from_path(__file__, Controller.__name__)
 

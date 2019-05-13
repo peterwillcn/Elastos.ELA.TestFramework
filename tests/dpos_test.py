@@ -380,14 +380,14 @@ class DposTest(object):
                 Logger.info("{} The balance of deposit address is {}".format(self.tag, balance))
 
                 state = self.controller.get_producer_state(1)
-                ret = state == "Inactivate"
+                ret = state == self.controller.PRODUCER_STATE_INACTIVE
                 self.controller.check_result("{} Before active producer, the stopped producer state is Inactive".format(
                     self.tag), ret)
                 ret = self.controller.tx_manager.activate_producer(inactive_producer)
                 Logger.info("{} activate the producer result: {}".format(self.tag, ret))
 
                 state = self.controller.get_producer_state(1)
-                ret = state == "Activate"
+                ret = state == self.controller.PRODUCER_STATE_ACTIVE
                 self.controller.check_result("{} After activate producer, the stopped producer state is active".format(
                     self.tag), ret)
 
