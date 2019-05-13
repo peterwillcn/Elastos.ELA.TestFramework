@@ -53,6 +53,7 @@ def test_content():
         current_height = controller.get_current_height()
         times = controller.get_height_times(height_times, current_height)
         Logger.debug("current height: {}, times: {}".format(current_height, times))
+        Logger.debug("last change height: {}".format(last_change_height))
 
         if times >= 100:
             result = False
@@ -63,7 +64,6 @@ def test_content():
 
         if current_height - last_change_height == 12:
             last_change_height = current_height
-            Logger.debug("last change height: {}".format(last_change_height))
 
             if len(last_stop_list) != 0:
                 for node in last_stop_list:
@@ -99,11 +99,11 @@ def test_content():
             controller.check_result("check all nodes height", result)
             break
 
+        controller.discrete_mining_blocks(1)
         if last_change_height == h2:
-            controller.discrete_mining_blocks(1)
+            time.sleep(1)
         else:
-            controller.discrete_mining_blocks(5)
-        time.sleep(1)
+            time.sleep(3)
 
     controller.check_result("Minor nodes stop test", result)
     controller.terminate_all_process()
