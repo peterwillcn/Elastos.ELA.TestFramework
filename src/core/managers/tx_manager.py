@@ -278,7 +278,8 @@ class TransactionManager(object):
             rpc.discrete_mining(7)
 
             status = rpc.producer_status(public_key)
-            result = status == "Activate"
+            Logger.debug("After mining 7 blocks, register status: {}".format(status))
+            result = status == "Active"
             if not result:
                 Logger.error("{} register producer {} failed".format(self.tag, ela_node.name))
                 break
