@@ -107,13 +107,13 @@ def test_content():
 
         if cancel_height != 0 and current_height > cancel_height + 60:
             result = controller.check_nodes_height()
+            controller.check_result("check all the nodes height", result)
             break
         controller.discrete_mining_blocks(1)
         time.sleep(1)
 
     # check result and terminate all the processes
-    controller.check_result(test_case, result)
-    controller.check_result("all nodes heights are same ", controller.check_nodes_height())
+
     controller.terminate_all_process()
 
 

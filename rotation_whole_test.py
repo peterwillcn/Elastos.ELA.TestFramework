@@ -96,6 +96,7 @@ def test_content():
         if vote_height > 0 and current_height > vote_height + crc_number * 3 * 3:
             controller.start_later_nodes()
             result = controller.check_nodes_height()
+            controller.check_result("check all the nodes have the same height", result)
             break
 
         controller.discrete_mining_blocks(1)

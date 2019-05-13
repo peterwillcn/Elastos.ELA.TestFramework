@@ -117,6 +117,7 @@ def test_content():
 
         if stop_height != 0 and current_height > stop_height + 100:
             result = controller.check_nodes_height()
+            controller.check_result("check all the nodes height", result)
             break
 
         time.sleep(1)

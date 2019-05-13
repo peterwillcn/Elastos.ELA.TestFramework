@@ -390,7 +390,7 @@ def create_normal_inputs(address: str, total_amount: int, port=rpc.DEFAULT_PORT)
         response = rpc.list_unspent_utxos(address, port=port)
     else:
         response = rpc.get_utxos_by_amount(address, total_amount_format, port)
-    if isinstance(response, dict):
+    if response is None or isinstance(response, dict):
         Logger.debug("get utxos return error: {}".format(response))
         return None, None
     utxos = response

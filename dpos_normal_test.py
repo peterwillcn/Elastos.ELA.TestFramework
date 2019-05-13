@@ -75,6 +75,7 @@ def test_content():
 
         if start_height != 0 and current_height > start_height + 60:
             result = controller.check_nodes_height()
+            controller.check_result("check all the nodes height", result)
             break
 
         controller.discrete_mining_blocks(1)

@@ -90,7 +90,7 @@ def test_content():
 
         if stop_height != 0 and current_height > stop_height + 100:
             current_arbiter_public_keys = controller.get_current_arbiter_public_keys()
-            controller.check_result("all nodes have the same height", controller.check_nodes_height())
+            controller.check_result("check all nodes have the same height", controller.check_nodes_height())
             result = set(controller.rpc_manager.normal_dpos_pubkeys).issubset(current_arbiter_public_keys)
             break
 

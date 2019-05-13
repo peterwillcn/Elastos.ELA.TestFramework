@@ -14,8 +14,8 @@ config = {
         "number": 16,
         "crc_number": 4,
         "pre_connect_offset": 5,
-        "crc_dpos_height": 400,
-        "public_dpos_height": 500
+        "crc_dpos_height": 300,
+        "public_dpos_height": 400
     },
     "side": True,
     "arbiter": {
@@ -144,6 +144,7 @@ def test_content():
             Logger.debug("Start later nodes and check all nodes height")
             controller.start_later_nodes()
             result = controller.check_nodes_height()
+            controller.check_result("check all nodes height", result)
             break
 
         controller.discrete_mining_blocks(1)

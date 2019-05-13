@@ -103,7 +103,7 @@ def test_content():
 
         if stop_height != 0 and current_height > stop_height + 100:
             current_arbiter_public_keys = controller.get_current_arbiter_public_keys()
-            controller.check_result("all nodes have the same height", controller.check_nodes_height())
+            controller.check_result("check all nodes have the same height", controller.check_nodes_height())
 
             result = set(inactive_public_keys).issubset(set(current_arbiter_public_keys))
             break
@@ -111,7 +111,8 @@ def test_content():
         controller.discrete_mining_blocks(1)
         time.sleep(1)
 
-    controller.check_result(test_case, result)
+    result = controller.check_nodes_height()
+
     controller.terminate_all_process()
 
 

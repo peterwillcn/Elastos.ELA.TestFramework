@@ -98,13 +98,13 @@ def test_content():
             controller.check_result("all nodes have the same height", controller.check_nodes_height())
 
             result = set(target_public_keys) == set(current_arbiter_keys)
+            controller.check_result(test_case, result)
             break
 
         controller.discrete_mining_blocks(1)
 
         time.sleep(1)
 
-    controller.check_result(test_case, result)
     controller.terminate_all_process()
 
 

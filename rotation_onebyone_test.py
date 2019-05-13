@@ -87,6 +87,7 @@ def one_by_one_rotation_test():
         if index == 8:
             controller.start_later_nodes()
             result = controller.check_nodes_height()
+            controller.check_result("check all the nodes have the same height", result)
             break
         time.sleep(1)
 
