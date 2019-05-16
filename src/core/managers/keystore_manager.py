@@ -44,8 +44,8 @@ class KeyStoreManager(object):
 
         # generate special keystore such as foundation, miner and tap(水龙头地址)
         self.create_special_stores("main_foundation", True)
-        self.create_special_stores("side_foundation", False)
         self.create_special_stores("main_miner", False)
+        self.create_special_stores("side_foundation", False)
         self.create_special_stores("side_miner", False)
         self.create_special_stores("main_tap", False)
         self.create_special_stores("side_tap", False)

@@ -113,7 +113,7 @@ def test_content():
         time.sleep(1)
 
     # check result and terminate all the processes
-
+    controller.check_result(test_case, result)
     controller.terminate_all_process()
 
 

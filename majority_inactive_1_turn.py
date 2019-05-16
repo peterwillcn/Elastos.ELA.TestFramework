@@ -76,7 +76,7 @@ def test_content():
         if current_height > h1:
             controller.show_current_next_info()
 
-        # when current height is equal h2 + 12(320), then will stop the inactive producer nodes[9, 10, 11, 12]
+        # when current height is equal h2 + 12(320), then will stop the inactive producer nodes[5,6,7,8]
         if stop_height == 0 and current_height >= h2 + 12:
             for producer in inactive_producers:
                 producer.node.stop()

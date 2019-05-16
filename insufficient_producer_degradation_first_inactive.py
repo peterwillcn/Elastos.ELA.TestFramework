@@ -111,8 +111,7 @@ def test_content():
         controller.discrete_mining_blocks(1)
         time.sleep(1)
 
-    result = controller.check_nodes_height()
-
+    controller.check_result(test_case, result)
     controller.terminate_all_process()
 
 
