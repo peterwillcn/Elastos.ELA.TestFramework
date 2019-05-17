@@ -190,7 +190,7 @@ class TransactionManager(object):
 
         if recharge:
 
-            balance1 = rpc.get_balance_by_address(cross_key_store.address)
+            balance1 = rpc.get_balance_by_address(cross_key_store.address, side_port)
 
             ret = self.transfer_cross_chain_asset(
                 input_keystore=self.tap_key_store,
@@ -216,13 +216,13 @@ class TransactionManager(object):
                 if main_height - current_height > 7:
                     time.sleep(2)
 
-                if side_height - side_height_begin > 8:
+                if side_height - side_height_begin > 6:
                     break
 
                 rpc.discrete_mining(1)
                 time.sleep(1)
 
-            balance2 = rpc.get_balance_by_address(cross_key_store.address)
+            balance2 = rpc.get_balance_by_address(cross_key_store.address, side_port)
             Logger.debug("{} recharge balance1: {}".format(self.tag, balance1))
             Logger.debug("{} recharge balance2: {}".format(self.tag, balance2))
 

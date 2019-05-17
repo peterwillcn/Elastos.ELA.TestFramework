@@ -85,6 +85,7 @@ def tag_from_path(path: str, class_name: str):
 def read_config_file(config_file_path):
     with open(config_file_path, "r", encoding="utf8") as f:
         content = f.read()
+        # print("content: ", content, "content type: ", type(content))
         if content.startswith(u"\ufeff"):
             content = content.encode("utf8")[3:].decode("utf8")
         load_dict = json.loads(content)
