@@ -5,7 +5,7 @@
 
 import time
 
-from src.control import Controller
+from src.control.control import Controller
 from src.core.services import rpc
 from src.tools import constant
 from src.tools.log import Logger
@@ -69,7 +69,7 @@ def test_content():
         if current_height > h1:
             controller.show_current_next_info()
 
-        if vote_height == 0 and current_height > h2 + 5:
+        if vote_height == 0 and current_height > h2 + 12:
             before_rotation_nicknames = controller.rpc_manager.get_arbiter_names("arbiters")
             before_rotation_nicknames.sort()
             tap_balance = rpc.get_balance_by_address(tap_keystore.address)
@@ -89,7 +89,7 @@ def test_content():
             arbiter_set = set(controller.get_current_arbiter_public_keys())
             Logger.info("before rotation register producers: {}".format(before_rotation_nicknames))
             Logger.info("after  rotation register producers: {}".format(after_rotation_nicknames))
-            result = set(controller.get_node_public_key(13, 21)).issubset(arbiter_set)
+            result = set(controller.get_node_public_keys(13, 21)).issubset(arbiter_set)
             controller.check_result(test_case, result)
             check = True
 

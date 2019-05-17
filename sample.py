@@ -4,8 +4,14 @@
 # author: liteng
 
 import random
+from decimal import Decimal
 
 if __name__ == '__main__':
 
-        a = random.randint(1, 3)
-        print(a)
+       a = 230089979.0
+       b = a / 100000000
+       print("a = ", a)
+       print("b = ", b)
+
+       c = round(b, 7)
+       print("c = ", c)

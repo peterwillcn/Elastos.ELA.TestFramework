@@ -7,7 +7,7 @@ import time
 
 from datetime import datetime
 
-from src.control import Controller
+from src.control.control import Controller
 from src.core.services import rpc
 from src.tools import util, constant
 from src.tools.log import Logger

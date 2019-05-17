@@ -29,7 +29,7 @@ class Controller(object):
 
         # set config
         self.up_config = up_config
-        self.root_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "../../"))
+        self.root_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "../../../"))
         self.config = util.read_config_file(os.path.join(self.root_path, "config.json"))
         self.node_types = ["ela", "arbiter", "did", "token", "neo"]
         self.reset_config(up_config)
@@ -178,11 +178,11 @@ class Controller(object):
     def check_nodes_height(self):
         return self.rpc_manager.check_nodes_height()
 
-    def get_node_public_key(self, start: int, end: int):
+    def get_node_public_keys(self, start: int, end: int):
         public_key_list = list()
         for i in range(start, end):
             node = self.node_manager.ela_nodes[i]
-            public_key_list.append(node.get_node_public_key())
+            public_key_list.append(node.get_node_public_keys())
         return public_key_list
 
     def start_stop_nodes(self):
@@ -190,9 +190,21 @@ class Controller(object):
             if not node.running:
                 node.start()
 
-    def get_inflation_per_year(self):
+    def get_total_tx_fee(self, transactions: list):
+        Logger.debug("{} transactions length: {}".format(self.tag, len(transactions)))
+        if len(transactions) == 0:
+            return 0
+        tx_fee = 0
+        for tx in transactions:
+            if tx.valid:
+                tx_fee += tx.tx_fee
+
+        return tx_fee
+
+    @staticmethod
+    def get_inflation_per_year():
         inflation_per_year = 3300 * 10000 * constant.TO_SELA * 4 / 100
-        Logger.debug("{} inflation per year: {}".format(self.tag, inflation_per_year))
+        # Logger.debug("{} inflation per year: {}".format(self.tag, inflation_per_year))
         return inflation_per_year
 
     def get_reward_per_block(self):
@@ -200,51 +212,85 @@ class Controller(object):
         generated_blocks_per_year = 365 * 24 * 60 / block_generate_interval
         inflation_per_year = self.get_inflation_per_year()
         reward_per_block = inflation_per_year / generated_blocks_per_year
-        Logger.debug("{} per block reward: {}".format(self.tag, reward_per_block))
+        # Logger.debug("{} per block reward: {}".format(self.tag, reward_per_block))
         return reward_per_block
 
-    def check_income_distribution(self):
-        dpos_origin_income = math.ceil(self.get_reward_per_block() * 35 / 100)
+    def check_dpos_income(self, real_income: dict, theory_income: dict):
+        if real_income is None or real_income == {}:
+            Logger.debug("{} Params real_income is None".format(self.tag))
+            return False
+
+        if theory_income is None or theory_income == {}:
+            Logger.debug("{} Params theory_income is None".format(self.tag))
+            return False
+
+        real_income_keys = real_income.keys()
+        theory_income_keys = theory_income.keys()
+
+        if len(real_income_keys) != len(theory_income_keys):
+            Logger.debug("{} real income keys is not equal theory income keys".format(self.tag))
+            return False
+
+        for key in real_income_keys:
+            real = real_income[key]
+            theory = theory_income[key]
+            result = abs(real - theory) < 10
+            if not result:
+                return False
+
+        return True
+
+    def get_dpos_theory_income(self, block_num: int, tx_fee: int, dpos_votes: dict):
+        Logger.debug("{} block num: {}".format(self.tag, block_num))
+        Logger.debug("{} tx fee: {}".format(self.tag, tx_fee))
+        dpos_origin_income = math.ceil(self.get_reward_per_block() * 35 / 100) * block_num + (tx_fee * 35 / 100)
         Logger.debug("{} dpos origin income: {}".format(self.tag, dpos_origin_income))
-        income1 = math.floor(dpos_origin_income * 25 / 100)
-        income2 = math.floor(dpos_origin_income * 75 / 100)
+        total_block_confirm_reward = math.floor(dpos_origin_income * 25 / 100)
+        total_top_producers_reward = math.floor(dpos_origin_income * 75 / 100)
 
-        Logger.debug("{} income1: {}".format(self.tag, income1))
-        Logger.debug("{} income2: {}".format(self.tag, income2))
+        Logger.debug("{} income1: {}".format(self.tag, total_block_confirm_reward))
+        Logger.debug("{} income2: {}".format(self.tag, total_top_producers_reward))
 
-        income1_each = math.floor(income1 / 12)
-        dpos_votes = self.get_dpos_votes()
-        total_votes = int(dpos_votes["total"])
-        income2_each = math.floor(income2 / total_votes)
-        Logger.debug("{} income1 each: {}".format(self.tag, income1_each))
-        Logger.debug("{} income2 each: {}".format(self.tag, income2_each))
+        current_arbiters = self.rpc_manager.get_arbiter_names("arbiters")
+        if not current_arbiters:
+            Logger.error("{} get current arbiters info error".format(self.tag))
+            return None
+
+        current_candidates = self.rpc_manager.get_arbiter_names("candidates")
+        if not current_candidates:
+            Logger.error("{} get current candidates info error".format(self.tag))
+            return None
+
+        individual_first_reward = math.floor(total_block_confirm_reward / len(current_arbiters))
+        total_votes = dpos_votes["total"]
+        Logger.debug("dpos total votes: {}".format(total_votes))
+        individual_second_reward = math.floor(total_top_producers_reward / total_votes)
+        Logger.debug("{} income1 each: {}".format(self.tag, individual_first_reward))
+        Logger.debug("{} income2 each: {}".format(self.tag, individual_second_reward))
 
         theory_incomes = dict()
-        theory_incomes["CRC-I"] = income1_each * 4 * 12
-        theory_incomes["PRO-005"] = income1_each + dpos_votes["PRO-005"] * income2_each * 12
-        theory_incomes["PRO-006"] = income1_each + dpos_votes["PRO-006"] * income2_each * 12
-        theory_incomes["PRO-007"] = income1_each + dpos_votes["PRO-007"] * income2_each * 12
-        theory_incomes["PRO-008"] = income1_each + dpos_votes["PRO-008"] * income2_each * 12
-        theory_incomes["PRO-009"] = income1_each + dpos_votes["PRO-009"] * income2_each * 12
-        theory_incomes["PRO-010"] = income1_each + dpos_votes["PRO-010"] * income2_each * 12
-        theory_incomes["PRO-011"] = income1_each + dpos_votes["PRO-011"] * income2_each * 12
-        theory_incomes["PRO-012"] = income1_each + dpos_votes["PRO-012"] * income2_each * 12
-        theory_incomes["PRO-013"] = dpos_votes["PRO-013"] * income2_each * 12
-        theory_incomes["PRO-014"] = dpos_votes["PRO-014"] * income2_each * 12
-        theory_incomes["PRO-015"] = dpos_votes["PRO-015"] * income2_each * 12
-        theory_incomes["PRO-016"] = dpos_votes["PRO-016"] * income2_each * 12
-        theory_incomes["PRO-017"] = dpos_votes["PRO-017"] * income2_each * 12
-        theory_incomes["PRO-018"] = dpos_votes["PRO-018"] * income2_each * 12
-        theory_incomes["PRO-019"] = dpos_votes["PRO-019"] * income2_each * 12
-        theory_incomes["PRO-020"] = dpos_votes["PRO-020"] * income2_each * 12
 
-        Logger.debug("{} theory income: {}".format(self.tag, theory_incomes))
+        # calculate current arbiter rewards
+        theory_incomes["CRC-I"] = individual_first_reward * 4
+        for node_name in current_arbiters:
+            if node_name.startswith("CRC"):
+                continue
+            theory_incomes[node_name] = individual_first_reward + dpos_votes[node_name] * individual_second_reward
 
-    def get_dpos_income(self, height: int):
+        # calculate current candidates rewards
+        for node_name in current_candidates:
+            if node_name.startswith("CRC"):
+                continue
+            theory_incomes[node_name] = dpos_votes[node_name] * individual_second_reward
+
+        Logger.debug("{} theory income: {}".format(self.tag, sorted(theory_incomes.items())))
+        return theory_incomes
+
+    def get_dpos_real_income(self, height: int):
         response = rpc.get_block_by_height(height)
         if response is False or not isinstance(response, dict):
             Logger.error("{} rpc response invalid".format(self.tag))
-            return False
+            return None
 
         # Logger.debug("{} response: {}".format(self.tag, response))
         vout_list = response["tx"][0]["vout"]
@@ -258,14 +304,12 @@ class Controller(object):
 
             value = float(vout["value"])
             if isinstance(address, str) and address.startswith("8"):
-                income_dict["CRC-I"] = value
+                income_dict["CRC-I"] = value * constant.TO_SELA
             else:
-                income_dict[self.node_manager.address_name_dict[address]] = value
+                income_dict[self.node_manager.address_name_dict[address]] = value * constant.TO_SELA
             sum += value
 
-        income_dict["total"] = sum
-
-        Logger.debug("{} income dict: {}".format(self.tag, income_dict))
+        Logger.debug("{} income dict: {}".format(self.tag, sorted(income_dict.items())))
         Logger.debug("{} dpos votes: {}".format(self.tag, self.dpos_votes_dict))
         return income_dict
 
@@ -274,17 +318,37 @@ class Controller(object):
         if list_producers is False:
             return 0
 
-        total_votes = list_producers["totalvotes"]
-        producers = list_producers["producers"]
-
+        total_votes = float(list_producers["totalvotes"])
+        # candidates = rpc.get_arbiters_info()["candidates"]
         dpos_votes = dict()
-        for producer in producers:
-            owner_pubkey = producer["ownerpublickey"]
-            dpos_votes[self.node_manager.owner_pubkey_name_dict[owner_pubkey]] = float(producer["votes"])
 
-        dpos_votes["total"] = float(total_votes)
+        producers = list_producers["producers"]
+        for producer in producers:
+            node_pubkey = producer["nodepublickey"]
+            dpos_votes[self.node_manager.node_pubkey_name_dict[node_pubkey]] = float(producer["votes"])
+
+        # if after_h2_transactions is not None:
+        #     for tx_income in after_h2_transactions:
+        #         if tx_income.node_pubkey != "" and tx_income.node_pubkey in candidates:
+        #             total_votes -= tx_income.votes
+        #             node_name = self.node_manager.node_pubkey_name_dict[tx_income.node_pubkey]
+        #             origin_votes = dpos_votes[node_name]
+        #             origin_votes -= tx_income.votes
+        #             dpos_votes[node_name] = origin_votes
+
+        Logger.debug("{} total votes: {}".format(self.tag, total_votes))
+        dpos_votes["total"] = total_votes
         self.dpos_votes_dict = dpos_votes
         return dpos_votes
+
+    def has_dpos_reward(self, height: int):
+        response = rpc.get_block_by_height(height)
+        if response is False:
+            Logger.error("{} rpc response invalid".format(self.tag))
+            return False
+
+        # Logger.debug("{} response: {}".format(self.tag, response))
+        return len(response["tx"][0]["vout"]) > 2
 
     @staticmethod
     def get_current_height():

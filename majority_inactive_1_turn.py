@@ -5,7 +5,7 @@
 
 import time
 
-from src.control import Controller
+from src.control.control import Controller
 from src.core.services import rpc
 from src.tools.log import Logger
 
@@ -87,7 +87,7 @@ def test_content():
         if not activate and stop_height != 0 and current_height > stop_height + 36:
             arbiters_set = set(rpc.get_arbiters_info()["arbiters"])
             result = not inactive_set.issubset(arbiters_set) and \
-                set(controller.get_node_public_key(13, 17)).issubset(arbiters_set)
+                set(controller.get_node_public_keys(13, 17)).issubset(arbiters_set)
 
             controller.check_result("replace public key", result)
 

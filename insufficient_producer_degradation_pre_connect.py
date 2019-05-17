@@ -6,7 +6,7 @@
 import time
 import random
 
-from src.control import Controller
+from src.control.control import Controller
 
 from src.tools.log import Logger
 

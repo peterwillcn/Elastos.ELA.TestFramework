@@ -206,6 +206,7 @@ class TransactionManager(object):
             Logger.debug("{} cross chain transaction on success".format(self.tag))
 
             current_height = rpc.get_block_count()
+            side_height_begin = rpc.get_block_count(side_port)
             while True:
                 main_height = rpc.get_block_count()
                 side_height = rpc.get_block_count(side_port)
@@ -215,15 +216,18 @@ class TransactionManager(object):
                 if main_height - current_height > 7:
                     time.sleep(2)
 
-                if main_height - current_height > 10:
+                if side_height - side_height_begin > 8:
                     break
 
                 rpc.discrete_mining(1)
                 time.sleep(1)
 
             balance2 = rpc.get_balance_by_address(cross_key_store.address)
+            Logger.debug("{} recharge balance1: {}".format(self.tag, balance1))
+            Logger.debug("{} recharge balance2: {}".format(self.tag, balance2))
 
-            result = float(balance2) - float(balance1) > float(200 - 3 * 10000) / constant.TO_SELA
+            result = (float(balance2) - float(balance1)) * constant.TO_SELA > float(200 * constant.TO_SELA - 3 * 10000)
+            Logger.debug("{} recharge result: {}".format(self.tag, result))
 
         else:
 
@@ -256,8 +260,11 @@ class TransactionManager(object):
                 time.sleep(3)
 
             balance2 = rpc.get_balance_by_address(self.tap_key_store.address)
+            Logger.debug("{} withdraw balance1: {}".format(self.tag, balance1))
+            Logger.debug("{} withdraw balance2: {}".format(self.tag, balance2))
 
-            result = float(balance2) - float(balance1) > float(100 - 3 * 10000) / constant.TO_SELA
+            result = (float(balance2) - float(balance1)) * constant.TO_SELA > float(100 * constant.TO_SELA - 3 * 10000)
+            Logger.debug("{} withdraw result: {}".format(self.tag, result))
 
         return result
 

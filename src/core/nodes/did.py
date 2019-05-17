@@ -64,7 +64,7 @@ class DidNode(Node):
             port_type="node_port"
         )
 
-        #_config[constant.CONFIG_SPV_MAGIC] = self.params.spv_magic
+        _config[constant.CONFIG_SPV_MAGIC] = self.params.spv_magic
         _config[constant.CONFIG_DISABLE_DNS] = self.params.disable_dns
         _config[constant.CONFIG_PERMANENT_PEERS] = self.gen_permanent_list()
         _config[constant.CONFIG_DID_SPV_DISABLE_DNS] = self.params.spv_disable_dns

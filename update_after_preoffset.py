@@ -6,7 +6,7 @@
 import time
 
 from src.tools.log import Logger
-from src.control import Controller
+from src.control.control import Controller
 
 config = {
     "ela": {

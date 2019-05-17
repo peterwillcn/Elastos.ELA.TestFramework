@@ -38,6 +38,7 @@ class NodeManager(object):
         self.neo_nodes = []
         self.address_name_dict = dict()
         self.owner_pubkey_name_dict = dict()
+        self.node_pubkey_name_dict = dict()
 
         self.main_foundation_address = self.keystore_manager.special_key_stores[0].address
         self.main_miner_address = self.keystore_manager.special_key_stores[1].address
@@ -60,6 +61,7 @@ class NodeManager(object):
                 self.ela_nodes[self.params.ela_params.number - self.params.ela_params.later_start_number + 1:]
             self.create_address_name_dict()
             self.create_owner_pubkey_name_dict()
+            self.create_node_pubkey_name_dict()
         if self.params.did_params.enable:
             ret = self._deploy_nodes("did", self.params.did_params.number)
         if self.params.token_params.enable:
@@ -290,7 +292,7 @@ class NodeManager(object):
             self.tag,
             node_type,
             self.params.arbiter_params.side_chain_genesis_hash
-        )
+            )
         )
 
         recharge_address = keytool.gen_cross_chain_address(bytes.fromhex(side_chain_genesis_hash))
@@ -316,5 +318,8 @@ class NodeManager(object):
         for node in self.ela_nodes:
             self.owner_pubkey_name_dict[node.owner_keystore.public_key.hex()] = node.name
 
+    def create_node_pubkey_name_dict(self):
+        for node in self.ela_nodes:
+            self.node_pubkey_name_dict[node.node_keystore.public_key.hex()] = node.name
 
 

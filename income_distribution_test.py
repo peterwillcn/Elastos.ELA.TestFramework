@@ -5,8 +5,10 @@
 
 import time
 
+from src.tools import constant
 from src.tools.log import Logger
-from src.control import Controller
+from src.control.control import Controller
+from src.control.tx_income import TxIncome
 
 config = {
     "ela": {
@@ -39,10 +41,17 @@ def test_content():
     height_times[current_height] = 1
 
     global result
-    global start_height
+    global vote_height
+    global after_h2_transactions
     global last_income_height
+    global dpos_votes
+    dpos_votes = dict()
     last_income_height = h2
-    start_height = 0
+    vote_height = 0
+    after_h2_transactions = list()
+
+    register_producers = controller.tx_manager.register_producers_list
+    later_vote_producer = register_producers[len(register_producers) - 1]
 
     while True:
         current_height = controller.get_current_height()
@@ -56,13 +65,34 @@ def test_content():
         if current_height >= h1:
             controller.show_current_next_info()
 
-        if current_height > h2 and current_height - last_income_height == 12:
-            controller.get_dpos_income(current_height)
-            controller.check_income_distribution()
+        if current_height == h2:
+            dpos_votes = controller.get_dpos_votes()
 
+        if current_height > h2 and controller.has_dpos_reward(current_height):
+            tx_fee = controller.get_total_tx_fee(after_h2_transactions)
+            real_income = controller.get_dpos_real_income(current_height)
+            theory_income = controller.get_dpos_theory_income(current_height - last_income_height, tx_fee, dpos_votes)
+            result = controller.check_dpos_income(real_income, theory_income)
+            controller.check_result("check dpos income", result)
+            after_h2_transactions.clear()
             last_income_height = current_height
+            dpos_votes = controller.get_dpos_votes()
 
-        if start_height != 0 and current_height > start_height + 500000:
+        if vote_height == 0 and current_height > vote_height + h2 + 20:
+            votes = 100
+            result = controller.tx_manager.vote_producer(
+                keystore=controller.keystore_manager.tap_key_store,
+                amount=votes * constant.TO_SELA,
+                candidates=[later_vote_producer]
+            )
+
+            controller.check_result("vote producer {}".format(later_vote_producer.node.name), result)
+            vote_height = current_height
+
+            ti = TxIncome(10000, True)
+            after_h2_transactions.append(ti)
+
+        if vote_height != 0 and current_height > vote_height + 500000:
             result = controller.check_nodes_height()
             controller.check_result("check all the nodes height", result)
             break

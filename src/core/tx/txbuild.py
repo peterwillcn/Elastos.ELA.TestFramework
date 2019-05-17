@@ -390,7 +390,7 @@ def create_normal_inputs(address: str, total_amount: int, port=rpc.DEFAULT_PORT)
         response = rpc.list_unspent_utxos(address, port=port)
     else:
         response = rpc.get_utxos_by_amount(address, total_amount_format, port)
-    if response is None or isinstance(response, dict):
+    if not response or isinstance(response, dict):
         Logger.debug("get utxos return error: {}".format(response))
         return None, None
     utxos = response
@@ -431,7 +431,6 @@ def create_normal_inputs(address: str, total_amount: int, port=rpc.DEFAULT_PORT)
         return None, None
 
     return inputs, change_outputs
-
 
 def create_normal_outputs(output_addresses: list, amount: int, fee: int, output_lock: int):
     total_amount = 0
@@ -486,6 +485,7 @@ def single_sign_transaction(keystore: KeyStore, tx: Transaction):
     r = b""
     r = serialize.write_var_bytes(r, signature)
     tx.programs[0].parameter = r
+    tx.hash()
     return tx
 
 
