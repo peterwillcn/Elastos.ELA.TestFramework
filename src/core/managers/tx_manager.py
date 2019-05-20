@@ -257,7 +257,7 @@ class TransactionManager(object):
                     break
 
                 rpc.discrete_mining(1)
-                time.sleep(3)
+                time.sleep(20)
 
             balance2 = rpc.get_balance_by_address(self.tap_key_store.address)
             Logger.debug("{} withdraw balance1: {}".format(self.tag, balance1))

@@ -184,43 +184,29 @@ class NodeManager(object):
             config_dict = self.env_manager.config_dict[category]
 
         global ela_type
-
+        global temp_dest_dir
+        temp_dest_dir = os.path.join(self.env_manager.test_path, self.env_manager.current_date_time)
         for i in range(num+1):
             if category == "ela" and i == 0:
-                dest_path = os.path.join(
-                    self.env_manager.test_path, category + "_nodes",
-                    self.env_manager.current_date_time,
-                    "miner"
-                )
+                dest_path = os.path.join(temp_dest_dir, category + "_nodes", "miner")
                 self.log_file_path = os.path.abspath(os.path.join(dest_path, "../log.txt"))
                 print("######## log file path: ", self.log_file_path)
                 ela_type = ElaNode.TYPE_MINER
             elif category == "ela" and i <= self.params.ela_params.crc_number:
-                dest_path = os.path.join(
-                    self.env_manager.test_path, category + "_nodes",
-                    self.env_manager.current_date_time,
-                                                "crc" + str(i)
-                )
+                dest_path = os.path.join(temp_dest_dir, category + "_nodes", "crc" + str(i))
 
                 ela_type = ElaNode.TYPE_CRC
 
             elif category == "ela" and i <= self.params.ela_params.crc_number * 3:
-                dest_path = os.path.join(
-                    self.env_manager.test_path, category + "_nodes",
-                    self.env_manager.current_date_time,
-                                                "producer" + str(i)
-                )
+                dest_path = os.path.join(temp_dest_dir, category + "_nodes", "producer" + str(i))
                 ela_type = ElaNode.TYPE_PRODUCER
+
             else:
                 if category is not "ela" and i == num:
                     break
                 else:
                     ela_type = ElaNode.TYPE_CANDIDATE
-                dest_path = os.path.join(
-                    self.env_manager.test_path, category + "_nodes",
-                    self.env_manager.current_date_time,
-                                                category + str(i)
-                )
+                dest_path = os.path.join(temp_dest_dir, category + "_nodes", category + str(i))
 
             Logger.debug("{} dest_path: {}".format(self.tag, dest_path))
             if not os.path.exists(dest_path):

@@ -8,6 +8,8 @@ import requests
 import signal
 import sys
 
+from src.tools.log import Logger
+
 
 span_time = 2
 crc_number = 4
@@ -55,11 +57,29 @@ def get_txpool_size(port: int):
 		return False
 
 
+def print_output(name, height, tx_size, node_height: dict):
+	global color_prefix
+	global color_tail
+
+	color_prefix = ""
+	color_tail = ""
+
+	if name not in node_height.keys():
+		node_height[name] = height
+	else:
+		if node_height[name] == height:
+			color_prefix = Logger.COLOR_RED
+			color_tail = Logger.COLOR_END
+		node_height[name] = height
+	print(color_prefix + "{}\theight: {}\t txpool size: {}".format(name, height, tx_size) + color_tail)
+
+
 if __name__ == '__main__':
 	signal.signal(signal.SIGINT, exit_handler)
 
 	print("How many nodes will you start: ")
 	node_num = input(prompt)
+	node_height = dict()
 
 	while True:
 		for i in range(int(node_num)):
@@ -67,13 +87,14 @@ if __name__ == '__main__':
 			height = get_node_height(port)
 			tx_size = get_txpool_size(port)
 			if i == 0:
-				print("miner     {}\theight: {}\t txpool size: {}".format(i, height, tx_size))
+				name = "miner    "
 			elif i <= crc_number:
-				print("crc       {}\theight: {}\t txpool size: {}".format(i, height, tx_size))
+				name = "crc" + str(i) + "    "
 			elif i <= crc_number * 3:
-				print("producer  {}\theight: {}\t txpool size: {}".format(i, height, tx_size))
+				name = "producer" + str(i)
 			else:
-				print("candidate {}\theight: {}\t txpool size: {}".format(i, height, tx_size))
+				name = "candidate" + str(i)
 
+			print_output(name, height, tx_size, node_height)
 		time.sleep(span_time)
 		print('*' * 60)
