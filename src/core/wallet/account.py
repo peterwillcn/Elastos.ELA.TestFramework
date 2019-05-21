@@ -37,7 +37,7 @@ class Account(object):
             Logger.error("keystore_dat dose not contain key Account")
             return None
 
-        at = self.keystore_dat["Account"]
+        at = self.keystore_dat["Account"][0]
         if "PrivateKeyEncrypted" not in at.keys():
             Logger.error("Account dose not contain key PrivateKeyEncrypted")
             return None
@@ -66,9 +66,11 @@ class Account(object):
             Logger.error("encrypt private key length is not 96")
             return None
 
-        private_key = keytool.aes_decrypt(encrypt_private_key, self.mater_key, self.iv)
+        private_key = keytool.aes_decrypt(encrypt_private_key_bytes, self.mater_key, self.iv)
 
         return private_key[64: 96]
+
+
 
 
 
