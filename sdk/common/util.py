@@ -30,6 +30,9 @@ port_type_dict = {
     "arbiter_node_port": 9
 }
 
+TO_SELA = 100000000
+TX_FEE = 10000
+
 
 def reset_port(index, node_type: str, port_type: str):
     port = (100 + index) * 100 + node_type_dict[node_type] + port_type_dict[port_type]

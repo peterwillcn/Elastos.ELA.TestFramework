@@ -182,7 +182,7 @@ class Controller(object):
         public_key_list = list()
         for i in range(start, end):
             node = self.node_manager.ela_nodes[i]
-            public_key_list.append(node.get_node_public_keys())
+            public_key_list.append(node.get_node_public_key())
         return public_key_list
 
     def start_stop_nodes(self):

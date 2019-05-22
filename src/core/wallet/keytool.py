@@ -124,9 +124,9 @@ def aes_encrypt(plaintext, key, iv):
     return cbc_buffer
 
 
-def aes_decrypt(ciphertext, key, iv):
+def aes_decrypt(cipher_text, key, iv):
     cbc_cipher = AES.new(key=key, mode=AES.MODE_CBC, iv=iv)
-    plaintext = cbc_cipher.decrypt(ciphertext)
+    plaintext = cbc_cipher.decrypt(cipher_text)
     return plaintext
 
 
