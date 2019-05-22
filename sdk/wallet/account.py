@@ -3,6 +3,7 @@
 # date: 2019/5/22 10:25 AM
 # author: liteng
 
+import json
 from sdk.wallet import keytool
 
 
@@ -55,12 +56,17 @@ class Account(object):
     def sign(self, data: bytes):
         return keytool.ecdsa_sign(self._private_key, data)
 
+    def to_dict(self):
+        data = {
+            "private_key": self.private_key(),
+            "public_key": self.public_key(),
+            "sign_script": self.redeem_script(),
+            "program_hash": self.program_hash(),
+            "address": self.address()
+        }
+        return data
+
     def __repr__(self):
-        return "Account: {\n\t" + \
-                "private_key:   " + self.private_key() + "\n\t" + \
-                "public key :   " + self.public_key() + "\n\t" + \
-                "redeem script: " + self.redeem_script() + "\n\t" + \
-                "program hash:  " + self.program_hash() + "\n\t" + \
-                "address:       " + self.address() + "\n}"
+        return json.dumps(self.to_dict(), indent=4)
 
 

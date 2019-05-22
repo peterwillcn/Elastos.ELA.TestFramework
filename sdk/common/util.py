@@ -101,6 +101,24 @@ def write_config_file(config_dict, config_file_path):
         json.dump(config_dict, f, indent=4)
 
 
+def save_to_json(k, prefix: str, dest_path: str, first_time: bool):
+
+    if os.path.exists(dest_path) and not first_time:
+        with open(dest_path, "r") as f:
+            load_dict = json.load(f)
+            load_dict[prefix] = k.to_dict()
+        with open(dest_path, "w", buffering=1) as f:
+            json.dump(load_dict, f, indent=4)
+    else:
+        with open(dest_path, "w", buffering=1) as f:
+            json.dump({prefix: k.to_dict()}, f, indent=4)
+
+
+def save_to_dat(keystore_dat: dict, dat_file_path: str):
+    with open(dat_file_path, "w", buffering=1) as f:
+        json.dump(keystore_dat, f, sort_keys=False, indent=4, separators=(',', ':'))
+
+
 def deser_uint256(f):
     r = 0
     for i in range(8):

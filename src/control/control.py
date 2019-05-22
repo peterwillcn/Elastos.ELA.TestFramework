@@ -39,22 +39,22 @@ class Controller(object):
         self.env_manager = EnvManager()
         self.keystore_manager = KeyStoreManager(self.params)
 
-        self.node_manager = NodeManager(self.params, self.env_manager, self.keystore_manager)
-        self.rpc_manager = RpcManager(self.node_manager)
-        self.tx_manager = TransactionManager(self.node_manager)
-        # init tap amount and register amount(unit: ELA)
-        self.tap_amount = 20000000
-        self.register_amount = 6000
-        self.node_amount = 5000
-        # necessary keystore
-        self.foundation_keystore = self.keystore_manager.special_key_stores[0]
-        self.tap_keystore = self.keystore_manager.special_key_stores[4]
-
-        self.init_for_testing()
-        self.later_nodes = self.node_manager.ela_nodes[(self.params.ela_params.number -
-                                                              self.params.ela_params.later_start_number + 1):]
-
-        self.dpos_votes_dict = dict()
+        # self.node_manager = NodeManager(self.params, self.env_manager, self.keystore_manager)
+        # self.rpc_manager = RpcManager(self.node_manager)
+        # self.tx_manager = TransactionManager(self.node_manager)
+        # # init tap amount and register amount(unit: ELA)
+        # self.tap_amount = 20000000
+        # self.register_amount = 6000
+        # self.node_amount = 5000
+        # # necessary keystore
+        # self.foundation_keystore = self.keystore_manager.special_key_stores[0]
+        # self.tap_keystore = self.keystore_manager.special_key_stores[4]
+        #
+        # self.init_for_testing()
+        # self.later_nodes = self.node_manager.ela_nodes[(self.params.ela_params.number -
+        #                                                       self.params.ela_params.later_start_number + 1):]
+        #
+        # self.dpos_votes_dict = dict()
 
     def init_for_testing(self):
         self.node_manager.deploy_nodes()

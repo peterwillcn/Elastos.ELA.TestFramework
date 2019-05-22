@@ -12,8 +12,8 @@ config = {
     "ela": {
         "enable": True,
         "password": "123",
-        "number": 36,
-        "crc_number": 12,
+        "number": 12,
+        "crc_number": 4,
         "later_start_number": 0,
         "pre_connect_offset": 5,
         "crc_dpos_height": 400,
@@ -26,7 +26,7 @@ config = {
 
 def test_content():
     controller = Controller(config)
-    controller.ready_for_dpos()
+    # controller.ready_for_dpos()
     h1 = controller.params.ela_params.crc_dpos_height
     h2 = controller.params.ela_params.public_dpos_height
     pre_offset = config["ela"]["pre_connect_offset"]

@@ -3,7 +3,7 @@
     "enable": true,
     "arbiter_enable": true,
     "password": "123",
-    "number": 12,
+    "number": 16,
     "crc_number": 4,
     "later_start_number": 4,
     "active_net": "regnet",
