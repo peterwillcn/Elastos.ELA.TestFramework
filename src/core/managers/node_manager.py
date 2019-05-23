@@ -156,7 +156,7 @@ class NodeManager(object):
                 time.sleep(0.5)
 
         if self.params.neo_params.enable:
-            for i in range(len(self.token_nodes)):
+            for i in range(len(self.neo_nodes)):
                 self.neo_nodes[i].stop()
                 time.sleep(0.5)
 
