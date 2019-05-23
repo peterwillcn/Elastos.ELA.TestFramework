@@ -52,7 +52,7 @@ class ArbiterNode(Node):
             self.dev_null.close()
             self.err_output.close()
         except subprocess.SubprocessError as e:
-            Logger.error("{} Unable to stop ela{}, error: {}".format(self.tag, self.index, e))
+            Logger.error("{} Unable to stop arbiter{}, error: {}".format(self.tag, self.index, e))
         self.running = False
         Logger.debug("{} arbiter{} has stopped on success!".format(self.tag, self.index))
 
@@ -66,8 +66,8 @@ class ArbiterNode(Node):
         _config[constant.CONFIG_SPV_PRINT_LEVEL] = self.params.spv_print_level
         _config[constant.CONFIG_ARBITER_MAIN_NODE] = self.gen_main_node()
         _config[constant.CONFIG_SIDE_NODE_LIST] = self.gen_side_node_list()
-        _config[constant.CONFIG_ORIGIN_CROSS_CHAIN_ARBITERS] = self.gen_arbiters_list(0, 5)
-        _config[constant.CONFIG_CRC_CROSS_CHAIN_ARBITERS] = self.gen_arbiters_list(5, 5 + self.params.crc_number)
+        _config[constant.CONFIG_ORIGIN_CROSS_CHAIN_ARBITERS] = self.gen_origin_arbiters()
+        _config[constant.CONFIG_CRC_CROSS_CHAIN_ARBITERS] = self.gen_crc_arbiters(1, self.params.crc_number + 1)
         _config[constant.CONFIG_CRC_ONLY_DPOS_HEIGHT] = self.params.crc_dpos_only_height
 
         if self.index > 4:
@@ -85,12 +85,9 @@ class ArbiterNode(Node):
         main_node[constant.CONFIG_ARBITER_RPC] = dict()
         rpc_config = main_node[constant.CONFIG_ARBITER_RPC]
         rpc_config[constant.CONFIG_ARBITER_IP_ADDRESS] = "127.0.0.1"
-        if self.index > 4:
-            index = self.index % 5 + 1
-        else:
-            index = self.index
+
         rpc_config[constant.CONFIG_PORT_JSON] = self.reset_port(
-            index=index,
+            index=self.index,
             node_type="ela",
             port_type="json_port"
         )
@@ -99,16 +96,16 @@ class ArbiterNode(Node):
         rpc_config[constant.CONFIG_RPC_WHITE_LIST] = ["0.0.0.0"]
         main_node[constant.CONFIG_SPV_SEED_LIST] = list()
         main_node[constant.CONFIG_SPV_SEED_LIST].append("127.0.0.1:" + str(self.reset_port(
-            index=index,
+            index=self.index,
             node_type="ela",
             port_type="node_port"
         )))
         main_node[constant.CONFIG_MAGIC] = self.params.spv_magic
         main_node[constant.CONFIG_MIN_OUTBOUND] = 1
         main_node[constant.CONFIG_MAX_CONNECTION] = 3
-        main_node[constant.CONFIG_FOUNDATION_ADDRESS] = self.keystore_manager.special_key_stores[0].address
+        main_node[constant.CONFIG_FOUNDATION_ADDRESS] = self.keystore_manager.foundation_account.address()
         main_node[constant.CONFIG_PORT_ARBITER_MAIN_DEFAULT] = self.reset_port(
-            index=index,
+            index=self.index,
             node_type="ela",
             port_type="node_port"
         )
@@ -124,7 +121,7 @@ class ArbiterNode(Node):
             rpc_config = side_dict[constant.CONFIG_ARBITER_RPC]
             rpc_config[constant.CONFIG_ARBITER_IP_ADDRESS] = "127.0.0.1"
             rpc_config[constant.CONFIG_PORT_JSON] = self.reset_port(
-                index=self.index % 5,
+                index=self.index,
                 node_type=side_node,
                 port_type="json_port"
             )
@@ -135,19 +132,29 @@ class ArbiterNode(Node):
             side_dict[constant.CONFIG_GENESIS_BLOCK] = self.params.side_info[side_node][constant.SIDE_GENESIS_ADDRESS]
 
             if side_node is "did":
-                side_dict[constant.CONFIG_MINER_ADDRESS] = self.keystore_manager.sub_key_stores[self.index].address
+                side_dict[constant.CONFIG_MINER_ADDRESS] = self.keystore_manager.sub1_accounts[self.index].address()
             elif side_node is "token":
-                side_dict[constant.CONFIG_MINER_ADDRESS] = self.keystore_manager.sub_key_stores2[self.index].address
-            side_dict[constant.CONFIG_PAY_TO_ADDR] = self.keystore_manager.special_key_stores[3].address
+                side_dict[constant.CONFIG_MINER_ADDRESS] = self.keystore_manager.sub2_accounts[self.index].address()
+            elif side_node is "neo":
+                side_dict[constant.CONFIG_MINER_ADDRESS] = self.keystore_manager.sub3_accounts[self.index].address()
+
+            side_dict[constant.CONFIG_PAY_TO_ADDR] = self.keystore_manager.side_miner_account.address()
             side_dict[constant.CONFIG_POW_CHAIN] = self.params.pow_chain
 
             side_node_list.append(side_dict)
 
         return side_node_list
 
-    def gen_arbiters_list(self, start: int, end: int):
+    def gen_origin_arbiters(self):
+        pubkey_list = list()
+        for account in self.keystore_manager.origin_arbiter_accounts:
+            pubkey_list.append(account.public_key())
+
+        return pubkey_list
+
+    def gen_crc_arbiters(self, start: int, end: int):
         arbiters_list = list()
         for i in range(start, end):
-            arbiters_list.append(self.keystore_manager.arbiter_stores[i].public_key.hex())
+            arbiters_list.append(self.keystore_manager.arbiter_accounts[i].public_key())
 
         return arbiters_list

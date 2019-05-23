@@ -95,7 +95,7 @@ def create_cross_chain_asset(keystore: KeyStore, lock_address: str, cross_chain_
     )
 
     # create inputs:
-    inputs, change_outputs = create_normal_inputs(keystore.address, total_amount, port)
+    inputs, change_outputs = create_normal_inputs(keystore.address(), total_amount, port)
     if inputs is None or change_outputs is None:
         Logger.error("Create normal inputs failed")
         return None
@@ -154,7 +154,7 @@ def create_register_transaction(keystore: KeyStore, output_addresses: list, amou
     )
 
     # create inputs
-    inputs, change_outputs = create_normal_inputs(keystore.address, total_amount)
+    inputs, change_outputs = create_normal_inputs(keystore.address(), total_amount)
     if inputs is None or change_outputs is None:
         Logger.error("Create normal inputs failed")
         return None
@@ -192,7 +192,7 @@ def create_update_transaction(keystore: KeyStore, payload: ProducerInfo):
 
     # create inputs
     fee = 10000
-    inputs, change_outputs = create_normal_inputs(keystore.address, fee)
+    inputs, change_outputs = create_normal_inputs(keystore.address(), fee)
     if inputs is None or change_outputs is None:
         Logger.error("Create normal inputs failed")
         return None

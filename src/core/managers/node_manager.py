@@ -40,11 +40,10 @@ class NodeManager(object):
         self.owner_pubkey_name_dict = dict()
         self.node_pubkey_name_dict = dict()
 
-        self.main_foundation_address = self.keystore_manager.special_key_stores[0].address
-        self.main_miner_address = self.keystore_manager.special_key_stores[1].address
-        self.side_foundation_address = self.keystore_manager.special_key_stores[2].address
-        self.side_miner_address = self.keystore_manager.special_key_stores[3].address
-        self.tap_address = self.keystore_manager.special_key_stores[4].address
+        self.foundation_address = self.keystore_manager.foundation_account.address()
+        self.main_miner_address = self.keystore_manager.main_miner_account.address()
+        self.side_miner_address = self.keystore_manager.side_miner_account.address()
+        self.tap_address = self.keystore_manager.tap_account.address()
         self.nodes_dict = {
             "ela": self.ela_nodes,
             "arbiter": self.arbiter_nodes,
@@ -164,7 +163,7 @@ class NodeManager(object):
         elif category == "token":
             node = TokenNode(index, config, self.params.token_params, self.keystore_manager, cwd_dir)
         elif category == "neo":
-            node = NeoNode(index, config, self.params.neo_params, cwd_dir)
+            node = NeoNode(index, config, self.params.neo_params, self.keystore_manager, cwd_dir)
         else:
             node = None
 
@@ -186,11 +185,10 @@ class NodeManager(object):
         global ela_type
         global temp_dest_dir
         temp_dest_dir = os.path.join(self.env_manager.test_path, self.env_manager.current_date_time)
+
         for i in range(num+1):
             if category == "ela" and i == 0:
                 dest_path = os.path.join(temp_dest_dir, category + "_nodes", "miner")
-                self.log_file_path = os.path.abspath(os.path.join(dest_path, "../log.txt"))
-                print("######## log file path: ", self.log_file_path)
                 ela_type = ElaNode.TYPE_MINER
             elif category == "ela" and i <= self.params.ela_params.crc_number:
                 dest_path = os.path.join(temp_dest_dir, category + "_nodes", "crc" + str(i))
@@ -202,9 +200,9 @@ class NodeManager(object):
                 ela_type = ElaNode.TYPE_PRODUCER
 
             else:
-                if category is not "ela" and i == num:
-                    break
-                else:
+                if category is not "ela" and i == 0:
+                    continue
+                elif category == "ela":
                     ela_type = ElaNode.TYPE_CANDIDATE
                 dest_path = os.path.join(temp_dest_dir, category + "_nodes", category + str(i))
 
@@ -226,46 +224,36 @@ class NodeManager(object):
 
             if category == "ela":
                 shutil.copy(
-                    os.path.join(self.params.root_path, "datas/keystores/owner_keystores", "owner_" + str(i) + ".dat"),
-                    os.path.join(dest_path, "owner.dat")
-                )
-
-                shutil.copy(
-                    os.path.join(self.params.root_path, "datas/keystores/node_keystores", "node_" + str(i) + ".dat"),
+                    os.path.join(self.params.root_path, "datas/stables/node", "node" + str(i) + ".dat"),
                     os.path.join(dest_path, "keystore.dat")
                 )
 
             if i == 0 and category == "ela":
                 shutil.copy(
-                    os.path.join(self.params.root_path, "datas/keystores/special/main_foundation.dat"),
+                    os.path.join(self.params.root_path, "datas/stables/special/special0.dat"),
                     os.path.join(dest_path, "foundation.dat")
                 )
 
                 shutil.copy(
-                    os.path.join(self.params.root_path, "datas/keystores/special/main_miner.dat"),
+                    os.path.join(self.params.root_path, "datas/stables/special/special1.dat"),
                     os.path.join(dest_path, "miner.dat")
                 )
 
-                # shutil.copy(
-                #     os.path.join(self.params.root_path, "datas/keystores/special/main_tap.dat"),
-                #     os.path.join(dest_path, "tap.dat")
-                # )
+                shutil.copy(
+                    os.path.join(self.params.root_path, "datas/stables/special/special3.dat"),
+                    os.path.join(dest_path, "tap.dat")
+                )
 
             if category == "arbiter":
-                if i <= 4:
-                    shutil.copy(
-                        os.path.join(
-                            self.params.root_path,
-                            "datas/keystores/arbiter_keystores/origin_arbiter_" + str(i) +".dat"),
-                        os.path.join(dest_path, "keystore.dat")
-                    )
-                else:
-                    shutil.copy(
-                        os.path.join(
-                            self.params.root_path,
-                            "datas/keystores/arbiter_keystores/crc_arbiter_" + str(i - 5 + 1) + ".dat"),
-                        os.path.join(dest_path, "keystore.dat")
-                    )
+                if i == 0:
+                    continue
+
+                shutil.copy(
+                    os.path.join(
+                        self.params.root_path,
+                        "datas/stables/arbiter/arbiter" + str(i) + ".dat"),
+                    os.path.join(dest_path, "keystore.dat")
+                )
 
         return True
 
@@ -294,18 +282,18 @@ class NodeManager(object):
         self.params.arbiter_params.side_info[node_type][constant.SIDE_RECHARGE_ADDRESS] = recharge_address
 
     def create_address_name_dict(self):
-        self.address_name_dict[self.main_foundation_address] = "Foundation"
+        self.address_name_dict[self.foundation_address] = "Foundation"
         self.address_name_dict[self.main_miner_address] = "Miner"
 
         for node in self.ela_nodes:
-            self.address_name_dict[node.owner_keystore.address] = node.name
+            self.address_name_dict[node.owner_keystore.address()] = node.name
 
     def create_owner_pubkey_name_dict(self):
         for node in self.ela_nodes:
-            self.owner_pubkey_name_dict[node.owner_keystore.public_key.hex()] = node.name
+            self.owner_pubkey_name_dict[node.owner_keystore.public_key()] = node.name
 
     def create_node_pubkey_name_dict(self):
         for node in self.ela_nodes:
-            self.node_pubkey_name_dict[node.node_keystore.public_key.hex()] = node.name
+            self.node_pubkey_name_dict[node.node_keystore.public_key()] = node.name
 
 

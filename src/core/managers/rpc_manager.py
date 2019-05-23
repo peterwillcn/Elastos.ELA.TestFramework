@@ -40,7 +40,7 @@ class RpcManager(object):
         public_keys_list = list()
         nodes = self.node_manager.ela_nodes[1: self.params.ela_params.crc_number * 3 + 1]
         for node in nodes:
-            public_keys_list.append(node.node_keystore.public_key.hex())
+            public_keys_list.append(node.node_account.public_key())
 
         self.normal_dpos_pubkeys = public_keys_list
 
@@ -48,7 +48,7 @@ class RpcManager(object):
         pubkey_node_name = dict()
         for node in self.node_manager.ela_nodes:
             Logger.debug("{} node name: {}".format(self.tag, node.name))
-            pubkey_node_name[node.node_keystore.public_key.hex()] = node.name
+            pubkey_node_name[node.node_account.public_key()] = node.name
         if len(pubkey_node_name.keys()) == 0:
             Logger.debug("pubkey node name length: {}".format(len(pubkey_node_name)))
             exit(0)

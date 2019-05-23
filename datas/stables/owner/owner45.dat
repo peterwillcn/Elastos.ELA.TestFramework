@@ -1,0 +1,15 @@
+{
+    "Version":"1.0.0",
+    "PasswordHash":"3180b4071170db0ae9f666167ed379f53468463f152e3c3cfb57d1de45fd01d6",
+    "IV":"32abefaaf7fd7d504b99c9d9f1b9cff8",
+    "MasterKey":"f30c5cb8c3ba4b8140cb49fee678ebf33636cc556bb8cbe0a43c082068948929",
+    "Account":[
+        {
+            "Address":"EeTp3GrfkitDRPnK7T19f4AySjKpqQL49K",
+            "ProgramHash":"21e9bd938997bc6f687c406578a145477c932a1380",
+            "RedeemScript":"21025daa53e0c120856fd1042ef1d5cdb83e85e840fa0efabfeb2da0c0ba1f30bab1ac",
+            "PrivateKeyEncrypted":"40e28d70b64de2d92031f459b58f1edb9a2a29bbdc31123ba6a69159d6e15d3ec322bf860c710d6255ad3c0b5c5eb726f2f9c1dea3e631f65fef79e8d47914f539bd749e551901937c1cc55a527c052d46340ae99f4aed4942be1f4191f3b080",
+            "Type":"main-account"
+        }
+    ]
+}

@@ -21,16 +21,16 @@ class Producer(object):
         self.utxo_value = 0
         self.fee = 10000
         self.state = ""
-        self.deposit_address = keytool.gen_deposit_address(self.node.owner_keystore.program_hash)
-        self.output_address = self.node.owner_keystore.address
+        self.deposit_address = keytool.gen_deposit_address(self.node.owner_account.program_hash)
+        self.output_address = self.node.owner_account.address
         self.deposit_amount = 5000 * constant.TO_SELA
         self.info = self._producer_info()
 
     def _producer_info(self):
         info = ProducerInfo(
-            private_key=self.node.owner_keystore.private_key,
-            owner_public_key=self.node.owner_keystore.public_key,
-            node_public_key=self.node.node_keystore.public_key,
+            private_key=self.node.owner_account.private_key,
+            owner_public_key=self.node.owner_account.public_key,
+            node_public_key=self.node.node_account.public_key,
             nickname="PRO-{:0>3d}".format(self.node.index),
             url="https://elastos.org",
             location=0,
@@ -40,7 +40,7 @@ class Producer(object):
 
     def register(self):
         tx = txbuild.create_register_transaction(
-            keystore=self.node.owner_keystore,
+            keystore=self.node.owner_account,
             output_addresses=[self.deposit_address],
             amount=self.deposit_amount,
             payload=self.info
@@ -49,48 +49,48 @@ class Producer(object):
         if tx is None:
             return None
 
-        tx = txbuild.single_sign_transaction(self.node.owner_keystore, tx)
+        tx = txbuild.single_sign_transaction(self.node.owner_account, tx)
 
         return tx
 
     def update(self, producer_info: ProducerInfo):
         tx = txbuild.create_update_transaction(
-            keystore=self.node.owner_keystore,
+            keystore=self.node.owner_account,
             payload=producer_info,
         )
 
         if tx is None:
             return None
         producer_info.gen_signature()
-        tx = txbuild.single_sign_transaction(self.node.owner_keystore, tx)
+        tx = txbuild.single_sign_transaction(self.node.owner_account, tx)
 
         return tx
 
     def cancel(self):
-        tx = txbuild.create_cancel_transaction(self.node.owner_keystore)
+        tx = txbuild.create_cancel_transaction(self.node.owner_account)
 
         if tx is None:
             return None
 
-        tx = txbuild.single_sign_transaction(self.node.owner_keystore, tx)
+        tx = txbuild.single_sign_transaction(self.node.owner_account, tx)
 
         return tx
 
     def redeem(self):
 
-        tx = txbuild.create_redeem_transaction(self.node.owner_keystore, amount=4999 * constant.TO_SELA)
+        tx = txbuild.create_redeem_transaction(self.node.owner_account, amount=4999 * constant.TO_SELA)
 
         if tx is None:
             return None
 
-        tx = txbuild.single_sign_transaction(self.node.owner_keystore, tx)
+        tx = txbuild.single_sign_transaction(self.node.owner_account, tx)
 
         return tx
 
     def activate(self):
 
         # note activate producer transaction needn't to sign the whole transaction
-        tx = txbuild.create_activate_producer(self.node.node_keystore)
+        tx = txbuild.create_activate_producer(self.node.node_account)
 
         if tx is None:
             return None

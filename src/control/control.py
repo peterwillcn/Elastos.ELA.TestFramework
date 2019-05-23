@@ -39,29 +39,29 @@ class Controller(object):
         self.env_manager = EnvManager()
         self.keystore_manager = KeyStoreManager(self.params)
 
-        # self.node_manager = NodeManager(self.params, self.env_manager, self.keystore_manager)
-        # self.rpc_manager = RpcManager(self.node_manager)
-        # self.tx_manager = TransactionManager(self.node_manager)
-        # # init tap amount and register amount(unit: ELA)
-        # self.tap_amount = 20000000
-        # self.register_amount = 6000
-        # self.node_amount = 5000
-        # # necessary keystore
-        # self.foundation_keystore = self.keystore_manager.special_key_stores[0]
-        # self.tap_keystore = self.keystore_manager.special_key_stores[4]
-        #
-        # self.init_for_testing()
-        # self.later_nodes = self.node_manager.ela_nodes[(self.params.ela_params.number -
-        #                                                       self.params.ela_params.later_start_number + 1):]
-        #
-        # self.dpos_votes_dict = dict()
+        self.node_manager = NodeManager(self.params, self.env_manager, self.keystore_manager)
+        self.rpc_manager = RpcManager(self.node_manager)
+        self.tx_manager = TransactionManager(self.node_manager)
+        # init tap amount and register amount(unit: ELA)
+        self.tap_amount = 20000000
+        self.register_amount = 6000
+        self.node_amount = 5000
+        # necessary keystore
+        self.foundation_account = self.keystore_manager.foundation_account
+        self.tap_account = self.keystore_manager.tap_account
+
+        self.init_for_testing()
+        self.later_nodes = self.node_manager.ela_nodes[(self.params.ela_params.number -
+                                                        self.params.ela_params.later_start_number + 1):]
+
+        self.dpos_votes_dict = dict()
 
     def init_for_testing(self):
         self.node_manager.deploy_nodes()
         Logger.info("{} deploying nodes on success!".format(self.tag))
         self.node_manager.start_nodes()
         Logger.info("{} starting nodes on success!".format(self.tag))
-        self.rpc_manager.mining_blocks_ready(self.node_manager.main_foundation_address)
+        self.rpc_manager.mining_blocks_ready(self.foundation_account.address())
         Logger.info("{} mining 110 blocks on success!".format(self.tag))
         time.sleep(5)
 
@@ -69,8 +69,8 @@ class Controller(object):
         self.rpc_manager.init_normal_dpos_public_keys()
 
         ret = self.tx_manager.recharge_necessary_keystore(
-            input_keystore=self.foundation_keystore,
-            keystores=[self.tap_keystore],
+            input_keystore=self.foundation_account,
+            keystores=[self.tap_account],
             amount=self.tap_amount * constant.TO_SELA
         )
 
@@ -79,16 +79,16 @@ class Controller(object):
         Logger.info("{} recharge tap keystore {} ELAs on success!".format(self.tag, self.tap_amount * constant.TO_SELA))
 
         ret = self.tx_manager.recharge_necessary_keystore(
-            input_keystore=self.tap_keystore,
-            keystores=self.keystore_manager.owner_key_stores,
+            input_keystore=self.tap_account,
+            keystores=self.keystore_manager.owner_accounts,
             amount=self.register_amount * constant.TO_SELA
         )
 
         self.check_result("recharge owner keystore", ret)
 
         ret = self.tx_manager.recharge_necessary_keystore(
-            input_keystore=self.tap_keystore,
-            keystores=self.keystore_manager.node_key_stores,
+            input_keystore=self.tap_account,
+            keystores=self.keystore_manager.node_accounts,
             amount=self.node_amount * constant.TO_SELA
         )
 
@@ -98,8 +98,8 @@ class Controller(object):
 
         if self.params.arbiter_params.enable:
             ret = self.tx_manager.recharge_necessary_keystore(
-                input_keystore=self.tap_keystore,
-                keystores=self.keystore_manager.arbiter_stores,
+                input_keystore=self.tap_account,
+                keystores=self.keystore_manager.arbiter_accounts,
                 amount=3 * constant.TO_SELA
             )
 
@@ -107,20 +107,28 @@ class Controller(object):
             Logger.info("{} recharge each arbiter keystore {} ELAs on success!")
 
             ret = self.tx_manager.recharge_necessary_keystore(
-                input_keystore=self.tap_keystore,
-                keystores=self.keystore_manager.sub_key_stores,
+                input_keystore=self.tap_account,
+                keystores=self.keystore_manager.sub1_accounts,
                 amount=3 * constant.TO_SELA
             )
             self.check_result("recharge sub keystore", ret)
             Logger.info("{} recharge each sub keystore {} ELAs on success!")
 
             ret = self.tx_manager.recharge_necessary_keystore(
-                input_keystore=self.tap_keystore,
-                keystores=self.keystore_manager.sub_key_stores2,
+                input_keystore=self.tap_account,
+                keystores=self.keystore_manager.sub2_accounts,
                 amount=3 * constant.TO_SELA
             )
             self.check_result("recharge sub keystore2", ret)
             Logger.info("{} recharge each sub keystore2 {} ELAs on success!")
+
+            ret = self.tx_manager.recharge_necessary_keystore(
+                input_keystore=self.tap_account,
+                keystores=self.keystore_manager.sub3_accounts,
+                amount=3 * constant.TO_SELA
+            )
+            self.check_result("recharge sub keystore3", ret)
+            Logger.info("{} recharge each sub keystore3 {} ELAs on success!")
 
     def ready_for_dpos(self):
         ret = self.tx_manager.register_producers_candidates()

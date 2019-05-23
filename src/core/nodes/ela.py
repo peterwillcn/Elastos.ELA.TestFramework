@@ -32,8 +32,8 @@ class ElaNode(Node):
         self.keystore_manager = keystore_manager
         self.name = ""
         self.type = ela_type
-        self.owner_keystore = keystore_manager.owner_key_stores[index]
-        self.node_keystore = keystore_manager.node_key_stores[index]
+        self.owner_account = keystore_manager.owner_accounts[self.index]
+        self.node_account = keystore_manager.node_accounts[self.index]
         self.cwd_dir = cwd_dir
         self.password = self.params.password
         self.rpc_port = self.reset_port(self.index, "ela", "json_port")
@@ -69,8 +69,8 @@ class ElaNode(Node):
         _config[constant.CONFIG_PRINT_LEVEL] = self.params.print_level
         _config[constant.CONFIG_ACTIVE_NET] = self.params.active_net
         _config[constant.CONFIG_DISABLE_DNS] = self.params.disable_dns
-        _config[constant.CONFIG_FOUNDATION_ADDRESS] = self.keystore_manager.special_key_stores[0].address
-        _config[constant.CONFIG_POW][constant.CONFIG_PAY_TO_ADDR] = self.keystore_manager.special_key_stores[1].address
+        _config[constant.CONFIG_FOUNDATION_ADDRESS] = self.keystore_manager.foundation_account.address()
+        _config[constant.CONFIG_POW][constant.CONFIG_PAY_TO_ADDR] = self.keystore_manager.main_miner_account.address()
         _config[constant.CONFIG_POW][constant.CONFIG_AUTO_MINING] = self.params.auto_mining
         _config[constant.CONFIG_POW][constant.CONFIG_INSTANT_BLOCK] = self.params.instant_block
         _config[constant.CONFIG_CHECK_ADDRESS_HEIGHT] = self.params.check_address_height
@@ -79,7 +79,7 @@ class ElaNode(Node):
         _config[constant.CONFIG_PUBLIC_DPOS_HEIGHT] = self.params.public_dpos_height
         # rpc accept set
 
-        _config[constant.CONFIG_ARBITER_CONFIGURATION][constant.CONFIG_PUBLIC_KEY] = self.node_keystore.public_key.hex()
+        _config[constant.CONFIG_ARBITER_CONFIGURATION][constant.CONFIG_PUBLIC_KEY] = self.node_account.public_key()
         _config[constant.CONFIG_ARBITER_CONFIGURATION][constant.CONFIG_PORT_DPOS] = self.reset_port(
             self.index,
             "ela",
@@ -149,28 +149,28 @@ class ElaNode(Node):
     def gen_crc_config(self):
         crc_arbiters = list()
         for index in range(1, self.params.crc_number + 1):
-            crc_arbiters.append(self.keystore_manager.node_key_stores[index].public_key.hex())
+            crc_arbiters.append(self.keystore_manager.node_accounts.public_key())
         return crc_arbiters
 
     def gen_original_arbiter(self):
         origin_arbiters = []
-        for keystore in self.keystore_manager.arbiter_stores[:5]:
-            origin_arbiters.append(keystore.public_key.hex())
+        for keystore in self.keystore_manager.origin_arbiter_accounts:
+            origin_arbiters.append(keystore.public_key())
         return origin_arbiters
 
     def get_node_public_key(self):
-        return self.node_keystore.public_key.hex()
+        return self.node_account.public_key.hex()
 
     def get_owner_public_key(self):
-        return self.owner_keystore.public_key.hex()
+        return self.owner_account.public_key.hex()
 
     def get_node_address(self):
-        return self.node_keystore.address
+        return self.node_account.address
 
     def get_owner_address(self):
-        return self.owner_keystore.address
+        return self.owner_account.address
 
     def get_owner_private_key(self):
-        return self.owner_keystore.private_key.hex()
+        return self.owner_account.private_key.hex()
 
 

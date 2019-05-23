@@ -158,7 +158,7 @@ class TransactionManager(object):
     def recharge_necessary_keystore(self, input_keystore: KeyStore, keystores: list, amount: int):
         addresses = list()
         for keystore in keystores:
-            addresses.append(keystore.address)
+            addresses.append(keystore.address())
 
         ret = self.transfer_asset(input_keystore, addresses, amount)
 
@@ -278,7 +278,7 @@ class TransactionManager(object):
                 self.params.ela_params.number - round(self.params.ela_params.later_start_number / 2) + 1
         ):
             ela_node = self.node_manager.ela_nodes[i]
-            public_key = ela_node.node_keystore.public_key.hex()
+            public_key = ela_node.node_account.public_key()
             ret = self.register_producer(ela_node)
             if not ret:
                 return False
@@ -303,7 +303,7 @@ class TransactionManager(object):
         num = 0
         for i in range(start, end):
             ela_node = self.node_manager.ela_nodes[i]
-            public_key = ela_node.node_keystore.public_key.hex()
+            public_key = ela_node.node_account.public_key()
             ret = self.register_producer(ela_node)
             if not ret:
                 return False
