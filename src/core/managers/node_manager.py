@@ -92,6 +92,13 @@ class NodeManager(object):
             self.wait_rpc_ready(self.token_nodes[0].rpc_port)
             self.create_side_info("token")
 
+        if self.params.neo_params.enable:
+            for i in range(len(self.neo_nodes)):
+                self.neo_nodes[i].start()
+                time.sleep(0.2)
+            self.wait_rpc_ready(self.neo_nodes[0].rpc_port)
+            self.create_side_info("neo")
+
         if self.params.arbiter_params.enable:
             if self.params.arbiter_params.enable:
                 self._deploy_nodes("arbiter", self.params.arbiter_params.number)
@@ -164,7 +171,7 @@ class NodeManager(object):
         elif category == "token":
             node = TokenNode(index, config, self.params.token_params, self.keystore_manager, cwd_dir)
         elif category == "neo":
-            node = NeoNode(index, config, self.params.neo_params, cwd_dir)
+            node = NeoNode(index, config, self.params.neo_params, self.keystore_manager, cwd_dir)
         else:
             node = None
 

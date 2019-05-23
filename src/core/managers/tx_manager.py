@@ -187,6 +187,9 @@ class TransactionManager(object):
         elif side_node_type is "token":
             side_port = 10046
             cross_key_store = self.node_manager.keystore_manager.special_key_stores[5]
+        elif side_node_type is "neo":
+            side_port = 10056
+            cross_key_store = self.node_manager.keystore_manager.special_key_stores[5]
 
         if recharge:
 

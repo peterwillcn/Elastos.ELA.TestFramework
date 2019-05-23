@@ -136,7 +136,7 @@ class ArbiterNode(Node):
 
             if side_node is "did":
                 side_dict[constant.CONFIG_MINER_ADDRESS] = self.keystore_manager.sub_key_stores[self.index].address
-            elif side_node is "token":
+            elif side_node is "neo":
                 side_dict[constant.CONFIG_MINER_ADDRESS] = self.keystore_manager.sub_key_stores2[self.index].address
             side_dict[constant.CONFIG_PAY_TO_ADDR] = self.keystore_manager.special_key_stores[3].address
             side_dict[constant.CONFIG_POW_CHAIN] = self.params.pow_chain
