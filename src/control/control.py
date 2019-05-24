@@ -402,6 +402,10 @@ class Controller(object):
         rpc.discrete_mining(num)
 
     @staticmethod
+    def get_address_balance(address: str):
+        return rpc.get_balance_by_address(address)
+
+    @staticmethod
     def get_height_times(height_times: dict, current_height: int):
         if current_height not in height_times.keys():
             height_times[current_height] = 1

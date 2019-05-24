@@ -27,7 +27,7 @@ config = {
         "print_level": 0
     },
     "did": {
-        "enable": True,
+        "enable": False,
         "number": 5,
         "instant_block": True
     },

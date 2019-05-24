@@ -65,7 +65,7 @@ def test_content():
             break
 
         if current_height > h1:
-            controller.show_current_next_info()
+            controller.show_arbiter_info()
 
         if stop_height == 0 and current_height >= h2 + 12:
             controller.check_result("Ater H2", True)

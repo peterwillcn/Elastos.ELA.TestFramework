@@ -28,13 +28,13 @@ class Logger:
     def info(msg):
         if Logger.level <= 1:
             current_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-            print(current_time + Logger.COLOR_GREEN + " [INFO] " + Logger.COLOR_END + msg)
+            print(current_time + Logger.COLOR_GREEN + " [INFO!] " + Logger.COLOR_END + msg)
 
     @staticmethod
     def warn(msg):
         if Logger.level <= 2:
             current_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-            print(current_time + Logger.COLOR_YELLOW + " [WARN] " + Logger.COLOR_END + msg)
+            print(current_time + Logger.COLOR_YELLOW + " [WARN!] " + Logger.COLOR_END + msg)
 
     @staticmethod
     def error(msg):

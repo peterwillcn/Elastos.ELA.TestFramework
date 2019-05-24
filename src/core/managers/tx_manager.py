@@ -49,7 +49,7 @@ class TransactionManager(object):
         tx = txbuild.single_sign_transaction(input_private_key, tx)
 
         # return the result
-        ret = self._handle_tx_result(tx)
+        ret = self.handle_tx_result(tx)
 
         return ret
 
@@ -70,7 +70,7 @@ class TransactionManager(object):
         tx = txbuild.single_sign_transaction(input_private_key, tx)
 
         Logger.debug("cross chain asset transaction: \n{}".format(tx))
-        ret = self._handle_tx_result(tx, port)
+        ret = self.handle_tx_result(tx, port)
 
         return ret
 
@@ -90,7 +90,7 @@ class TransactionManager(object):
         if tx is None:
             return False
 
-        ret = self._handle_tx_result(tx)
+        ret = self.handle_tx_result(tx)
         if ret:
             self.register_producers_list.append(producer)
 
@@ -103,7 +103,7 @@ class TransactionManager(object):
         if tx is None:
             return False
 
-        ret = self._handle_tx_result(tx)
+        ret = self.handle_tx_result(tx)
 
         return ret
 
@@ -113,7 +113,7 @@ class TransactionManager(object):
         if tx is None:
             return False
 
-        ret = self._handle_tx_result(tx)
+        ret = self.handle_tx_result(tx)
 
         if ret:
             self.cancel_producers_list.append(producer)
@@ -125,7 +125,7 @@ class TransactionManager(object):
         if tx is None:
             return False
 
-        ret = self._handle_tx_result(tx)
+        ret = self.handle_tx_result(tx)
 
         return ret
 
@@ -135,7 +135,7 @@ class TransactionManager(object):
         if tx is None:
             return False
 
-        ret = self._handle_tx_result(tx)
+        ret = self.handle_tx_result(tx)
 
         return ret
 
@@ -157,7 +157,7 @@ class TransactionManager(object):
 
         tx = txbuild.single_sign_transaction(input_private_key, tx)
 
-        ret = self._handle_tx_result(tx)
+        ret = self.handle_tx_result(tx)
 
         return ret
 
@@ -186,13 +186,17 @@ class TransactionManager(object):
         global cross_key_store
         global side_port
         global result
+        global balance_port
 
         if side_node_type is "did":
-            side_port = 10036
-            cross_key_store = self.node_manager.keystore_manager.special_key_stores[5]
+            side_port = 10136
+            cross_key_store = self.node_manager.keystore_manager.cross_did_account
         elif side_node_type is "token":
-            side_port = 10046
-            cross_key_store = self.node_manager.keystore_manager.special_key_stores[5]
+            side_port = 10146
+            cross_key_store = self.node_manager.keystore_manager.cross_token_account
+        elif side_node_type is "neo":
+            side_port = 10156
+            cross_key_store = self.node_manager.keystore_manager.cross_neo_account
 
         if recharge:
             port = self.rpc_port
@@ -201,12 +205,12 @@ class TransactionManager(object):
             port = side_port
             balance_port = self.rpc_port
 
-        balance1 = rpc.get_balance_by_address(cross_key_store.address, balance_port)
+        balance1 = rpc.get_balance_by_address(cross_key_store.address(), balance_port)
 
         ret = self.transfer_cross_chain_asset(
             input_private_key=self.tap_account.private_key(),
             lock_address=self.params.arbiter_params.side_info[side_node_type][constant.SIDE_RECHARGE_ADDRESS],
-            cross_address=cross_key_store.address,
+            cross_address=cross_key_store.address(),
             amount=200 * constant.TO_SELA,
             recharge=recharge,
             port=port
@@ -228,9 +232,9 @@ class TransactionManager(object):
                 break
 
             rpc.discrete_mining(1)
-            time.sleep(1)
+            time.sleep(3)
 
-        balance2 = rpc.get_balance_by_address(cross_key_store.address, balance_port)
+        balance2 = rpc.get_balance_by_address(cross_key_store.address(), balance_port)
         Logger.debug("{} recharge balance1: {}".format(self.tag, balance1))
         Logger.debug("{} recharge balance2: {}".format(self.tag, balance2))
 
@@ -349,7 +353,7 @@ class TransactionManager(object):
             rpc.discrete_mining(1)
         return True
 
-    def _handle_tx_result(self, tx: Transaction, port=rpc.DEFAULT_PORT):
+    def handle_tx_result(self, tx: Transaction, port=rpc.DEFAULT_PORT):
 
         # Logger.debug("{} {}".format(self.tag, tx))
 
