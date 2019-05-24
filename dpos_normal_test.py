@@ -12,9 +12,9 @@ config = {
     "ela": {
         "enable": True,
         "password": "123",
-        "number": 12,
+        "number": 16,
         "crc_number": 4,
-        "later_start_number": 0,
+        "later_start_number": 4,
         "pre_connect_offset": 5,
         "crc_dpos_height": 400,
         "public_dpos_height": 420
@@ -26,7 +26,7 @@ config = {
 
 def test_content():
     controller = Controller(config)
-    # controller.ready_for_dpos()
+    controller.ready_for_dpos()
     h1 = controller.params.ela_params.crc_dpos_height
     h2 = controller.params.ela_params.public_dpos_height
     pre_offset = config["ela"]["pre_connect_offset"]
@@ -59,7 +59,7 @@ def test_content():
             break
 
         if current_height >= h1:
-            controller.show_current_next_info()
+            controller.show_arbiter_info()
 
         if current_height == h1 + 1:
             Logger.info("H1 PASS!")
@@ -85,7 +85,7 @@ def test_content():
             controller.start_later_nodes()
             start_height = current_height
 
-        if start_height != 0 and current_height > start_height + 500:
+        if start_height != 0 and current_height > start_height + 100:
             result = controller.check_nodes_height()
             controller.check_result("check all the nodes height", result)
             break

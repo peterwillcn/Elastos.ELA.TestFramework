@@ -91,6 +91,14 @@ class NodeManager(object):
             self.wait_rpc_ready(self.token_nodes[0].rpc_port)
             self.create_side_info("token")
 
+        if self.params.neo_params.enable:
+            for i in range(len(self.neo_nodes)):
+                self.neo_nodes[i].start()
+                time.sleep(0.2)
+
+            self.wait_rpc_ready(self.neo_nodes[0].rpc_port)
+            self.create_side_info("neo")
+
         if self.params.arbiter_params.enable:
             if self.params.arbiter_params.enable:
                 self._deploy_nodes("arbiter", self.params.arbiter_params.number)
@@ -148,7 +156,7 @@ class NodeManager(object):
                 time.sleep(0.5)
 
         if self.params.neo_params.enable:
-            for i in range(len(self.token_nodes)):
+            for i in range(len(self.neo_nodes)):
                 self.neo_nodes[i].stop()
                 time.sleep(0.5)
 
@@ -259,7 +267,7 @@ class NodeManager(object):
 
     def create_side_info(self, node_type: str):
         self.params.arbiter_params.side_info[node_type] = dict()
-        side_port = util.reset_port(0, node_type, "json_port")
+        side_port = util.reset_port(1, node_type, "json_port")
         Logger.warn("{} side port: {}".format(self.tag, side_port))
         side_chain_genesis_hash = rpc.get_block_hash_by_height(0, side_port)
         Logger.debug("{} {} genesis hash: {}".format(
@@ -286,14 +294,14 @@ class NodeManager(object):
         self.address_name_dict[self.main_miner_address] = "Miner"
 
         for node in self.ela_nodes:
-            self.address_name_dict[node.owner_keystore.address()] = node.name
+            self.address_name_dict[node.owner_account.address()] = node.name
 
     def create_owner_pubkey_name_dict(self):
         for node in self.ela_nodes:
-            self.owner_pubkey_name_dict[node.owner_keystore.public_key()] = node.name
+            self.owner_pubkey_name_dict[node.owner_account.public_key()] = node.name
 
     def create_node_pubkey_name_dict(self):
         for node in self.ela_nodes:
-            self.node_pubkey_name_dict[node.node_keystore.public_key()] = node.name
+            self.node_pubkey_name_dict[node.node_account.public_key()] = node.name
 
 

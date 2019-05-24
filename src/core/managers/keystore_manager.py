@@ -43,6 +43,7 @@ class KeyStoreManager(object):
         self.sub1_accounts = list()
         self.sub2_accounts = list()
         self.sub3_accounts = list()
+        self.sub4_accounts = list()
         self.category_dict = dict()
 
         self._init_category_dict()
@@ -66,14 +67,17 @@ class KeyStoreManager(object):
             time.sleep(1)
             exit(-1)
 
-        self._read_key_stores("special", 13)
-        self._read_key_stores("node", 37)
-        self._read_key_stores("owner", 37)
-        self._read_key_stores("arbiter", 13)
+        self._read_key_stores("special", 10)
+        self._read_key_stores("node", self.params.ela_params.number + 1)
+        self._read_key_stores("owner", self.params.ela_params.number + 1)
         self._read_key_stores("origin", 5)
-        self._read_key_stores("sub1", 13)
-        self._read_key_stores("sub2", 13)
-        self._read_key_stores("sub3", 13)
+
+        if self.params.arbiter_params.enable:
+            self._read_key_stores("arbiter", 13)
+            self._read_key_stores("sub1", 13)
+            self._read_key_stores("sub2", 13)
+            self._read_key_stores("sub3", 13)
+            self._read_key_stores("sub4", 13)
 
     def _init_category_dict(self):
         self.category_dict["special"] = self.special_accounts
@@ -84,6 +88,7 @@ class KeyStoreManager(object):
         self.category_dict["sub1"] = self.sub1_accounts
         self.category_dict["sub2"] = self.sub2_accounts
         self.category_dict["sub3"] = self.sub3_accounts
+        self.category_dict["sub4"] = self.sub4_accounts
 
     def _read_key_stores(self, category: str, num: int):
         dest_path = os.path.join(self.stables_path, category + ".json")
@@ -96,22 +101,22 @@ class KeyStoreManager(object):
 
         for i in range(num):
             private_key_str = content_dict[category + "_" + str(i)]["private_key"]
-            Logger.debug("{} {}_{} private key: {}".format(self.tag, category, i, private_key_str))
             a = Account(private_key_str)
             self.category_dict[category].append(a)
+        Logger.debug("{} load {} keystore on success !".format(self.tag, category))
 
     def _create_keystore_files(self):
         Logger.info("{} begin to generate the key stores".format(self.tag))
 
-        self.key_message_saved_dir = os.path.join(self.params.root_path, "datas/hello")
+        self.key_message_saved_dir = os.path.join(self.params.root_path, "datas/stables")
         if not os.path.exists(self.key_message_saved_dir):
             os.mkdir(self.key_message_saved_dir)
         else:
             os.system("rm -fr " + self.key_message_saved_dir + "/*")
 
-        self._create_keystore("special", 10)
-        self._create_keystore("owner", 10)
-        self._create_keystore("node", 10)
+        self._create_keystore("special", 13)
+        self._create_keystore("owner", 109)
+        self._create_keystore("node", 109)
         self._create_keystore("arbiter", 13)
         self._create_keystore("origin", 5)
 
@@ -129,6 +134,7 @@ class KeyStoreManager(object):
                 first_time = False
 
             a = Account()
+            Logger.debug("{} {}_{} private key: {}".format(self.tag, category, i, a.private_key()))
             k = Keystore(a, self.password)
             self.category_dict[category].append(a)
 
@@ -160,6 +166,16 @@ class KeyStoreManager(object):
                     sub3,
                     "sub3_" + str(i),
                     os.path.join(self.key_message_saved_dir, "sub3.json"),
+                    first_time
+                )
+
+                sub4 = Account()
+                k.add_sub_account(sub4)
+                self.sub3_accounts.append(sub4)
+                util.save_to_json(
+                    sub4,
+                    "sub4_" + str(i),
+                    os.path.join(self.key_message_saved_dir, "sub4.json"),
                     first_time
                 )
 

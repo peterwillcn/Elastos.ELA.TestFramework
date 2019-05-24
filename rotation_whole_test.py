@@ -67,10 +67,10 @@ def test_content():
         global before_rotation_nicknames
 
         if current_height > h1:
-            controller.show_current_next_info()
+            controller.show_current_info()
 
         if vote_height == 0 and current_height > h2 + 12:
-            before_rotation_nicknames = controller.rpc_manager.get_arbiter_names("arbiters")
+            before_rotation_nicknames = controller.get_arbiter_names("arbiters")
             before_rotation_nicknames.sort()
             tap_balance = rpc.get_balance_by_address(tap_keystore.address)
             Logger.info("tap_balance: {}".format(tap_balance))
@@ -84,7 +84,7 @@ def test_content():
             vote_height = current_height
 
         if not check and vote_height > 0 and current_height > vote_height + crc_number * 3 * 2:
-            after_rotation_nicknames = controller.rpc_manager.get_arbiter_names("arbiters")
+            after_rotation_nicknames = controller.get_arbiter_names("arbiters")
             after_rotation_nicknames.sort()
             arbiter_set = set(controller.get_current_arbiter_public_keys())
             Logger.info("before rotation register producers: {}".format(before_rotation_nicknames))

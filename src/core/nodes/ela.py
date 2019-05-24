@@ -37,6 +37,7 @@ class ElaNode(Node):
         self.cwd_dir = cwd_dir
         self.password = self.params.password
         self.rpc_port = self.reset_port(self.index, "ela", "json_port")
+        self.arbiter_node_port = self.reset_port(self.index, "ela", "arbiter_node_port")
         self.err_output = open(os.path.join(self.cwd_dir, "error.log"), 'w')
         self.arbiter_enable = False
         self.process = None
@@ -149,7 +150,7 @@ class ElaNode(Node):
     def gen_crc_config(self):
         crc_arbiters = list()
         for index in range(1, self.params.crc_number + 1):
-            crc_arbiters.append(self.keystore_manager.node_accounts.public_key())
+            crc_arbiters.append(self.keystore_manager.node_accounts[index].public_key())
         return crc_arbiters
 
     def gen_original_arbiter(self):

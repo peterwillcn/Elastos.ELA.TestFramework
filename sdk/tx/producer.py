@@ -40,6 +40,24 @@ class Producer(object):
     def get_payload(self):
         return self.info
 
+    def input_private_key(self):
+        return self.input_private_key
+
+    def input_public_key(self):
+        return self.input_account.public_key()
+
+    def owner_private_key(self):
+        return self.get_payload().owner_account.private_key()
+
+    def owner_public_key(self):
+        return self.get_payload().owner_account.public_key()
+
+    def node_private_key(self):
+        return self.get_payload().node_account.private_key()
+
+    def node_public_key(self):
+        return self.get_payload().node_account.public_key()
+
     def register(self, rpc_port: int):
         tx = txbuild.create_register_transaction(
             input_private_key=self.input_private_key,

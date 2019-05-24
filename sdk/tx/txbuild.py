@@ -77,7 +77,7 @@ def create_transaction(input_private_key: str, output_addresses: list, amount: i
     return tx
 
 
-def create_cross_chain_asset(input_private_key: str, lock_address: str, cross_chain_address: str, amount: int, is_withdraw: bool, rpc_port: int):
+def create_cross_chain_asset(input_private_key: str, lock_address: str, cross_chain_address: str, amount: int, recharge: bool, rpc_port: int):
     if lock_address is None or lock_address is "":
         Logger.error("Invalid lock address")
         return None
@@ -122,10 +122,10 @@ def create_cross_chain_asset(input_private_key: str, lock_address: str, cross_ch
     cross_chain_asset.cross_chain_amounts = [amount - 10000]
 
     tx = Transaction()
-    if is_withdraw:
-        tx.version = Transaction.TX_VERSION_DEFAULT
-    else:
+    if recharge:
         tx.version = Transaction.TX_VERSION_09
+    else:
+        tx.version = Transaction.TX_VERSION_DEFAULT
 
     Logger.debug("transaction version {}".format(tx.version))
     tx.tx_type = Transaction.TRANSFER_CROSS_CHAIN_ASSET
