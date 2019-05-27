@@ -54,7 +54,6 @@ class ArbiterNode(Node):
         except subprocess.SubprocessError as e:
             Logger.error("{} Unable to stop ela{}, error: {}".format(self.tag, self.index, e))
         self.running = False
-        Logger.debug("{} arbiter{} has stopped on success!".format(self.tag, self.index))
 
     def reset_config(self):
 

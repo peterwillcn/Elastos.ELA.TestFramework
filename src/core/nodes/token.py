@@ -51,7 +51,6 @@ class TokenNode(Node):
         except subprocess.SubprocessError as e:
             Logger.error("{} Unable to stop token{}, error: {}".format(self.tag, self.index, e))
         self.running = False
-        Logger.debug("{} token{} has stopped on success!".format(self.tag, self.index))
 
     def reset_config(self):
         Node.reset_config_common(self, self.index, "token", self.params.number)

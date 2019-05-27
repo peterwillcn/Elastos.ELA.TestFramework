@@ -161,6 +161,8 @@ class Controller(object):
     def terminate_all_process(self):
         Logger.info("{} terminal all the process and exit...".format(self.tag))
         self.node_manager.stop_nodes()
+        time.sleep(1)
+        os.system("sh {}/shell/killall.sh".format(self.root_path))
 
     def start_later_nodes(self):
         for node in self.later_nodes:

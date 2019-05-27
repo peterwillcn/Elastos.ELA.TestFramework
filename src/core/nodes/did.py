@@ -51,7 +51,6 @@ class DidNode(Node):
         except subprocess.SubprocessError as e:
             Logger.error("{} Unable to stop ela{}, error: {}".format(self.tag, self.index, e))
         self.running = False
-        Logger.debug("{} did{} has stopped on success!".format(self.tag, self.index))
 
     def reset_config(self):
         Node.reset_config_common(self, self.index, "did", self.params.number)

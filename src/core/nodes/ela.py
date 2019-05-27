@@ -144,7 +144,6 @@ class ElaNode(Node):
         except subprocess.SubprocessError as e:
             Logger.error("{} Unable to stop ela{}, error: {}".format(self.tag, self.index, e))
         self.running = False
-        Logger.debug("{} ela{} has stopped on success!".format(self.tag, self.index))
 
     def gen_crc_config(self):
         crc_arbiters = list()
