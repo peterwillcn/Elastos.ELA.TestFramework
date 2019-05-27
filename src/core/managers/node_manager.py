@@ -288,6 +288,8 @@ class NodeManager(object):
 
         self.params.arbiter_params.side_info[node_type][constant.SIDE_GENESIS_ADDRESS] = side_chain_genesis_hash
         self.params.arbiter_params.side_info[node_type][constant.SIDE_RECHARGE_ADDRESS] = recharge_address
+        self.params.arbiter_params.side_info[node_type][constant.SIDE_WITHDRAW_ADDRESS] = \
+            self.params.arbiter_params.withdraw_address
 
     def create_address_name_dict(self):
         self.address_name_dict[self.foundation_address] = "Foundation"

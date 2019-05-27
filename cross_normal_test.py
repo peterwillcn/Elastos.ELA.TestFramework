@@ -37,7 +37,7 @@ config = {
         "instant_block": True
     },
     "neo": {
-        "enable": False,
+        "enable": True,
         "number": 4,
         "instant_block": True
     },
@@ -166,6 +166,7 @@ def test_content():
 
     controller.check_result(test_case, result)
     controller.terminate_all_process()
+
 
 
 if __name__ == '__main__':

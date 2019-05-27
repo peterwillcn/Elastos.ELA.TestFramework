@@ -47,6 +47,7 @@ class KeyStoreManager(object):
         self.category_dict = dict()
 
         self._init_category_dict()
+
         self._init_key_stores()
 
         self.foundation_account = self.special_accounts[self.INDEX_FOUNDATION]
@@ -59,6 +60,7 @@ class KeyStoreManager(object):
         self.cross_eth_account = self.special_accounts[self.INDEX_CROSS_ETH]
 
         # self._create_keystore_files()
+        # exit(0)
 
     def _init_key_stores(self):
         self.stables_path = os.path.join(self.params.root_path, "datas/stables")
@@ -133,7 +135,10 @@ class KeyStoreManager(object):
             else:
                 first_time = False
 
-            a = Account()
+            if category == "arbiter":
+                a = Account(self.node_accounts[i].private_key())
+            else:
+                a = Account()
             Logger.debug("{} {}_{} private key: {}".format(self.tag, category, i, a.private_key()))
             k = Keystore(a, self.password)
             self.category_dict[category].append(a)

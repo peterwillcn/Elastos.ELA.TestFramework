@@ -183,41 +183,50 @@ class TransactionManager(object):
         if side_node_type is None or side_node_type is "":
             return False
 
-        global cross_key_store
+        global cross_key_account
         global side_port
         global result
         global balance_port
 
         if side_node_type is "did":
             side_port = 10136
-            cross_key_store = self.node_manager.keystore_manager.cross_did_account
+            cross_key_account = self.node_manager.keystore_manager.cross_did_account
         elif side_node_type is "token":
             side_port = 10146
-            cross_key_store = self.node_manager.keystore_manager.cross_token_account
+            cross_key_account = self.node_manager.keystore_manager.cross_token_account
         elif side_node_type is "neo":
             side_port = 10156
-            cross_key_store = self.node_manager.keystore_manager.cross_neo_account
+            cross_key_account = self.node_manager.keystore_manager.cross_neo_account
 
         if recharge:
             port = self.rpc_port
             balance_port = side_port
+            input_private_key = self.tap_account.private_key()
+            lock_address = self.params.arbiter_params.side_info[side_node_type][constant.SIDE_RECHARGE_ADDRESS]
+            cross_address = cross_key_account.address()
+            amount = 200 * constant.TO_SELA
+
         else:
             port = side_port
             balance_port = self.rpc_port
+            input_private_key = cross_key_account.private_key()
+            lock_address = self.params.arbiter_params.side_info[side_node_type][constant.SIDE_WITHDRAW_ADDRESS]
+            cross_address = self.tap_account.address()
+            amount = 100 * constant.TO_SELA
 
-        balance1 = rpc.get_balance_by_address(cross_key_store.address(), balance_port)
+        balance1 = rpc.get_balance_by_address(cross_address, balance_port)
 
         ret = self.transfer_cross_chain_asset(
-            input_private_key=self.tap_account.private_key(),
-            lock_address=self.params.arbiter_params.side_info[side_node_type][constant.SIDE_RECHARGE_ADDRESS],
-            cross_address=cross_key_store.address(),
-            amount=200 * constant.TO_SELA,
+            input_private_key=input_private_key,
+            lock_address=lock_address,
+            cross_address=cross_address,
+            amount=amount,
             recharge=recharge,
             port=port
         )
 
         if not ret:
-            Logger.debug("{} transfer cross chain asset failed".format(self.tag))
+            Logger.error("{} transfer cross chain asset failed".format(self.tag))
             return False
 
         side_height_begin = rpc.get_block_count(side_port)
@@ -234,11 +243,11 @@ class TransactionManager(object):
             rpc.discrete_mining(1)
             time.sleep(3)
 
-        balance2 = rpc.get_balance_by_address(cross_key_store.address(), balance_port)
+        balance2 = rpc.get_balance_by_address(cross_address, balance_port)
         Logger.debug("{} recharge balance1: {}".format(self.tag, balance1))
         Logger.debug("{} recharge balance2: {}".format(self.tag, balance2))
 
-        result = (float(balance2) - float(balance1)) * constant.TO_SELA > float(200 * constant.TO_SELA - 3 * 10000)
+        result = (float(balance2) - float(balance1)) * constant.TO_SELA > float(amount - 3 * 10000)
         Logger.debug("{} recharge result: {}".format(self.tag, result))
 
         return result
