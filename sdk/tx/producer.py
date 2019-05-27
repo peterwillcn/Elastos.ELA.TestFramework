@@ -34,7 +34,7 @@ class Producer(object):
             location=location,
             net_address=net_address
         )
-        Logger.debug("{} generate register producer payload: {}".format(self.tag, info))
+        Logger.debug("{} generate register producer{} payload".format(self.tag, nick_name))
         return info
 
     def get_payload(self):

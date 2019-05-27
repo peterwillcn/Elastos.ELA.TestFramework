@@ -108,8 +108,6 @@ class DidNode(Node):
     def gen_spv_permanent_list(self):
         spv_seed_list = list()
         for i in range(self.params.number + 1):
-            if i == 0:
-                continue
             spv_seed_list.append("127.0.0.1:" + str(self.reset_port(
                 index=i,
                 node_type="ela",

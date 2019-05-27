@@ -22,13 +22,13 @@ config = {
     "side": True,
     "arbiter": {
         "enable": True,
-        "number": 5,
+        "number": 4,
         "pow_chain": True,
         "print_level": 0
     },
     "did": {
-        "enable": False,
-        "number": 5,
+        "enable": True,
+        "number": 4,
         "instant_block": True
     },
     "token": {
@@ -37,8 +37,8 @@ config = {
         "instant_block": True
     },
     "neo": {
-        "enable": True,
-        "number": 5,
+        "enable": False,
+        "number": 4,
         "instant_block": True
     },
     "times": 1
