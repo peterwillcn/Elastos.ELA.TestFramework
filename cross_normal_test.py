@@ -25,7 +25,7 @@ config = {
         "print_level": 0
     },
     "did": {
-        "enable": False,
+        "enable": True,
         "number": 5,
         "instant_block": True
     },
@@ -35,7 +35,7 @@ config = {
         "instant_block": True
     },
     "neo": {
-        "enable": True,
+        "enable": False,
         "number": 5,
         "instant_block": True
     },

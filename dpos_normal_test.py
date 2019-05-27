@@ -12,8 +12,8 @@ config = {
     "ela": {
         "enable": True,
         "password": "123",
-        "number": 36,
-        "crc_number": 12,
+        "number": 12,
+        "crc_number": 4,
         "later_start_number": 0,
         "pre_connect_offset": 5,
         "crc_dpos_height": 400,
@@ -85,7 +85,7 @@ def test_content():
             controller.start_later_nodes()
             start_height = current_height
 
-        if start_height != 0 and current_height > start_height + 500:
+        if start_height != 0 and current_height > start_height + 20:
             result = controller.check_nodes_height()
             controller.check_result("check all the nodes height", result)
             break
