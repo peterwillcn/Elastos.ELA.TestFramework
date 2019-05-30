@@ -6,25 +6,25 @@
 
 from decimal import Decimal
 
-from sdk.common import util, serialize
-from sdk.common import rpc
-from sdk.common.log import Logger
+from elasdk.common import util, serialize
+from elasdk.common import rpc
+from elasdk.common.log import Logger
 
-from sdk.tx.input import Input
-from sdk.tx.output import Output
-from sdk.tx.program import Program
-from sdk.tx.vote_info import VoteInfo
-from sdk.tx.attribute import Attribute
-from sdk.tx.transaction import Transaction
-from sdk.tx.vote_content import VoteContent
-from sdk.tx.output_payload import OutputPayload
-from sdk.tx.payload.payload import Payload
-from sdk.tx.payload.producer_info import ProducerInfo
-from sdk.tx.payload.process_producer import ProcessProducer
-from sdk.tx.payload.cross_chain_asset import TransferCrossChainAsset
+from elasdk.tx.input import Input
+from elasdk.tx.output import Output
+from elasdk.tx.program import Program
+from elasdk.tx.vote_info import VoteInfo
+from elasdk.tx.attribute import Attribute
+from elasdk.tx.transaction import Transaction
+from elasdk.tx.vote_content import VoteContent
+from elasdk.tx.output_payload import OutputPayload
+from elasdk.tx.payload.payload import Payload
+from elasdk.tx.payload.producer_info import ProducerInfo
+from elasdk.tx.payload.process_producer import ProcessProducer
+from elasdk.tx.payload.cross_chain_asset import TransferCrossChainAsset
 
-from sdk.wallet import keytool
-from sdk.wallet.account import Account
+from elasdk.wallet import keytool
+from elasdk.wallet.account import Account
 
 
 def create_transaction(input_private_key: str, output_addresses: list, amount: int, rpc_port: int):
@@ -318,9 +318,27 @@ def create_redeem_transaction(payload: ProducerInfo, output_address: str, amount
     return tx
 
 
-def create_activate_producer(payload: ProducerInfo):
-    pub_key = bytes.fromhex(payload.node_account.public_key())
-    pri_key = bytes.fromhex(payload.node_account.private_key())
+# def create_activate_producer(payload: ProducerInfo):
+#     pub_key = bytes.fromhex(payload.node_account.public_key())
+#     pri_key = bytes.fromhex(payload.node_account.private_key())
+#     activate_producer = ProcessProducer(pub_key, pri_key)
+#
+#     tx = Transaction()
+#     tx.version = Transaction.TX_VERSION_09
+#     tx.tx_type = Transaction.ACTIVATE_PRODUCER
+#     tx.payload = activate_producer
+#     tx.attributes = []
+#     tx.inputs = []
+#     tx.outputs = []
+#     tx.programs = list()
+#     tx.lock_time = 0
+#
+#     return tx
+
+
+def create_active_transaction(node_private_key: str, node_public_key: str):
+    pub_key = bytes.fromhex(node_public_key)
+    pri_key = bytes.fromhex(node_private_key)
     activate_producer = ProcessProducer(pub_key, pri_key)
 
     tx = Transaction()
@@ -336,15 +354,15 @@ def create_activate_producer(payload: ProducerInfo):
     return tx
 
 
-def create_vote_transaction(input_private_key: str, cancadites_list: list, amount: int, rpc_port: int):
+def create_vote_transaction(input_private_key: str, candidates_list: list, amount: int, rpc_port: int):
     # check output
-    if cancadites_list is None or len(cancadites_list) == 0:
+    if candidates_list is None or len(candidates_list) == 0:
         Logger.error("Invalid output addresses")
         return None
 
     # create outputs
     account = Account(input_private_key)
-    outputs = create_vote_output(account.address(), amount, cancadites_list)
+    outputs = create_vote_output(account.address(), amount, candidates_list)
 
     # create inputs
     total_amount = amount + util.TX_FEE
@@ -392,11 +410,11 @@ def create_normal_inputs(address: str, total_amount: int, rpc_port: int):
     else:
         response = rpc.get_utxos_by_amount(address, total_amount_format, rpc_port)
     if not response or isinstance(response, dict):
-        Logger.debug("get utxos return error: {}".format(response))
+        Logger.error("get utxos return error: {}".format(response))
         return None, None
     utxos = response
 
-    Logger.debug("utxos: {}".format(utxos))
+    # Logger.debug("utxos: {}".format(utxos))
     inputs = list()
     change_outputs = list()
 

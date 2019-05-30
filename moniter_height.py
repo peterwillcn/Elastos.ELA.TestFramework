@@ -12,7 +12,7 @@ from src.tools.log import Logger
 
 
 span_time = 2
-crc_number = 4
+crc_number = 2
 prompt = '> '
 
 

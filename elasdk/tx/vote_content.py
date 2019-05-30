@@ -5,8 +5,8 @@
 
 import struct
 
-from sdk.common import util, serialize
-from sdk.common.log import Logger
+from elasdk.common import util, serialize
+from elasdk.common.log import Logger
 
 
 class VoteContent(object):
@@ -15,7 +15,6 @@ class VoteContent(object):
     TYPE_CRC = 0x01
 
     def __init__(self, vote_type: int, candidates: list):
-        self.tag = util.tag_from_path(__file__, VoteContent.__name__)
         self.vote_type = vote_type
         self.candidates = candidates
 

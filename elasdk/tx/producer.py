@@ -3,19 +3,18 @@
 # date: 2019/4/3 4:49 PM
 # author: liteng
 
-from sdk.common import util
-from sdk.common.log import Logger
+from elasdk.common import util
+from elasdk.common.log import Logger
 
-from sdk.tx.payload.producer_info import ProducerInfo
-from sdk.tx import txbuild
-from sdk.wallet.account import Account
+from elasdk.tx.payload.producer_info import ProducerInfo
+from elasdk.tx import txbuild
+from elasdk.wallet.account import Account
 
 
 class Producer(object):
 
     def __init__(self, input_private_key: str, owner_private_key: str, node_private_key: str,
                  nick_name: str, url: str, location: int, net_address: str):
-        self.tag = util.tag_from_path(__file__, self.__class__.__name__)
         self.input_private_key = input_private_key
         self.input_account = Account(input_private_key)
         self.utxo_value = 0
@@ -34,7 +33,7 @@ class Producer(object):
             location=location,
             net_address=net_address
         )
-        Logger.debug("{} generate register producer{} payload".format(self.tag, nick_name))
+        Logger.debug("generate register producer{} payload".format(nick_name))
         return info
 
     def get_payload(self):
@@ -120,7 +119,7 @@ class Producer(object):
     def activate(self):
 
         # note activate producer transaction needn't to sign the whole transaction
-        tx = txbuild.create_activate_producer(self.get_payload())
+        tx = txbuild.create_active_transaction(self.node_private_key(), self.node_public_key())
 
         if tx is None:
             return None

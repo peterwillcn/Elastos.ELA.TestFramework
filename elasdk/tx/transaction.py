@@ -5,10 +5,10 @@
 
 import struct
 
-from sdk.common import serialize
-from sdk.common.log import Logger
+from elasdk.common import serialize
+from elasdk.common.log import Logger
 
-from sdk.wallet import keytool
+from elasdk.wallet import keytool
 
 
 class Transaction(object):

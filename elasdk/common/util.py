@@ -9,8 +9,9 @@
 import os
 import json
 import struct
-from src.tools.log import Logger
-from src.tools import constant
+from elasdk.common.log import Logger
+
+PROJECT_NAME = "Elastos.ELA.TestFramework"
 
 node_type_dict = {
     "ela": 10,
@@ -47,6 +48,23 @@ def get_go_path():
     return go_path
 
 
+def tag_from_path(path: str, class_name: str):
+    elements = path.split("/")
+    index = elements.index(PROJECT_NAME)
+    tag = "["
+    for i in range(index + 1, len(elements)):
+        if i == len(elements) - 1:
+            tag += elements[i].split(".")[0]
+            if class_name is not "":
+                tag += "."
+                tag += class_name
+            break
+        tag += elements[i]
+        tag += "."
+    tag += "]"
+    return tag
+
+
 def arbiter_public_keys(key_stores):
     public_keys = []
     if len(key_stores) != 5:
@@ -66,23 +84,6 @@ def assert_equal(send_resp, jar_txid):
     else:
         result = True
     return result
-
-
-def tag_from_path(path: str, class_name: str):
-    elements = path.split("/")
-    index = elements.index(constant.PROJECT_NAME)
-    tag = "["
-    for i in range(index + 1, len(elements)):
-        if i == len(elements) - 1:
-            tag += elements[i].split(".")[0]
-            if class_name is not "":
-                tag += "."
-                tag += class_name
-            break
-        tag += elements[i]
-        tag += "."
-    tag += "]"
-    return tag
 
 
 def read_config_file(config_file_path):

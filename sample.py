@@ -5,13 +5,28 @@
 
 import random
 from decimal import Decimal
+from elasdk.wallet.account import Account
+from elasdk.wallet.keystore import Keystore
+
+
+def hello():
+    return "hello", "world"
+
 
 if __name__ == '__main__':
 
-       a = 230089979.0
-       b = a / 100000000
-       print("a = ", a)
-       print("b = ", b)
+    a = Account()
+    data = str.encode("hello")
 
-       c = round(b, 7)
-       print("c = ", c)
+    k = Keystore(a, "123")
+    print(k)
+    k.save_to_file("./")
+
+    k2 = Keystore("./keystore.dat", "12")
+
+
+
+
+
+
+

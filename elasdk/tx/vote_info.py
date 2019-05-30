@@ -5,17 +5,16 @@
 
 import struct
 
-from sdk.common import util, serialize
-from sdk.common.log import Logger
+from elasdk.common import util, serialize
+from elasdk.common.log import Logger
 
-from sdk.tx.vote_content import VoteContent
-from sdk.tx.output_payload import OutputPayload
+from elasdk.tx.vote_content import VoteContent
+from elasdk.tx.output_payload import OutputPayload
 
 
 class VoteInfo(OutputPayload):
 
     def __init__(self, version: int, vote_contents: list):
-        self.tag = util.tag_from_path(__file__, VoteInfo.__name__)
         self.version = version
         self.contents = vote_contents
 
@@ -43,13 +42,13 @@ class VoteInfo(OutputPayload):
 
     def validate(self):
         if self.version != 0:
-            Logger.error("{} invalid vote version".format(self.tag))
+            Logger.error("invalid vote version")
             return False
 
         type_list = list()
         for content in self.contents:
             if content.vote_type in type_list:
-                Logger.error("{} duplicate vote type".format(self.tag))
+                Logger.error("{} duplicate vote type")
                 return False
             type_list.append(content.vote_type)
 
@@ -57,13 +56,13 @@ class VoteInfo(OutputPayload):
                 Logger.error("{} invalid vote type")
 
             if len(content.candidates) == 0 or len(content.candidates) > 36:
-                Logger.error("{} invalid vote candidates".format(self.tag))
+                Logger.error("{} invalid vote candidates")
                 return False
 
             candidates_list = list()
             for candidate in content.candidates:
                 if candidate in candidates_list:
-                    Logger.error("{} duplicate candidate".format(self.tag))
+                    Logger.error("{} duplicate candidate")
                     return False
                 candidates_list.append(candidate)
 

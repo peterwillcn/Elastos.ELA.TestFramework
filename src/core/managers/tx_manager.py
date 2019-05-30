@@ -7,8 +7,8 @@
 import time
 
 
-from sdk.tx import txbuild
-from sdk.tx.producer import Producer
+from elasdk.tx import txbuild
+from elasdk.tx.producer import Producer
 from src.core.tx.transaction import Transaction
 from src.core.services import rpc
 from src.core.nodes.ela import ElaNode
@@ -147,7 +147,7 @@ class TransactionManager(object):
 
         tx = txbuild.create_vote_transaction(
             input_private_key=input_private_key,
-            cancadites_list=candidates_list,
+            candidates_list=candidates_list,
             amount=amount,
             rpc_port=self.rpc_port
         )

@@ -7,8 +7,8 @@
 import time
 
 from src.tools.log import Logger
-from sdk.wallet.account import Account
-from sdk.tx.producer import Producer
+from elasdk.wallet.account import Account
+from elasdk.tx.producer import Producer
 from src.control.control import Controller
 
 config = {

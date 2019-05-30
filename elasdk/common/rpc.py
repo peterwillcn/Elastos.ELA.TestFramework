@@ -3,7 +3,7 @@
 # date: 2019/5/4 2:47 PM
 # author: liteng
 
-from src.core.services import net
+from elasdk.common import net
 
 DEFAULT_HOST = "http://127.0.0.1"
 DEFAULT_PORT = 10016

@@ -5,11 +5,11 @@
 
 import struct
 
-from sdk.common import serialize
+from elasdk.common import serialize
 
-from sdk.tx.payload.payload import Payload
-from sdk.wallet import keytool
-from sdk.wallet.account import Account
+from elasdk.tx.payload.payload import Payload
+from elasdk.wallet import keytool
+from elasdk.wallet.account import Account
 
 
 class ProducerInfo(Payload):

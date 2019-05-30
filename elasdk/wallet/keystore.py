@@ -3,10 +3,14 @@
 # date: 2019/5/22 11:34 AM
 # author: liteng
 
+import os
 import json
-from sdk.wallet import keytool
-from sdk.wallet.account import Account
-from sdk.common.log import Logger
+
+from elasdk.wallet import keytool
+from elasdk.wallet.account import Account
+
+from elasdk.common.log import Logger
+from elasdk.common import util
 
 
 class Keystore(object):
@@ -15,9 +19,10 @@ class Keystore(object):
     SUB_ACCOUNT = "sub-account"
 
     def __init__(self, arg, password="123"):
-        self.password = password
-        self._password_double_hash = keytool.sha256_hash(str.encode(self.password), 2)
-        self._password_thrice_hash = keytool.sha256_hash(str.encode(self.password), 3)
+        self._password = password
+        self._valid = False
+        self._password_double_hash = keytool.sha256_hash(str.encode(self._password), 2)
+        self._password_thrice_hash = keytool.sha256_hash(str.encode(self._password), 3)
         self._accounts_data_list = list()
         self._sub_accounts_list = list()
 
@@ -28,8 +33,10 @@ class Keystore(object):
             self._master_key_encrypted = keytool.aes_encrypt(self._master_key, self._password_double_hash, self._iv)
             self._accounts_data_list.append(self._create_account_data(self._main_account, self.MAIN_ACCOUNT))
 
-        elif isinstance(arg, dict):
-            self._store_dict = arg
+        elif isinstance(arg, str):
+            self._store_dict = util.read_config_file(arg)
+            if not self._check_password():
+                return
             if "IV" not in self._store_dict.keys():
                 return
             self._iv = bytes.fromhex(self._get_iv())
@@ -38,6 +45,15 @@ class Keystore(object):
             self._accounts_data_list = self._get_accounts_data()
             self._main_account = self._get_account(0)
             self._sub_accounts_list = self._get_sub_accounts()
+
+        self._valid = True
+
+    def _check_password(self):
+        ret = keytool.sha256_hash(str.encode(self._password), 3).hex() == self._get_password_hash()
+        if not ret:
+            Logger.error("Invalid password!")
+
+        return ret
 
     def _create_account_data(self, account: Account, account_type: str):
         private_key_encrypted = keytool.encrypt_private_key(
@@ -63,6 +79,13 @@ class Keystore(object):
 
         return self._store_dict["IV"]
 
+    def _get_password_hash(self):
+        if "PasswordHash" not in self._store_dict.keys():
+            Logger.error("keystore_dat dose not contain key PasswordHash")
+            return None
+
+        return self._store_dict["PasswordHash"]
+
     def _get_master_key_encrypted(self):
         if "MasterKey" not in self._store_dict.keys():
             Logger.error("keystore_dat dose not contain key MasterKey")
@@ -71,7 +94,7 @@ class Keystore(object):
         return self._store_dict["MasterKey"]
 
     def _get_master_key(self):
-        password_twice_hash = keytool.sha256_hash(str.encode(self.password), 2)
+        password_twice_hash = keytool.sha256_hash(str.encode(self._password), 2)
         encrypt_master_key = self._get_master_key_encrypted()
         if encrypt_master_key is None:
             Logger.error("encrypt master key is None")
@@ -112,17 +135,41 @@ class Keystore(object):
         return subs
 
     def add_sub_account(self, sub_account: Account):
+        if not self._valid:
+            Logger.error("Invalid keystore!")
+            return
         self._sub_accounts_list.append(sub_account)
         sub_account_data = self._create_account_data(sub_account, self.SUB_ACCOUNT)
         self._accounts_data_list.append(sub_account_data)
 
     def main_account(self):
+        if not self._valid:
+            Logger.error("Invalid keystore!")
+            return None
         return self._main_account
 
     def sub_accounts(self):
+        if not self._valid:
+            Logger.error("Invalid keystore!")
+            return None
         return self._sub_accounts_list
 
+    def password(self):
+        if not self._valid:
+            Logger.error("Invalid keystore!")
+            return ""
+        return self._password
+
+    def export_private_key(self):
+        if not self._valid:
+            Logger.error("Invalid keystore!")
+            return None
+        return self.main_account().private_key()
+
     def key_store_dict(self):
+        if not self._valid:
+            Logger.error("Invalid keystore!")
+            return None
         store_dict = {
             "Version": "1.0.0",
             "PasswordHash": self._password_thrice_hash.hex(),
@@ -133,10 +180,26 @@ class Keystore(object):
 
         return store_dict
 
-    def export_private_key(self):
-        return self.main_account().private_key()
+    def save_to_file(self, dest_dir_path: str):
+        if not self._valid:
+            Logger.error("Invalid keystore!")
+            return False
+        if dest_dir_path is "":
+            Logger.debug("Invalid parameter!")
+            return False
+
+        if not os.path.exists(dest_dir_path):
+            os.makedirs(dest_dir_path)
+
+        file_path = os.path.join(dest_dir_path, "keystore.dat")
+        util.write_config_file(self.key_store_dict(), file_path)
+
+        return True
 
     def __repr__(self):
+        if not self._valid:
+            Logger.error("Invalid keystore!")
+            return ""
         return json.dumps(self.key_store_dict(), indent=4)
 
 

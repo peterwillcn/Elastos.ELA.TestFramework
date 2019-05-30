@@ -5,10 +5,10 @@
 
 import struct
 
-from sdk.common.log import Logger
+from elasdk.common.log import Logger
 
-from sdk.common import serialize
-from sdk.tx.payload.payload import Payload
+from elasdk.common import serialize
+from elasdk.tx.payload.payload import Payload
 
 
 class TransferCrossChainAsset(Payload):

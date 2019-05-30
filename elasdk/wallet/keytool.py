@@ -200,3 +200,22 @@ def ecdsa_sign(private_key: bytes, data: bytes):
     b = r + s
 
     return b
+
+
+def ecdsa_verify(private_key: bytes, data: bytes, signature: bytes):
+
+    if len(signature) != 64:
+        return False
+
+    r = int.from_bytes(signature[:32], byteorder="big", signed=False)
+    s = int.from_bytes(signature[32:], byteorder="big", signed=False)
+    data_hash = sha256_hash(data, 1)
+    g = ecdsa.generator_256
+
+    secret = int.from_bytes(private_key, byteorder="big", signed=False)
+    digest = int.from_bytes(data_hash, byteorder="big", signed=False)
+    pub_key = ecdsa.Public_key(g, g * secret)
+    sig = ecdsa.Signature(r, s)
+    b = pub_key.verifies(digest, sig)
+
+    return b

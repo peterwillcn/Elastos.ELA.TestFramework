@@ -11,9 +11,9 @@ from src.tools.log import Logger
 
 from src.core.parameters.params import Parameter
 
-from sdk.wallet.account import Account
-from sdk.wallet.keystore import Keystore
-from sdk.common import util
+from elasdk.wallet.account import Account
+from elasdk.wallet.keystore import Keystore
+from elasdk.common import util
 
 
 class KeyStoreManager(object):

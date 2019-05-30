@@ -4,7 +4,7 @@
 # author: liteng
 
 import json
-from sdk.wallet import keytool
+from elasdk.wallet import keytool
 
 
 class Account(object):
@@ -17,6 +17,7 @@ class Account(object):
         self._program_hash = None
         self._address = None
         self._create_account()
+        self.signature = None
 
     def _create_account(self):
         if len(self._private_key) == 0:
@@ -56,11 +57,14 @@ class Account(object):
     def sign(self, data: bytes):
         return keytool.ecdsa_sign(self._private_key, data)
 
+    def verify(self, data: bytes, signature: bytes):
+        return keytool.ecdsa_verify(self._private_key, data, signature)
+
     def to_dict(self):
         data = {
             "private_key": self.private_key(),
             "public_key": self.public_key(),
-            "sign_script": self.redeem_script(),
+            "redeem_script": self.redeem_script(),
             "program_hash": self.program_hash(),
             "address": self.address()
         }

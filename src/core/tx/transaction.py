@@ -220,7 +220,7 @@ if __name__ == '__main__':
     tx = Transaction()
     tx.version = Transaction.TX_VERSION_09
     tx.tx_type = Transaction.TRANSFER_ASSET
-    tx.payload = Payload()
+    tx.payload = Payload(0)
     tx.attributes = attributes
     tx.inputs = inputs
     tx.outputs = outputs

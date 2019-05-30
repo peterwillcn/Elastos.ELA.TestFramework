@@ -5,7 +5,7 @@
 
 import struct
 
-from sdk.common import util
+from elasdk.common import util
 
 
 class Output(object):
@@ -21,7 +21,7 @@ class Output(object):
         self.value = value
         self.output_lock = output_lock
         self.program_hash = program_hash
-        self.type = output_type
+        self.output_type = output_type
         self.output_payload = output_payload
 
     def deserialize(self, f):
@@ -35,19 +35,19 @@ class Output(object):
         r += self.program_hash
 
         if tx_version >= 0x09:
-            r += struct.pack("<B", self.type)
+            r += struct.pack("<B", self.output_type)
             if self.output_payload.serialize() is not None:
                 r += self.output_payload.serialize()
         return r
 
     def __repr__(self):
         return "Output {" + "\n\t" \
-                + "asset_id: " + self.asset_id.hex() + "\n\t" \
-                + "value: " + str(self.value) + "\n\t" \
-                + "output_lock: " + str(self.output_lock) + "\n\t" \
-                + "program_hash: " + self.program_hash.hex() + "\n\t" \
-                + "type: " + str(self.type) + "\n\t" \
-                + "output_payload: {}".format(self.output_payload) + "\n" \
-                + "}"
+               + "asset_id: " + self.asset_id.hex() + "\n\t" \
+               + "value: " + str(self.value) + "\n\t" \
+               + "output_lock: " + str(self.output_lock) + "\n\t" \
+               + "program_hash: " + self.program_hash.hex() + "\n\t" \
+               + "output_type: " + str(self.output_type) + "\n\t" \
+               + "output_payload: {}".format(self.output_payload) + "\n" \
+               + "}"
 
 

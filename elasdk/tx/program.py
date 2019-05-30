@@ -3,7 +3,7 @@
 # date: 2019/5/2 11:12 AM
 # author: liteng
 
-from sdk.common import serialize
+from elasdk.common import serialize
 
 
 class Program(object):
