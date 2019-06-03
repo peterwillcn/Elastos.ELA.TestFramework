@@ -70,13 +70,13 @@ def test_content():
                 node.start()
                 restart = True
 
-        if stop_height != 0 and current_height > stop_height + 36:
+        if stop_height != 0 and current_height > stop_height + 100:
             arbiters_list = rpc.get_arbiters_info()["arbiters"]
             result = set(controller.node_manager.normal_dpos_pubkeys) == set(arbiters_list)
             Logger.debug("normal arbiters dpos result: {}".format(result))
             controller.check_result("normal arbiters consensus", result)
 
-        if stop_height != 0 and current_height > stop_height + 60:
+        if stop_height != 0 and current_height > stop_height + 20:
             controller.start_later_nodes()
             result = controller.check_nodes_height()
             controller.check_result("check all the nodes height", result)

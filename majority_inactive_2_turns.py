@@ -41,7 +41,9 @@ def test_content():
 
     # prepare inactive producers [9, 10, 11, 12, 13, 14, 15, 16]
     inactive_producers = controller.tx_manager.register_producers_list[crc_number: crc_number * 3]
-    inactive_nodes = controller.node_manager.ela_nodes[crc_number + 1 + crc_number: crc_number + 1 + crc_number * 3]
+    inactive_nodes = list()
+    for producer in inactive_producers:
+        inactive_nodes.append(producer.node)
     # prepare replace candidate [17, 18, 19, 20]
     replace_cadidates = controller.tx_manager.register_producers_list[crc_number * 3: crc_number * 4]
 
@@ -119,7 +121,7 @@ def test_content():
 
             # second, activate producers
             for producer in activate_producers:
-                result = controller.tx_manager.activate_producer(producer)
+                result = controller.tx_manager.active_producer(producer)
                 controller.check_result("activate producer {}".format(producer.info.nickname), result)
 
             controller.start_later_nodes()

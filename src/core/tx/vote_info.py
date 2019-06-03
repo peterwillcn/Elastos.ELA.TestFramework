@@ -5,11 +5,11 @@
 
 import struct
 
-from elasdk.common import util, serialize
-from elasdk.common.log import Logger
+from src.tools import serialize
+from src.tools.log import Logger
 
-from elasdk.tx.vote_content import VoteContent
-from elasdk.tx.output_payload import OutputPayload
+from src.core.tx.vote_content import VoteContent
+from src.core.tx.output_payload import OutputPayload
 
 
 class VoteInfo(OutputPayload):

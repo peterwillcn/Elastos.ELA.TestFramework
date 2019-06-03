@@ -6,11 +6,11 @@
 import os
 import json
 
-from elasdk.wallet import keytool
-from elasdk.wallet.account import Account
+from src.core.wallet import keytool
+from src.core.wallet.account import Account
 
-from elasdk.common.log import Logger
-from elasdk.common import util
+from src.tools.log import Logger
+from src.tools import util
 
 
 class Keystore(object):

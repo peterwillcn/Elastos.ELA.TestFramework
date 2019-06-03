@@ -5,8 +5,8 @@
 
 import struct
 
-from elasdk.common import util, serialize
-from elasdk.common.log import Logger
+from src.tools import serialize
+from src.tools.log import Logger
 
 
 class VoteContent(object):

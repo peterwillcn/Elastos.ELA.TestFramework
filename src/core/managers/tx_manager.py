@@ -7,8 +7,8 @@
 import time
 
 
-from elasdk.tx import txbuild
-from elasdk.tx.producer import Producer
+from src.core.tx import txbuild
+from src.core.tx.producer import Producer
 from src.core.tx.transaction import Transaction
 from src.core.services import rpc
 from src.core.nodes.ela import ElaNode
@@ -55,7 +55,7 @@ class TransactionManager(object):
 
     def transfer_cross_chain_asset(self, input_private_key: str, lock_address: str, cross_address: str,
                                    amount: int, recharge: bool, port=rpc.DEFAULT_PORT):
-        tx = txbuild.create_cross_chain_asset(
+        tx = txbuild.create_cross_chain_transaction(
             input_private_key=input_private_key,
             lock_address=lock_address,
             cross_chain_address=cross_address,
@@ -77,8 +77,7 @@ class TransactionManager(object):
 
         producer = Producer(
             input_private_key=node.owner_account.private_key(),
-            owner_private_key=node.owner_account.private_key(),
-            node_private_key=node.node_account.private_key(),
+            node=node,
             nick_name=node.name,
             url="http://elastos.org",
             location=0,
@@ -128,8 +127,8 @@ class TransactionManager(object):
 
         return ret
 
-    def activate_producer(self, producer: Producer):
-        tx = producer.activate()
+    def active_producer(self, producer: Producer):
+        tx = producer.active()
 
         if tx is None:
             return False
@@ -142,7 +141,7 @@ class TransactionManager(object):
 
         candidates_list = list()
         for producer in candidates:
-            candidates_list.append(bytes.fromhex(producer.owner_public_key()))
+            candidates_list.append(producer.owner_account().public_key())
 
         tx = txbuild.create_vote_transaction(
             input_private_key=input_private_key,
@@ -336,7 +335,7 @@ class TransactionManager(object):
             producer = self.register_producers_list[i - self.params.ela_params.crc_number - 1]
             vote_amount = (self.params.ela_params.number - i + 1) * constant.TO_SELA
             ret = self.vote_producer(
-                input_private_key=producer.node_private_key(),
+                input_private_key=producer.node_account().private_key(),
                 amount=vote_amount,
                 candidates=[producer],
             )
@@ -351,7 +350,7 @@ class TransactionManager(object):
             producer = self.register_producers_list[i - self.params.ela_params.crc_number - 1]
             vote_amount = (self.params.ela_params.number - i + 1) * constant.TO_SELA
             ret = self.vote_producer(
-                input_private_key=producer.node_private_key(),
+                input_private_key=producer.node_account().private_key(),
                 amount=vote_amount,
                 candidates=[producer]
             )

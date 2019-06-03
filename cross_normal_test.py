@@ -38,7 +38,7 @@ config = {
     },
     "neo": {
         "enable": False,
-        "number": 4,
+        "number": 2,
         "instant_block": True
     },
     "times": 1

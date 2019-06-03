@@ -5,20 +5,20 @@
 
 import struct
 
-from elasdk.common import serialize
+from src.tools import serialize
 
-from elasdk.tx.payload.payload import Payload
-from elasdk.wallet import keytool
-from elasdk.wallet.account import Account
+from src.core.tx.payload.payload import Payload
+from src.core.wallet import keytool
+from src.core.wallet.account import Account
 
 
 class ProducerInfo(Payload):
 
-    def __init__(self, owner_private_key: str, node_private_key: str, nickname: str, url: str, location: int,
-                 net_address: str):
+    def __init__(self, owner_account: Account, node_account: Account, nickname: str, url: str,
+                 location: int, net_address: str):
         Payload.__init__(self, self.DEFAULT_VERSION)
-        self.owner_account = Account(owner_private_key)
-        self.node_account = Account(node_private_key)
+        self.owner_account = owner_account
+        self.node_account = node_account
         self.nickname = nickname
         self.url = url
         self.location = location

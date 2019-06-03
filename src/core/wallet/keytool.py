@@ -4,7 +4,6 @@
 # author: liteng
 
 import os
-import json
 import struct
 import random
 import base58

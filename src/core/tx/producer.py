@@ -3,30 +3,34 @@
 # date: 2019/4/3 4:49 PM
 # author: liteng
 
-from elasdk.common import util
-from elasdk.tx.payload.producer_info import ProducerInfo
-from elasdk.tx import txbuild
-from elasdk.wallet.account import Account
+from src.tools import util
+from src.core.tx.payload.producer_info import ProducerInfo
+from src.core.tx import txbuild
+from src.core.wallet.account import Account
+from src.core.nodes.ela import ElaNode
 
 
 class Producer(object):
 
-    def __init__(self, input_private_key: str, owner_private_key: str, node_private_key: str,
-                 nick_name: str, url: str, location: int, net_address: str):
+    def __init__(self, input_private_key: str, node: ElaNode, nick_name: str, url: str, location: int,
+                 net_address: str):
+
         self.input_private_key = input_private_key
         self.input = Account(input_private_key)
+        self.node = node
         self.utxo_value = 0
         self.fee = 10000
         self.state = ""
         self.deposit_amount = 5000 * util.TO_SELA
-        self.info = self._producer_info(owner_private_key, node_private_key, nick_name, url, location, net_address)
+        self.info = self._producer_info(self.node.owner_account, self.node.node_account, nick_name,
+                                        url, location, net_address)
 
     @staticmethod
-    def _producer_info(owner_private_key: str, node_private_key: str, nick_name: str, url: str,
+    def _producer_info(owner_account: Account, node_account: Account, nick_name: str, url: str,
                        location: int, net_address: str):
         info = ProducerInfo(
-            owner_private_key=owner_private_key,
-            node_private_key=node_private_key,
+            owner_account=owner_account,
+            node_account=node_account,
             nickname=nick_name,
             url=url,
             location=location,
@@ -41,10 +45,10 @@ class Producer(object):
         return self.input
 
     def owner_account(self):
-        return self.producer_info().owner_account
+        return self.node.owner_account
 
     def node_account(self):
-        return self.producer_info().node_account
+        return self.node.node_account
 
     def register(self, rpc_port: int):
         tx = txbuild.create_register_transaction(
@@ -61,7 +65,7 @@ class Producer(object):
 
         return tx
 
-    def update(self, producer_info: ProducerInfo, rpc_port):
+    def update(self, producer_info: ProducerInfo, rpc_port: int):
         tx = txbuild.create_update_transaction(
             input_private_key=self.input_private_key,
             payload=producer_info,

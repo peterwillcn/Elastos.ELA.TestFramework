@@ -88,17 +88,17 @@ def test_content():
             controller.check_result("Before active producer, the stopped producer state is Inactive", result)
 
             inactive_node.start()
-            result = controller.tx_manager.activate_producer(inactive_producer)
+            result = controller.tx_manager.active_producer(inactive_producer)
             Logger.info("activate the producer result: {}".format(result))
             controller.check_result("send activate producer transaction", result)
 
-            ret = controller.tx_manager.activate_producer(inactive_producer)
+            ret = controller.tx_manager.active_producer(inactive_producer)
             controller.check_result("1 same height and send activate producer again", not ret)
 
             while True:
                 current_height2 = controller.get_current_height()
                 if current_height2 - current_height < 6:
-                    ret = controller.tx_manager.activate_producer(inactive_producer)
+                    ret = controller.tx_manager.active_producer(inactive_producer)
                     controller.check_result("2 pending state and send activate producer again", not ret)
                 else:
                     break
@@ -112,7 +112,7 @@ def test_content():
             result = state == controller.PRODUCER_STATE_ACTIVE
             Logger.debug("activted producer state: {}".format(state))
             controller.check_result("activated producer state is activate", result)
-            ret = controller.tx_manager.activate_producer(inactive_producer)
+            ret = controller.tx_manager.active_producer(inactive_producer)
             controller.check_result("3 state is activated send activate producer again", not ret)
             controller.start_later_nodes()
             later_start = True

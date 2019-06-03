@@ -38,7 +38,10 @@ def test_content():
 
     # init inactive producers [5,6,7,8, 9,10,11,12, 13,14,15,16]
     inactive_producers = controller.tx_manager.register_producers_list[4: 16]
-    inactive_nodes = controller.node_manager.ela_nodes[crc_number + 1 + 4: crc_number + 1 + 16]
+    inactive_nodes = list()
+
+    for producer in inactive_producers:
+        inactive_nodes.append(producer.node)
 
     stop_height = 0
 
@@ -84,7 +87,7 @@ def test_content():
                 node.start()
 
             for producer in first_inactive_producers:
-                ret = controller.tx_manager.activate_producer(producer)
+                ret = controller.tx_manager.active_producer(producer)
                 controller.check_result("activate producer {}".format(producer.info.nickname), ret)
 
             # start stopped nodes again and look at their height are sync them

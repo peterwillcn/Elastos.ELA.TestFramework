@@ -9,8 +9,10 @@
 import os
 import json
 import struct
+
 from src.tools.log import Logger
-from src.tools import constant
+
+PROJECT_NAME = "Elastos.ELA.TestFramework"
 
 node_type_dict = {
     "ela": 10,
@@ -30,6 +32,9 @@ port_type_dict = {
     "arbiter_node_port": 9
 }
 
+TO_SELA = 100000000
+TX_FEE = 10000
+
 
 def reset_port(index, node_type: str, port_type: str):
     port = (100 + index) * 100 + node_type_dict[node_type] + port_type_dict[port_type]
@@ -42,6 +47,23 @@ def get_go_path():
     if ":" in path:
         go_path = path.split(":")[0]
     return go_path
+
+
+def tag_from_path(path: str, class_name: str):
+    elements = path.split("/")
+    index = elements.index(PROJECT_NAME)
+    tag = "["
+    for i in range(index + 1, len(elements)):
+        if i == len(elements) - 1:
+            tag += elements[i].split(".")[0]
+            if class_name is not "":
+                tag += "."
+                tag += class_name
+            break
+        tag += elements[i]
+        tag += "."
+    tag += "]"
+    return tag
 
 
 def arbiter_public_keys(key_stores):
@@ -65,23 +87,6 @@ def assert_equal(send_resp, jar_txid):
     return result
 
 
-def tag_from_path(path: str, class_name: str):
-    elements = path.split("/")
-    index = elements.index(constant.PROJECT_NAME)
-    tag = "["
-    for i in range(index + 1, len(elements)):
-        if i == len(elements) - 1:
-            tag += elements[i].split(".")[0]
-            if class_name is not "":
-                tag += "."
-                tag += class_name
-            break
-        tag += elements[i]
-        tag += "."
-    tag += "]"
-    return tag
-
-
 def read_config_file(config_file_path):
     with open(config_file_path, "r", encoding="utf8") as f:
         content = f.read()
@@ -96,6 +101,24 @@ def read_config_file(config_file_path):
 def write_config_file(config_dict, config_file_path):
     with open(config_file_path, "w", encoding="utf8") as f:
         json.dump(config_dict, f, indent=4)
+
+
+def save_to_json(k, prefix: str, dest_path: str, first_time: bool):
+
+    if os.path.exists(dest_path) and not first_time:
+        with open(dest_path, "r") as f:
+            load_dict = json.load(f)
+            load_dict[prefix] = k.to_dict()
+        with open(dest_path, "w", buffering=1) as f:
+            json.dump(load_dict, f, indent=4)
+    else:
+        with open(dest_path, "w", buffering=1) as f:
+            json.dump({prefix: k.to_dict()}, f, indent=4)
+
+
+def save_to_dat(keystore_dat: dict, dat_file_path: str):
+    with open(dat_file_path, "w", buffering=1) as f:
+        json.dump(keystore_dat, f, sort_keys=False, indent=4, separators=(',', ':'))
 
 
 def deser_uint256(f):

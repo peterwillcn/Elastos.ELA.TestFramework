@@ -38,13 +38,14 @@ def one_by_one_rotation_test():
     crc_number = controller.params.ela_params.crc_number
     later_start_number = controller.params.ela_params.later_start_number
 
-    tap_keystore = controller.tx_manager.tap_key_store
+    tap_account = controller.tx_manager.tap_account
     candidate_producers = controller.tx_manager.register_producers_list[
                             crc_number * 2: (number - crc_number - later_start_number)]
     voted = False
     global current_vote_height
     global result
     result = False
+
     current_vote_height = 0
     index = 0
     candidate = None
@@ -69,7 +70,7 @@ def one_by_one_rotation_test():
             if not voted:
                 candidate = candidate_producers[index]
                 vote_amount = (len(candidate_producers) - index) * constant.TO_SELA * 100
-                ret = controller.tx_manager.vote_producer(tap_keystore, vote_amount, [candidate])
+                ret = controller.tx_manager.vote_producer(tap_account.private_key(), vote_amount, [candidate])
                 controller.check_result("vote {} ELAs to {}".format(vote_amount / constant.TO_SELA,
                                                                     candidate.node.name), ret)
 
@@ -80,7 +81,7 @@ def one_by_one_rotation_test():
 
         if current_height > h2 + current_vote_height + crc_number * 3 * 2:
             arbiters_list = rpc.get_arbiters_info()["arbiters"]
-            ret = candidate.node.node_keystore.public_key.hex() in arbiters_list
+            ret = candidate.node.get_node_public_key() in arbiters_list
             controller.check_result("{} has rotated a producer!".format(candidate.info.nickname), ret)
             if ret:
                 voted = False

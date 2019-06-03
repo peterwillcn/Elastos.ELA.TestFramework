@@ -5,7 +5,7 @@
 
 import struct
 
-from elasdk.tx.outpoint import OutPoint
+from src.core.tx.outpoint import OutPoint
 
 
 class Input(object):

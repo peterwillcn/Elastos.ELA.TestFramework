@@ -40,12 +40,12 @@ def test_content():
     number = controller.params.ela_params.number
     crc_number = controller.params.ela_params.crc_number
 
-    global tap_keystore
+    global tap_account
     global result
     global check
     check = False
     result = False
-    tap_keystore = controller.keystore_manager.tap_key_store
+    tap_account = controller.keystore_manager.tap_account
     register_producers = controller.tx_manager.register_producers_list
 
     vote_height = 0
@@ -73,11 +73,11 @@ def test_content():
         if vote_height == 0 and current_height > h2 + 12:
             before_rotation_nicknames = controller.get_arbiter_names("arbiters")
             before_rotation_nicknames.sort()
-            tap_balance = rpc.get_balance_by_address(tap_keystore.address)
+            tap_balance = rpc.get_balance_by_address(tap_account.address())
             Logger.info("tap_balance: {}".format(tap_balance))
 
             ret = controller.tx_manager.vote_producer(
-                keystore=tap_keystore,
+                input_private_key=tap_account.private_key(),
                 amount=number * constant.TO_SELA,
                 candidates=register_producers[crc_number * 2: crc_number * 4]
             )

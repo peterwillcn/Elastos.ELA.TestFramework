@@ -38,8 +38,8 @@ def test_content():
 
     # get inactive nodes related to inactive producers
     inactive_producers_nodes = list()
-    for i in range(crc_number * 2 + 1, crc_number * 3 + 1):
-        inactive_producers_nodes.append(controller.node_manager.ela_nodes[i])
+    for producer in inactive_producers:
+        inactive_producers_nodes.append(producer.node)
 
     # get inactive public keys related to inactive nodes
     inactive_public_keys = list()
@@ -97,7 +97,7 @@ def test_content():
 
         if not activate and stop_height != 0 and current_height > stop_height + 30:
             for producer in inactive_producers:
-                ret = controller.tx_manager.activate_producer(producer)
+                ret = controller.tx_manager.active_producer(producer)
                 controller.check_result("activate producer {}".format(producer.info.nickname), ret)
             controller.start_later_nodes()
             activate = True

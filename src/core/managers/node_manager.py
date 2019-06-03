@@ -62,6 +62,7 @@ class NodeManager(object):
             self.create_address_name_dict()
             self.create_owner_pubkey_name_dict()
             self.create_node_pubkey_name_dict()
+            self.create_normal_dpos_pubkey()
         if self.params.did_params.enable:
             ret = self._deploy_nodes("did", self.params.did_params.number)
         if self.params.token_params.enable:

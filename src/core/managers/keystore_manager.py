@@ -6,14 +6,13 @@
 import os
 import time
 
-from src.tools import util
 from src.tools.log import Logger
 
 from src.core.parameters.params import Parameter
 
-from elasdk.wallet.account import Account
-from elasdk.wallet.keystore import Keystore
-from elasdk.common import util
+from src.core.wallet.account import Account
+from src.core.wallet.keystore import Keystore
+from src.tools import util
 
 
 class KeyStoreManager(object):
