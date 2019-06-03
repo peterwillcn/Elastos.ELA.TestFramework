@@ -13,6 +13,7 @@ config = {
     "ela": {
         "number": 16,
         "crc_number": 4,
+        "later_start_number": 4,
         "pre_connect_offset": 5,
         "crc_dpos_height": 300,
         "public_dpos_height": 308,
@@ -38,6 +39,7 @@ def test_content():
 
     # producer[PRO-005]
     inactive_producer = controller.tx_manager.register_producers_list[inactive_producer_index]
+    inactive_node = controller.node_manager.ela_nodes[inactive_producer_index + crc_number + 1]
 
     current_height = controller.get_current_height()
     if current_height < h1 - pre_offset - 1:
@@ -69,7 +71,7 @@ def test_content():
 
         if stop_height == 0 and current_height >= h2 + 12:
             controller.check_result("Ater H2", True)
-            inactive_producer.node.stop()
+            inactive_node.stop()
             stop_height = current_height
             Logger.error(
                 "[main] node {} stopped at height {} on success!".format(
@@ -85,7 +87,7 @@ def test_content():
             Logger.debug("get producer state: {}".format(state))
             controller.check_result("Before active producer, the stopped producer state is Inactive", result)
 
-            inactive_producer.node.start()
+            inactive_node.start()
             result = controller.tx_manager.activate_producer(inactive_producer)
             Logger.info("activate the producer result: {}".format(result))
             controller.check_result("send activate producer transaction", result)

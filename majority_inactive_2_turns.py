@@ -14,6 +14,7 @@ config = {
         "number": 24,
         "crc_number": 4,
         "pre_connect_offset": 5,
+        "later_start_number": 4,
         "crc_dpos_height": 300,
         "public_dpos_height": 308
     },
@@ -40,18 +41,19 @@ def test_content():
 
     # prepare inactive producers [9, 10, 11, 12, 13, 14, 15, 16]
     inactive_producers = controller.tx_manager.register_producers_list[crc_number: crc_number * 3]
+    inactive_nodes = controller.node_manager.ela_nodes[crc_number + 1 + crc_number: crc_number + 1 + crc_number * 3]
     # prepare replace candidate [17, 18, 19, 20]
     replace_cadidates = controller.tx_manager.register_producers_list[crc_number * 3: crc_number * 4]
 
     # get inactive node public key
     inactive_public_keys = list()
     for producer in inactive_producers:
-        inactive_public_keys.append(producer.node.node_keystore.public_key.hex())
+        inactive_public_keys.append(producer.node_account().public_key())
 
     # get replace node public key
     replace_public_keys = list()
     for producer in replace_cadidates:
-        replace_public_keys.append(producer.node.node_keystore.public_key.hex())
+        replace_public_keys.append(producer.node_account().public_key())
 
     global result
     global activate
@@ -84,13 +86,13 @@ def test_content():
 
         # after h1, will show current and next current arbiters info
         if current_height >= h1:
-            controller.show_current_next_info()
+            controller.show_arbiter_info()
 
         # when current height is equal h2 + 12(320), then will stop the inactive \
         # producer nodes[9, 10, 11, 12, 13, 14, 15, 16]
         if stop_height == 0 and current_height >= h2 + 12:
-            for producer in inactive_producers:
-                producer.node.stop()
+            for node in inactive_nodes:
+                node.stop()
 
             # stop height is equal h2 + 12 (320)
             stop_height = current_height
@@ -107,32 +109,33 @@ def test_content():
 
             # activate producers [9,10,11,12]
             activate_producers = inactive_producers[:4]
+            activate_nodes = inactive_nodes[:4]
 
             # first start activate producers nodes
-            for producer in activate_producers:
-                producer.node.start()
+            for node in activate_nodes:
+                node.start()
 
             controller.discrete_mining_blocks(1)
 
             # second, activate producers
             for producer in activate_producers:
                 result = controller.tx_manager.activate_producer(producer)
-                controller.check_result("activate producer {}".format(producer.node.name), result)
+                controller.check_result("activate producer {}".format(producer.info.nickname), result)
 
             controller.start_later_nodes()
             activate = True
 
         if not remaining_start and stop_height != 0 and current_height > stop_height + 80:
-            remaining_inactive_producers = inactive_producers[4:]
-            for producer in remaining_inactive_producers:
-                producer.node.start()
+            remaining_inactive_nodes = inactive_nodes[4:]
+            for node in remaining_inactive_nodes:
+                node.start()
             remaining_start = True
 
         if stop_height != 0 and current_height > stop_height + 100:
             current_pubkeys = controller.get_current_arbiter_public_keys()
             controller.check_result("check all nodes have the same height", controller.check_nodes_height())
 
-            result = set(controller.rpc_manager.normal_dpos_pubkeys) == set(current_pubkeys)
+            result = set(controller.node_manager.normal_dpos_pubkeys) == set(current_pubkeys)
             break
 
         # mining a block per second

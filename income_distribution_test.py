@@ -63,20 +63,20 @@ def test_content():
             break
 
         if current_height >= h1:
-            controller.show_current_next_info()
+            controller.show_arbiter_info()
 
         if current_height == h2:
             dpos_votes = controller.get_dpos_votes()
 
-        if current_height > h2 and controller.has_dpos_reward(current_height):
-            tx_fee = controller.get_total_tx_fee(after_h2_transactions)
-            real_income = controller.get_dpos_real_income(current_height)
-            theory_income = controller.get_dpos_theory_income(current_height - last_income_height, tx_fee, dpos_votes)
-            result = controller.check_dpos_income(real_income, theory_income)
-            controller.check_result("check dpos income", result)
-            after_h2_transactions.clear()
-            last_income_height = current_height
-            dpos_votes = controller.get_dpos_votes()
+        # if current_height > h2 and controller.has_dpos_reward(current_height):
+        #     tx_fee = controller.get_total_tx_fee(after_h2_transactions)
+        #     real_income = controller.get_dpos_real_income(current_height)
+        #     theory_income = controller.get_dpos_theory_income(current_height - last_income_height, tx_fee, dpos_votes)
+        #     result = controller.check_dpos_income(real_income, theory_income)
+        #     controller.check_result("check dpos income", result)
+        #     after_h2_transactions.clear()
+        #     last_income_height = current_height
+        #     dpos_votes = controller.get_dpos_votes()
 
         if vote_height == 0 and current_height > vote_height + h2 + 20:
             votes = 100
@@ -86,13 +86,13 @@ def test_content():
                 candidates=[later_vote_producer]
             )
 
-            controller.check_result("vote producer {}".format(later_vote_producer.node.name), result)
+            controller.check_result("vote producer {}".format(later_vote_producer.info.nickname), result)
             vote_height = current_height
 
             ti = TxIncome(10000, True)
             after_h2_transactions.append(ti)
 
-        if vote_height != 0 and current_height > vote_height + 500000:
+        if vote_height != 0 and current_height > vote_height + 50:
             result = controller.check_nodes_height()
             controller.check_result("check all the nodes height", result)
             break

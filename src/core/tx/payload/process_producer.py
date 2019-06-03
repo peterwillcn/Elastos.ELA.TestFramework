@@ -4,9 +4,9 @@
 # author: liteng
 
 
-from src.core.tx.payload.payload import Payload
-from src.tools import serialize
-from src.core.wallet import keytool
+from elasdk.tx.payload.payload import Payload
+from elasdk.common import serialize
+from elasdk.wallet import keytool
 
 
 class ProcessProducer(Payload):
@@ -58,7 +58,7 @@ class ProcessProducer(Payload):
         else:
             arg3 = self.signature.hex()
 
-        return "ActiveProducer {\n\t" \
+        return "ProcessProducer{\n\t" \
                 + "node_public_key: {}".format(arg1) + "\n\t" \
                 + "node_private_key: {}".format(arg2) + "\n\t" \
                 + "signature: {}".format(arg3) + "\n" \

@@ -4,8 +4,6 @@
 # author: liteng
 
 from elasdk.common import util
-from elasdk.common.log import Logger
-
 from elasdk.tx.payload.producer_info import ProducerInfo
 from elasdk.tx import txbuild
 from elasdk.wallet.account import Account
@@ -33,7 +31,6 @@ class Producer(object):
             location=location,
             net_address=net_address
         )
-        Logger.debug("generate register producer{} payload".format(nick_name))
         return info
 
     def get_payload(self):

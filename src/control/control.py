@@ -393,6 +393,16 @@ class Controller(object):
         # Logger.debug("{} response: {}".format(self.tag, response))
         return len(response["tx"][0]["vout"]) > 2
 
+    def get_list_producers_names(self):
+        producers_names = list()
+        list_producers = rpc.list_producers(0, 100)
+        for producer in list_producers["producers"]:
+            node_public_key = producer["nodepublickey"]
+            name = self.node_manager.node_pubkey_name_dict[node_public_key]
+            producers_names.append(name)
+
+        return producers_names
+
     @staticmethod
     def get_current_height():
         return rpc.get_block_count() - 1

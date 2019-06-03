@@ -60,7 +60,7 @@ def test_content():
             break
 
         if current_height >= h1:
-            controller.show_current_next_info()
+            controller.show_arbiter_info()
 
         if current_height - last_change_height == 12:
             last_change_height = current_height

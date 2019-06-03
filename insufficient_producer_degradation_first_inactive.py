@@ -14,6 +14,7 @@ config = {
         "number": 16,
         "crc_number": 4,
         "pre_connect_offset": 5,
+        "later_start_number": 4,
         "crc_dpos_height": 300,
         "public_dpos_height": 308
     },
@@ -37,13 +38,13 @@ def test_content():
 
     # get inactive nodes related to inactive producers
     inactive_producers_nodes = list()
-    for producer in inactive_producers:
-        inactive_producers_nodes.append(producer.node)
+    for i in range(crc_number * 2 + 1, crc_number * 3 + 1):
+        inactive_producers_nodes.append(controller.node_manager.ela_nodes[i])
 
     # get inactive public keys related to inactive nodes
     inactive_public_keys = list()
     for node in inactive_producers_nodes:
-        inactive_public_keys.append(node.node_keystore.public_key.hex())
+        inactive_public_keys.append(node.get_node_public_key())
 
     stop_height = 0
 
@@ -71,7 +72,7 @@ def test_content():
 
         # after h1, show the current and next arbiters info by sort
         if current_height >= h1:
-            controller.show_current_next_info()
+            controller.show_arbiter_info()
 
         if stop_height == 0 and current_height >= h2 + 12:
             for node in inactive_producers_nodes:

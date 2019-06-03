@@ -15,6 +15,7 @@ config = {
         "number": 16,
         "crc_number": 4,
         "pre_connect_offset": 5,
+        "later_start_number": 4,
         "crc_dpos_height": 300,
         "public_dpos_height": 308
     },
@@ -51,10 +52,11 @@ def test_content():
     crc_public_keys = controller.keystore_manager.crc_public_keys
     crc_public_keys.sort()
 
-    arbiter_keystores = controller.keystore_manager.node_key_stores[1:13]
+    arbiter_accounts = controller.keystore_manager.node_accounts[1:13]
+
     target_public_keys = list()
-    for keystore in arbiter_keystores:
-        target_public_keys.append(keystore.public_key.hex())
+    for account in arbiter_accounts:
+        target_public_keys.append(account.public_key())
 
     current_height = controller.get_current_height()
     if current_height < h1 - pre_offset - 1:
@@ -72,9 +74,9 @@ def test_content():
             break
 
         if current_height > h1:
-            controller.show_current_next_info()
+            controller.show_arbiter_info()
 
-        if not re_register and current_height >= h2 + 12:
+        if not re_register and current_height >= h2 + 1:
 
             current_arbiters = controller.get_current_arbiter_public_keys()
             current_arbiters.sort()

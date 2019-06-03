@@ -84,9 +84,12 @@ def test_content():
         # current is equal 380, start the later nodes include two candidates and two normal nodes
         if start_height == 0 and current_height > h2 + crc_number * 3 * 6:
             controller.start_later_nodes()
-            start_height = current_height
 
+<<<<<<< Updated upstream
         if start_height != 0 and current_height > start_height + 100000:
+=======
+        if start_height != 0 and current_height > start_height + 100:
+>>>>>>> Stashed changes
             result = controller.check_nodes_height()
             controller.check_result("check all the nodes height", result)
             break

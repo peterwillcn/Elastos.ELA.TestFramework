@@ -5,7 +5,7 @@
     "password": "123",
     "number": 16,
     "crc_number": 4,
-    "later_start_number": 4,
+    "later_start_number": 0,
     "active_net": "regnet",
     "print_level": 0,
     "disable_dns": true,

@@ -68,8 +68,7 @@ class TransactionManager(object):
             return False
 
         tx = txbuild.single_sign_transaction(input_private_key, tx)
-
-        Logger.debug("cross chain asset transaction: \n{}".format(tx))
+        Logger.warn("cross chain asset transaction: \n{}".format(tx))
         ret = self.handle_tx_result(tx, port)
 
         return ret
@@ -377,6 +376,7 @@ class TransactionManager(object):
         reverse_res = util.bytes_reverse(bytes.fromhex(response)).hex()
         Logger.debug("{} tx hash : {}".format(self.tag, tx.hash()))
         Logger.debug("{} response: {}".format(self.tag, reverse_res))
+        Logger.debug("{} reverse:  {}".format(self.tag, response))
 
         return tx.hash() == reverse_res
 

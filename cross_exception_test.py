@@ -59,7 +59,7 @@ if __name__ == '__main__':
 
         # after h1, show current and next arbiters info
         if current_height > h1:
-            controller.show_current_next_info()
+            controller.show_arbiter_info()
 
         if current_height > h2 + 12:
 

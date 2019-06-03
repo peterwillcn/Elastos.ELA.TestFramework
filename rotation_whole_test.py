@@ -17,6 +17,7 @@ config = {
         "password": "123",
         "number": 24,
         "crc_number": 4,
+        "later_start_number": 4,
         "pre_connect_offset": 5,
         "crc_dpos_height": 300,
         "public_dpos_height": 308
@@ -67,7 +68,7 @@ def test_content():
         global before_rotation_nicknames
 
         if current_height > h1:
-            controller.show_current_info()
+            controller.show_arbiter_info()
 
         if vote_height == 0 and current_height > h2 + 12:
             before_rotation_nicknames = controller.get_arbiter_names("arbiters")

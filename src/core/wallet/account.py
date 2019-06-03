@@ -1,79 +1,76 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# date: 2019/5/21 10:55 AM
+# date: 2019/5/22 10:25 AM
 # author: liteng
 
-from src.core.wallet import keytool
-from src.tools.log import Logger
+import json
+from elasdk.wallet import keytool
 
 
 class Account(object):
 
-    def __init__(self, keystore_dat: dict, password: str):
-        self.keystore_dat = keystore_dat
-        self.password = password
-        self.iv = bytes.fromhex(self.get_iv())
-        self.encrypt_master_key = bytes.fromhex(self.get_encrypt_master_key())
-        self.encrypt_private_key = bytes.fromhex(self.get_encrypt_private_key())
-        self.mater_key = self.get_master_key()
-        self.private_key = self.get_private_key()
+    def __init__(self, private_key_str=""):
 
-    def get_iv(self):
-        if "IV" not in self.keystore_dat.keys():
-            Logger.error("keystore_dat dose not contain key IV")
-            return None
+        self._private_key = bytes.fromhex(private_key_str)
+        self._public_key = None
+        self._redeem_script = None
+        self._program_hash = None
+        self._address = None
+        self._create_account()
+        self.signature = None
 
-        return self.keystore_dat["IV"]
+    def _create_account(self):
+        if len(self._private_key) == 0:
+            ecc_pair = keytool.create_ecc_pair("P-256")
+            self._private_key = ecc_pair.d.to_bytes()
 
-    def get_encrypt_master_key(self):
-        if "MasterKey" not in self.keystore_dat.keys():
-            Logger.error("keystore_dat dose not contain key MasterKey")
-            return None
+        ecc_pair = keytool.get_ecc_by_private_key(self._private_key.hex())
+        self._public_key = keytool.encode_point(ecc_pair.public_key(), True)
+        self._redeem_script = keytool.create_redeem_script(self._public_key)
+        self._program_hash = keytool.create_program_hash(self._redeem_script)
+        self._address = keytool.create_address(self._program_hash)
 
-        return self.keystore_dat["MasterKey"]
+    def ecc_pair(self):
+        return keytool.get_ecc_by_private_key(self._private_key.hex())
 
-    def get_encrypt_private_key(self):
-        if "Account" not in self.keystore_dat.keys():
-            Logger.error("keystore_dat dose not contain key Account")
-            return None
+    def ecc_public_key(self):
+        return self.ecc_pair().public_key()
 
-        at = self.keystore_dat["Account"][0]
-        if "PrivateKeyEncrypted" not in at.keys():
-            Logger.error("Account dose not contain key PrivateKeyEncrypted")
-            return None
+    def private_key(self):
+        return self._private_key.hex()
 
-        return at["PrivateKeyEncrypted"]
+    def public_key(self):
+        return self._public_key.hex()
 
-    def get_master_key(self):
-        password_twice_hash = keytool.sha256_hash(str.encode(self.password), 2)
-        encrypt_master_key = self.get_encrypt_master_key()
-        if encrypt_master_key is None:
-            Logger.error("encrypt master key is None")
-            return None
+    def redeem_script(self):
+        return self._redeem_script.hex()
 
-        master_key = keytool.aes_decrypt(bytes.fromhex(encrypt_master_key), password_twice_hash, self.iv)
+    def program_hash(self):
+        return self._program_hash.hex()
 
-        return master_key
+    def address(self):
+        return self._address
 
-    def get_private_key(self):
-        encrypt_private_key = self.get_encrypt_private_key()
-        if encrypt_private_key is None:
-            Logger.error("encrypt private key is None")
-            return None
+    def deposit_address(self):
+        return keytool.create_deposit_address(self._program_hash)
 
-        encrypt_private_key_bytes = bytes.fromhex(encrypt_private_key)
-        if len(encrypt_private_key_bytes) != 96:
-            Logger.error("encrypt private key length is not 96")
-            return None
+    def sign(self, data: bytes):
+        return keytool.ecdsa_sign(self._private_key, data)
 
-        private_key = keytool.aes_decrypt(encrypt_private_key_bytes, self.mater_key, self.iv)
+    def verify(self, data: bytes, signature: bytes):
+        return keytool.ecdsa_verify(self._private_key, data, signature)
 
-        return private_key[64: 96]
+    def to_dict(self):
+        data = {
+            "private_key": self.private_key(),
+            "public_key": self.public_key(),
+            "redeem_script": self.redeem_script(),
+            "program_hash": self.program_hash(),
+            "address": self.address()
+        }
+        return data
 
-
-
-
-
-
+    def __repr__(self):
+        return json.dumps(self.to_dict(), indent=4)
 
 

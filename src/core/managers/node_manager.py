@@ -44,6 +44,7 @@ class NodeManager(object):
         self.main_miner_address = self.keystore_manager.main_miner_account.address()
         self.side_miner_address = self.keystore_manager.side_miner_account.address()
         self.tap_address = self.keystore_manager.tap_account.address()
+        self.normal_dpos_pubkeys = list()
         self.nodes_dict = {
             "ela": self.ela_nodes,
             "arbiter": self.arbiter_nodes,
@@ -277,7 +278,7 @@ class NodeManager(object):
             )
         )
 
-        recharge_address = keytool.gen_cross_chain_address(bytes.fromhex(side_chain_genesis_hash))
+        recharge_address = keytool.create_cross_chain_address(bytes.fromhex(side_chain_genesis_hash))
 
         self.params.arbiter_params.recharge_address = recharge_address
         self.params.arbiter_params.withdraw_address = "0000000000000000000000000000000000"
@@ -305,5 +306,9 @@ class NodeManager(object):
     def create_node_pubkey_name_dict(self):
         for node in self.ela_nodes:
             self.node_pubkey_name_dict[node.node_account.public_key()] = node.name
+
+    def create_normal_dpos_pubkey(self):
+        for i in range(1, self.params.ela_params.crc_number * 3 + 1):
+            self.normal_dpos_pubkeys.append(self.ela_nodes[i].get_node_public_key())
 
 

@@ -116,7 +116,7 @@ def test_content():
         #         result = controller.tx_manager.cross_chain_transaction("neo", False)
         #         controller.check_result(test_case, result)
 
-        if current_height > h2 + 20:
+        if current_height > h2 + 2:
 
             if did_enable:
                 test_case = "cross chain recharge did after H2"

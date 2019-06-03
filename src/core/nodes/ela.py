@@ -160,10 +160,10 @@ class ElaNode(Node):
         return origin_arbiters
 
     def get_node_public_key(self):
-        return self.node_account.public_key.hex()
+        return self.node_account.public_key()
 
     def get_owner_public_key(self):
-        return self.owner_account.public_key.hex()
+        return self.owner_account.public_key()
 
     def get_node_address(self):
         return self.node_account.address
@@ -172,6 +172,6 @@ class ElaNode(Node):
         return self.owner_account.address
 
     def get_owner_private_key(self):
-        return self.owner_account.private_key.hex()
+        return self.owner_account.private_key()
 
 

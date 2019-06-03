@@ -15,6 +15,7 @@ config = {
         "number": 16,
         "crc_number": 4,
         "pre_connect_offset": 5,
+        "later_start_number": 4,
         "crc_dpos_height": 300,
         "public_dpos_height": 308
     },
@@ -69,7 +70,7 @@ def test_content():
 
         # after h1, show the current and next arbiters nicknames by sort
         if current_height >= h1:
-            controller.show_current_next_info()
+            controller.show_arbiter_info()
 
         # mining the height after h2 + 12, cancel producers which number is between 4 and 8 by random
         if cancel_height == 0 and current_height >= h2 + 12:
@@ -77,7 +78,7 @@ def test_content():
             time.sleep(2)
             for producer in cancel_producers:
                 ret = controller.tx_manager.cancel_producer(producer)
-                controller.check_result("Cancel Producer {}".format(producer.node.name), ret)
+                controller.check_result("Cancel Producer {}".format(producer.info.nickname), ret)
 
             cancel_height = current_height
             Logger.debug("cancel height: {}".format(cancel_height))

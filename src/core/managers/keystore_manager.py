@@ -45,6 +45,7 @@ class KeyStoreManager(object):
         self.sub3_accounts = list()
         self.sub4_accounts = list()
         self.category_dict = dict()
+        self.crc_public_keys = list()
 
         self._init_category_dict()
 
@@ -58,6 +59,8 @@ class KeyStoreManager(object):
         self.cross_token_account = self.special_accounts[self.INDEX_CROSS_TOKEN]
         self.cross_neo_account = self.special_accounts[self.INDEX_CROSS_NEO]
         self.cross_eth_account = self.special_accounts[self.INDEX_CROSS_ETH]
+
+        self._gen_crc_pubkeys()
 
         # self._create_keystore_files()
         # exit(0)
@@ -194,7 +197,11 @@ class KeyStoreManager(object):
 
         Logger.debug("{} create {} keystores on success!".format(self.tag, category))
 
+    def _gen_crc_pubkeys(self):
+        for i in range(1, self.params.ela_params.crc_number + 1):
+            self.crc_public_keys.append(self.node_accounts[i].public_key())
 
+        self.crc_public_keys.sort()
 
 
 

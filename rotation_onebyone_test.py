@@ -18,6 +18,7 @@ config = {
         "number": 24,
         "crc_number": 4,
         "pre_connect_offset": 5,
+        "later_start_number": 4,
         "crc_dpos_height": 300,
         "public_dpos_height": 308
     },
@@ -62,7 +63,7 @@ def one_by_one_rotation_test():
         controller.discrete_mining_blocks(1)
 
         if current_height > h1:
-            controller.show_current_next_info()
+            controller.show_arbiter_info()
 
         if current_height > h2 + current_vote_height + 1:
             if not voted:

@@ -5,7 +5,7 @@
 
 import struct
 
-from src.tools import serialize
+from elasdk.common import serialize
 
 
 class Attribute(object):
