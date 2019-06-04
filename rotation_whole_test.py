@@ -17,6 +17,7 @@ config = {
         "password": "123",
         "number": 24,
         "crc_number": 4,
+        "later_start_number": 4,
         "pre_connect_offset": 5,
         "crc_dpos_height": 300,
         "public_dpos_height": 308
@@ -39,12 +40,12 @@ def test_content():
     number = controller.params.ela_params.number
     crc_number = controller.params.ela_params.crc_number
 
-    global tap_keystore
+    global tap_account
     global result
     global check
     check = False
     result = False
-    tap_keystore = controller.keystore_manager.tap_key_store
+    tap_account = controller.keystore_manager.tap_account
     register_producers = controller.tx_manager.register_producers_list
 
     vote_height = 0
@@ -67,16 +68,16 @@ def test_content():
         global before_rotation_nicknames
 
         if current_height > h1:
-            controller.show_current_next_info()
+            controller.show_arbiter_info()
 
         if vote_height == 0 and current_height > h2 + 12:
-            before_rotation_nicknames = controller.rpc_manager.get_arbiter_names("arbiters")
+            before_rotation_nicknames = controller.get_arbiter_names("arbiters")
             before_rotation_nicknames.sort()
-            tap_balance = rpc.get_balance_by_address(tap_keystore.address)
+            tap_balance = rpc.get_balance_by_address(tap_account.address())
             Logger.info("tap_balance: {}".format(tap_balance))
 
             ret = controller.tx_manager.vote_producer(
-                keystore=tap_keystore,
+                input_private_key=tap_account.private_key(),
                 amount=number * constant.TO_SELA,
                 candidates=register_producers[crc_number * 2: crc_number * 4]
             )
@@ -84,7 +85,7 @@ def test_content():
             vote_height = current_height
 
         if not check and vote_height > 0 and current_height > vote_height + crc_number * 3 * 2:
-            after_rotation_nicknames = controller.rpc_manager.get_arbiter_names("arbiters")
+            after_rotation_nicknames = controller.get_arbiter_names("arbiters")
             after_rotation_nicknames.sort()
             arbiter_set = set(controller.get_current_arbiter_public_keys())
             Logger.info("before rotation register producers: {}".format(before_rotation_nicknames))

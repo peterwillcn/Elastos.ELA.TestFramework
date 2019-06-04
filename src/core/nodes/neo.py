@@ -10,8 +10,8 @@ from src.tools import util, constant
 from src.tools.log import Logger
 
 from src.core.nodes.node import Node
-from src.core.managers.keystore_manager import KeyStoreManager
 from src.core.parameters.neo_params import NeoParams
+from src.core.managers.keystore_manager import KeyStoreManager
 
 
 class NeoNode(Node):
@@ -27,9 +27,6 @@ class NeoNode(Node):
         self.err_output = open(os.path.join(self.cwd_dir, "error.log"), 'w')
         self.process = None
         self.running = None
-
-    # def reset_config(self, num: int, update_content: dict):
-    #     Node.reset_config_common(self, self.index, "neo", num)
 
     def start(self):
         self.process = subprocess.Popen(
@@ -52,7 +49,7 @@ class NeoNode(Node):
             self.dev_null.close()
             self.err_output.close()
         except subprocess.SubprocessError as e:
-            Logger.error("{} Unable to stop ela{}, error: {}".format(self.tag, self.index, e))
+            Logger.error("{} Unable to stop neo{}, error: {}".format(self.tag, self.index, e))
         self.running = False
 
     def reset_config(self):
@@ -69,47 +66,41 @@ class NeoNode(Node):
         _config[constant.CONFIG_SPV_MAGIC] = self.params.spv_magic
         _config[constant.CONFIG_DISABLE_DNS] = self.params.disable_dns
         _config[constant.CONFIG_PERMANENT_PEERS] = self.gen_permanent_list()
-        _config[constant.CONFIG_DID_SPV_DISABLE_DNS] = self.params.spv_disable_dns
-        _config[constant.CONFIG_DID_SPV_PERMANENT_PEERS] = self.gen_spv_permanent_list()
-        _config[constant.CONFIG_DID_ENABLE_REST] = self.params.rest_port_enable
-        _config[constant.CONFIG_DID_PORT_REST] = self.reset_port(
+        _config[constant.CONFIG_SIDE_SPV_DISABLE_DNS] = self.params.spv_disable_dns
+        _config[constant.CONFIG_SIDE_SPV_PERMANENT_PEERS] = self.gen_spv_permanent_list()
+        _config[constant.CONFIG_SIDE_ENABLE_REST] = self.params.rest_port_enable
+        _config[constant.CONFIG_SIDE_PORT_REST] = self.reset_port(
             index=self.index,
             node_type="neo",
             port_type="rest_port"
         )
-        _config[constant.CONFIG_DID_ENABLE_WS] = self.params.ws_port_enable
-        _config[constant.CONFIG_DID_PORT_WS] = self.reset_port(
+        _config[constant.CONFIG_SIDE_ENABLE_WS] = self.params.ws_port_enable
+        _config[constant.CONFIG_SIDE_PORT_WS] = self.reset_port(
             index=self.index,
             node_type="neo",
             port_type="ws_port"
         )
 
-        _config[constant.CONFIG_DID_ENABLE_RPC] = self.params.rpc_port_enable
-        _config[constant.CONFIG_DID_PORT_RPC] = self.reset_port(
+        _config[constant.CONFIG_SIDE_ENABLE_RPC] = self.params.rpc_port_enable
+        _config[constant.CONFIG_SIDE_PORT_RPC] = self.reset_port(
             index=self.index,
             node_type="neo",
             port_type="json_port"
         )
 
-        _config[constant.CONFIG_DID_RPC_USER] = ""
-        _config[constant.CONFIG_DID_RPC_PASS] = ""
-        _config[constant.CONFIG_DID_RPC_WHITE_LIST] = ["0.0.0.0"]
-        _config[constant.CONFIG_DID_LOG_LEVEL] = self.params.log_level
-        _config[constant.CONFIG_DID_ENABLE_MINING] = self.params.mining_enable
+        _config[constant.CONFIG_SIDE_RPC_USER] = ""
+        _config[constant.CONFIG_SIDE_RPC_PASS] = ""
+        _config[constant.CONFIG_SIDE_RPC_WHITE_LIST] = ["0.0.0.0"]
+        _config[constant.CONFIG_SIDE_LOG_LEVEL] = self.params.log_level
+        _config[constant.CONFIG_SIDE_ENABLE_MINING] = self.params.mining_enable
         _config[constant.CONFIG_INSTANT_BLOCK] = self.params.instant_block
-        _config[constant.CONFIG_PAY_TO_ADDR] = self.keystore_manager.special_key_stores[3].address
+        _config[constant.CONFIG_PAY_TO_ADDR] = self.keystore_manager.side_miner_account.address()
 
-        # _config[constant.CONFIG_MAIN_CHAIN_FOUNDATION_ADDRESS] = self.keystore_manager.special_key_stores[0].address
-        _config[constant.CONFIG_FOUNDATION_ADDRESS] = self.keystore_manager.special_key_stores[0].address
-        # _config[constant.CONFIG_PORT_MAIN_CHAIN_DEFAULT] = self.reset_port(
-        #     index=self.index,
-        #     node_type="ela",
-        #     port_type="node_port"
-        # )
+        _config[constant.CONFIG_FOUNDATION_ADDRESS] = self.keystore_manager.foundation_account.address()
 
     def gen_spv_permanent_list(self):
         spv_seed_list = list()
-        for i in range(self.params.number):
+        for i in range(self.params.number + 1):
             spv_seed_list.append("127.0.0.1:" + str(self.reset_port(
                 index=i,
                 node_type="ela",
@@ -119,7 +110,9 @@ class NeoNode(Node):
 
     def gen_permanent_list(self):
         permanent_list = list()
-        for i in range(self.params.number):
+        for i in range(self.params.number + 1):
+            if i == 0:
+                continue
             permanent_list.append("127.0.0.1:" + str(self.reset_port(
                 index=i,
                 node_type="neo",

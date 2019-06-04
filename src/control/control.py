@@ -13,7 +13,6 @@ from src.core.managers.env_manager import EnvManager
 from src.core.managers.node_manager import NodeManager
 from src.core.managers.keystore_manager import KeyStoreManager
 from src.core.managers.tx_manager import TransactionManager
-from src.core.managers.rpc_manager import RpcManager
 from src.tools import util
 from src.tools import constant
 from src.tools.log import Logger
@@ -40,19 +39,18 @@ class Controller(object):
         self.keystore_manager = KeyStoreManager(self.params)
 
         self.node_manager = NodeManager(self.params, self.env_manager, self.keystore_manager)
-        self.rpc_manager = RpcManager(self.node_manager)
         self.tx_manager = TransactionManager(self.node_manager)
         # init tap amount and register amount(unit: ELA)
         self.tap_amount = 20000000
         self.register_amount = 6000
         self.node_amount = 5000
         # necessary keystore
-        self.foundation_keystore = self.keystore_manager.special_key_stores[0]
-        self.tap_keystore = self.keystore_manager.special_key_stores[4]
+        self.foundation_account = self.keystore_manager.foundation_account
+        self.tap_account = self.keystore_manager.tap_account
 
         self.init_for_testing()
         self.later_nodes = self.node_manager.ela_nodes[(self.params.ela_params.number -
-                                                              self.params.ela_params.later_start_number + 1):]
+                                                        self.params.ela_params.later_start_number + 1):]
 
         self.dpos_votes_dict = dict()
 
@@ -61,16 +59,13 @@ class Controller(object):
         Logger.info("{} deploying nodes on success!".format(self.tag))
         self.node_manager.start_nodes()
         Logger.info("{} starting nodes on success!".format(self.tag))
-        self.rpc_manager.mining_blocks_ready(self.node_manager.main_foundation_address)
+        self.mining_blocks_ready(self.foundation_account.address())
         Logger.info("{} mining 110 blocks on success!".format(self.tag))
         time.sleep(5)
 
-        self.rpc_manager.init_pubkey_nodes()
-        self.rpc_manager.init_normal_dpos_public_keys()
-
         ret = self.tx_manager.recharge_necessary_keystore(
-            input_keystore=self.foundation_keystore,
-            keystores=[self.tap_keystore],
+            input_private_key=self.foundation_account.private_key(),
+            accounts=[self.tap_account],
             amount=self.tap_amount * constant.TO_SELA
         )
 
@@ -79,16 +74,16 @@ class Controller(object):
         Logger.info("{} recharge tap keystore {} ELAs on success!".format(self.tag, self.tap_amount * constant.TO_SELA))
 
         ret = self.tx_manager.recharge_necessary_keystore(
-            input_keystore=self.tap_keystore,
-            keystores=self.keystore_manager.owner_key_stores,
+            input_private_key=self.tap_account.private_key(),
+            accounts=self.keystore_manager.owner_accounts,
             amount=self.register_amount * constant.TO_SELA
         )
 
         self.check_result("recharge owner keystore", ret)
 
         ret = self.tx_manager.recharge_necessary_keystore(
-            input_keystore=self.tap_keystore,
-            keystores=self.keystore_manager.node_key_stores,
+            input_private_key=self.tap_account.private_key(),
+            accounts=self.keystore_manager.node_accounts,
             amount=self.node_amount * constant.TO_SELA
         )
 
@@ -97,30 +92,38 @@ class Controller(object):
         Logger.info("{} recharge producer on success!".format(self.tag))
 
         if self.params.arbiter_params.enable:
-            ret = self.tx_manager.recharge_necessary_keystore(
-                input_keystore=self.tap_keystore,
-                keystores=self.keystore_manager.arbiter_stores,
-                amount=3 * constant.TO_SELA
-            )
-
-            self.check_result("recharge arbiter keystore", ret)
-            Logger.info("{} recharge each arbiter keystore {} ELAs on success!")
 
             ret = self.tx_manager.recharge_necessary_keystore(
-                input_keystore=self.tap_keystore,
-                keystores=self.keystore_manager.sub_key_stores,
+                input_private_key=self.tap_account.private_key(),
+                accounts=self.keystore_manager.sub1_accounts,
                 amount=3 * constant.TO_SELA
             )
-            self.check_result("recharge sub keystore", ret)
-            Logger.info("{} recharge each sub keystore {} ELAs on success!")
+            self.check_result("recharge sub1 keystore", ret)
+            Logger.info("{} recharge each sub1 keystore {} ELAs on success!")
 
             ret = self.tx_manager.recharge_necessary_keystore(
-                input_keystore=self.tap_keystore,
-                keystores=self.keystore_manager.sub_key_stores2,
+                input_private_key=self.tap_account.private_key(),
+                accounts=self.keystore_manager.sub2_accounts,
                 amount=3 * constant.TO_SELA
             )
-            self.check_result("recharge sub keystore2", ret)
-            Logger.info("{} recharge each sub keystore2 {} ELAs on success!")
+            self.check_result("recharge sub2 keystore", ret)
+            Logger.info("{} recharge each sub2 keystore {} ELAs on success!")
+
+            ret = self.tx_manager.recharge_necessary_keystore(
+                input_private_key=self.tap_account.private_key(),
+                accounts=self.keystore_manager.sub3_accounts,
+                amount=3 * constant.TO_SELA
+            )
+            self.check_result("recharge sub3 keystore", ret)
+            Logger.info("{} recharge each sub3 keystore {} ELAs on success!")
+
+            ret = self.tx_manager.recharge_necessary_keystore(
+                input_private_key=self.tap_account.private_key(),
+                accounts=self.keystore_manager.sub4_accounts,
+                amount=3 * constant.TO_SELA
+            )
+            self.check_result("recharge sub4 keystore", ret)
+            Logger.info("{} recharge each sub4 keystore {} ELAs on success!")
 
     def ready_for_dpos(self):
         ret = self.tx_manager.register_producers_candidates()
@@ -132,6 +135,12 @@ class Controller(object):
 
         self.get_dpos_votes()
 
+    def mining_blocks_ready(self, foundation_address):
+        time.sleep(3)
+        rpc.discrete_mining(110)
+        balance = rpc.get_balance_by_address(foundation_address)
+        Logger.debug("{} foundation address value: {}".format(self.tag, balance))
+
     def check_params(self):
         if self.params.ela_params.number < 3 * self.params.ela_params.crc_number + \
                 self.params.ela_params.later_start_number:
@@ -140,8 +149,21 @@ class Controller(object):
             time.sleep(1)
             exit(-1)
 
-    def show_current_next_info(self):
-        return self.rpc_manager.show_arbiter_info()
+    def get_arbiter_names(self, category: str):
+        arbiters = rpc.get_arbiters_info()[category]
+        current_nicknames = list()
+        for public_key in arbiters:
+            current_nicknames.append(self.node_manager.node_pubkey_name_dict[public_key])
+
+        return current_nicknames
+
+    def show_arbiter_info(self):
+        arbiters_nicknames = self.get_arbiter_names("arbiters")
+        arbiters_nicknames.sort()
+        next_arbiter_nicknames = self.get_arbiter_names("nextarbiters")
+        next_arbiter_nicknames.sort()
+        Logger.info("current arbiters nicknames: {}".format(arbiters_nicknames))
+        Logger.info("next    arbiters nicknames: {}".format(next_arbiter_nicknames))
 
     def reset_config(self, up_config: dict):
         for key in up_config.keys():
@@ -178,7 +200,26 @@ class Controller(object):
             exit(0)
 
     def check_nodes_height(self):
-        return self.rpc_manager.check_nodes_height()
+        Logger.debug("{} check the all nodes whether have the same height".format(self.tag))
+        time.sleep(3)
+        heights = list()
+
+        for node in self.node_manager.ela_nodes:
+            if not node.running:
+                continue
+
+            height = rpc.get_block_count(node.rpc_port)
+            Logger.debug("{} node{} height\t{}".format(self.tag, node.index, height))
+            heights.append(height)
+
+        global h0
+        h0 = heights[0]
+
+        for h in heights[1:]:
+            if h != h0:
+                return False
+
+        return True
 
     def get_node_public_keys(self, start: int, end: int):
         public_key_list = list()
@@ -202,6 +243,8 @@ class Controller(object):
                 tx_fee += tx.tx_fee
 
         return tx_fee
+
+
 
     @staticmethod
     def get_inflation_per_year():
@@ -253,12 +296,12 @@ class Controller(object):
         Logger.debug("{} income1: {}".format(self.tag, total_block_confirm_reward))
         Logger.debug("{} income2: {}".format(self.tag, total_top_producers_reward))
 
-        current_arbiters = self.rpc_manager.get_arbiter_names("arbiters")
+        current_arbiters = self.get_arbiter_names("arbiters")
         if not current_arbiters:
             Logger.error("{} get current arbiters info error".format(self.tag))
             return None
 
-        current_candidates = self.rpc_manager.get_arbiter_names("candidates")
+        current_candidates = self.get_arbiter_names("candidates")
         if not current_candidates:
             Logger.error("{} get current candidates info error".format(self.tag))
             return None
@@ -301,7 +344,7 @@ class Controller(object):
         income_dict = dict()
         for vout in vout_list:
             address = vout["address"]
-            if address == self.node_manager.main_foundation_address or address == self.node_manager.main_miner_address:
+            if address == self.foundation_account.address() or address == self.node_manager.main_miner_address:
                 continue
 
             value = float(vout["value"])
@@ -352,6 +395,16 @@ class Controller(object):
         # Logger.debug("{} response: {}".format(self.tag, response))
         return len(response["tx"][0]["vout"]) > 2
 
+    def get_list_producers_names(self):
+        producers_names = list()
+        list_producers = rpc.list_producers(0, 100)
+        for producer in list_producers["producers"]:
+            node_public_key = producer["nodepublickey"]
+            name = self.node_manager.node_pubkey_name_dict[node_public_key]
+            producers_names.append(name)
+
+        return producers_names
+
     @staticmethod
     def get_current_height():
         return rpc.get_block_count() - 1
@@ -359,6 +412,10 @@ class Controller(object):
     @staticmethod
     def discrete_mining_blocks(num: int):
         rpc.discrete_mining(num)
+
+    @staticmethod
+    def get_address_balance(address: str):
+        return rpc.get_balance_by_address(address)
 
     @staticmethod
     def get_height_times(height_times: dict, current_height: int):

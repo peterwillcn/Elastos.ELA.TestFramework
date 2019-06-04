@@ -48,23 +48,23 @@ class DposTest(object):
         self.crc_number = self.config["ela"]["crc_number"]
         self.h1 = self.config["ela"]["crc_dpos_height"]
         self.h2 = self.config["ela"]["public_dpos_height"]
-        self.tap_keystore = None
+        self.tap_account = None
 
     def run(self):
         self.before_test()
-        # self.normal_test()
-        # self.rotation_onebyone_test()
-        # self.rotation_whole_test()
-        # self.minor_stop_test()
+        self.normal_test()
+        self.rotation_onebyone_test()
+        self.rotation_whole_test()
+        self.minor_stop_test()
         self.inactive_single_test()
-        self.cross_normal_test()
-        self.cross_stop_test()
+        # self.cross_normal_test()
+        # self.cross_stop_test()
         self.after_test()
 
     def before_test(self):
         self.controller = Controller(self.config)
         self.controller.ready_for_dpos()
-        self.tap_keystore = self.controller.keystore_manager.tap_key_store
+        self.tap_account = self.controller.keystore_manager.tap_account
 
     def normal_test(self):
         test_case = "1、dpos normal test"
@@ -148,7 +148,7 @@ class DposTest(object):
                     before_rotation_nicknames.sort()
                     candidate = candidate_producers[index]
                     vote_amount = (len(candidate_producers) - index) * constant.TO_SELA * 100
-                    ret = self.controller.tx_manager.vote_producer(self.tap_keystore, vote_amount, [candidate])
+                    ret = self.controller.tx_manager.vote_producer(self.tap_account, vote_amount, [candidate])
                     if ret:
                         Logger.info("vote {} ElAs at {} on success!".format((vote_amount / constant.TO_SELA),
                                                                             candidate.info.nickname))
@@ -210,11 +210,11 @@ class DposTest(object):
             if vote_height == 0 and current_height > self.h2:
                 before_rotation_nicknames = self.controller.get_arbiter_nicknames()
                 before_rotation_nicknames.sort()
-                tap_balance = rpc.get_balance_by_address(self.tap_keystore.address)
+                tap_balance = rpc.get_balance_by_address(self.tap_account.address)
                 Logger.info("[test] tap_balance: {}".format(tap_balance))
 
                 ret = self.controller.tx_manager.vote_producer(
-                    keystore=self.tap_keystore,
+                    keystore=self.tap_account,
                     amount=self.number * 10 * constant.TO_SELA,
                     candidates=register_producers[self.crc_number * 3: len(register_producers)-1],
                 )
@@ -383,7 +383,7 @@ class DposTest(object):
                 ret = state == self.controller.PRODUCER_STATE_INACTIVE
                 self.controller.check_result("{} Before active producer, the stopped producer state is Inactive".format(
                     self.tag), ret)
-                ret = self.controller.tx_manager.activate_producer(inactive_producer)
+                ret = self.controller.tx_manager.active_producer(inactive_producer)
                 Logger.info("{} activate the producer result: {}".format(self.tag, ret))
 
                 state = self.controller.get_producer_state(1)

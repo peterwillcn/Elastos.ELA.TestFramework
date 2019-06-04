@@ -5,22 +5,20 @@
 
 import struct
 
-from src.tools import util, serialize
-from src.tools.log import Logger
+from src.tools import serialize
 
 from src.core.tx.payload.payload import Payload
 from src.core.wallet import keytool
+from src.core.wallet.account import Account
 
 
 class ProducerInfo(Payload):
 
-    def __init__(self, private_key: bytes, owner_public_key: bytes, node_public_key: bytes,
-                 nickname: str, url: str, location: int, net_address: str):
+    def __init__(self, owner_account: Account, node_account: Account, nickname: str, url: str,
+                 location: int, net_address: str):
         Payload.__init__(self, self.DEFAULT_VERSION)
-        self.tag = util.tag_from_path(__file__, self.__class__.__name__)
-        self.private_key = private_key
-        self.owner_public_key = owner_public_key
-        self.node_public_key = node_public_key
+        self.owner_account = owner_account
+        self.node_account = node_account
         self.nickname = nickname
         self.url = url
         self.location = location
@@ -30,8 +28,7 @@ class ProducerInfo(Payload):
     def gen_signature(self):
         r = b""
         r = self.serialize_unsigned(r, self.version)
-        signature = keytool.ecdsa_sign(self.private_key, r)
-        Logger.debug("{} len signature: {}".format(self.tag, len(signature)))
+        signature = keytool.ecdsa_sign(bytes.fromhex(self.owner_account.private_key()), r)
         self.signature = signature
         return signature
 
@@ -49,8 +46,8 @@ class ProducerInfo(Payload):
         return r
 
     def serialize_unsigned(self, r: bytes, version=0):
-        r = serialize.write_var_bytes(r, self.owner_public_key)
-        r = serialize.write_var_bytes(r, self.node_public_key)
+        r = serialize.write_var_bytes(r, bytes.fromhex(self.owner_account.public_key()))
+        r = serialize.write_var_bytes(r, bytes.fromhex(self.node_account.public_key()))
         r = serialize.write_var_bytes(r, bytes(self.nickname.encode()))
         r = serialize.write_var_bytes(r, bytes(self.url.encode()))
         r += struct.pack("<Q", self.location)
@@ -63,10 +60,13 @@ class ProducerInfo(Payload):
     def deserialize_unsigned(self, r: bytes, version: int):
         pass
 
+    def get_deposit_address(self):
+        return self.owner_account.deposit_address()
+
     def __repr__(self):
         return "ProducerInfo {" + "\n\t" \
-                + "owner_public_key: {}".format(self.owner_public_key.hex()) + "\n\t" \
-                + "node_public_key : {}".format(self.node_public_key.hex()) + "\n\t" \
+                + "owner_public_key: {}".format(self.owner_account.public_key()) + "\n\t" \
+                + "node_public_key : {}".format(self.node_account.public_key()) + "\n\t" \
                 + "nickname: {}".format(self.nickname) + "\n\t" \
                 + "url: {}".format(self.url) + "\n\t" \
                 + "location: {}".format(self.location) + "\n\t" \
@@ -74,32 +74,6 @@ class ProducerInfo(Payload):
                 + "}"
 
 
-if __name__ == '__main__':
-
-    private_key = "579701507deb7b1917e26ce213d7c53b24d60e552f777db5fbdc3d0970ebef82"
-    owner_public_key = "03d758bcf43cd1a61920b8982e251f74a1f477aad187aaa5fcd38eb33c823a3d3e"
-    node_public_key = "02d33b5c12970fe3fda9adc5de4e94349fe18b6e96aff4fd779379d76884f4bfca"
-    nickname = "RPO-001"
-    url = "http://elastos.org"
-    location = 1
-    net_address = "127.0.0.1:10014"
-
-    pro_info = ProducerInfo(
-        private_key=bytes.fromhex(private_key),
-        owner_public_key=bytes.fromhex(owner_public_key),
-        node_public_key=bytes.fromhex(node_public_key),
-        nickname=nickname,
-        url=url,
-        location=location,
-        net_address=net_address
-    )
-
-    print(pro_info)
-
-    r = b""
-    print("type r: ", type(r))
-    r = pro_info.serialize_unsigned(r, 0)
-    print("pro info serial unsigned: ", r.hex())
 
 
 

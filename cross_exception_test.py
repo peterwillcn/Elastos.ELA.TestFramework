@@ -20,13 +20,13 @@ config = {
     "side": True,
     "arbiter": {
         "enable": True,
-        "number": 9,
+        "number": 4,
         "pow_chain": True,
         "print_level": 0
     },
     "did": {
         "enable": True,
-        "number": 5,
+        "number": 4,
         "instant_block": True
     },
     "times": 1
@@ -59,9 +59,9 @@ if __name__ == '__main__':
 
         # after h1, show current and next arbiters info
         if current_height > h1:
-            controller.show_current_next_info()
+            controller.show_arbiter_info()
 
-        if current_height > h2 + 12:
+        if current_height > h2 + 2:
 
             controller.node_manager.arbiter_nodes[1].stop()
             ret = controller.tx_manager.cross_chain_transaction("did", True)

@@ -20,3 +20,6 @@ class OutputPayload(object):
 
     def validate(self):
         return None
+
+    def __repr__(self):
+        return ""

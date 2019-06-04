@@ -39,7 +39,7 @@ class Node(object):
         pass
 
     def reset_config_common(self, index, node_type: str, num):
-        if node_type is "did" or node_type is "token" or node_type is "neo":
+        if node_type != "ela" and node_type != "arbiter":
             return
 
         _config = self.config[constant.CONFIG_TITLE]

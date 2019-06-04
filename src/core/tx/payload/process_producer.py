@@ -58,7 +58,7 @@ class ProcessProducer(Payload):
         else:
             arg3 = self.signature.hex()
 
-        return "ActiveProducer {\n\t" \
+        return "ProcessProducer{\n\t" \
                 + "node_public_key: {}".format(arg1) + "\n\t" \
                 + "node_private_key: {}".format(arg2) + "\n\t" \
                 + "signature: {}".format(arg3) + "\n" \

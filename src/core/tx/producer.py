@@ -3,97 +3,124 @@
 # date: 2019/4/3 4:49 PM
 # author: liteng
 
-from src.tools import util, constant
-from src.tools.log import Logger
-
-from src.core.nodes.ela import ElaNode
-from src.core.services import rpc
-from src.core.wallet import keytool
+from src.tools import util
 from src.core.tx.payload.producer_info import ProducerInfo
 from src.core.tx import txbuild
+from src.core.wallet.account import Account
+from src.core.nodes.ela import ElaNode
 
 
 class Producer(object):
 
-    def __init__(self, node: ElaNode):
-        self.tag = util.tag_from_path(__file__, self.__class__.__name__)
+    def __init__(self, input_private_key: str, node: ElaNode, nick_name: str, url: str, location: int,
+                 net_address: str):
+
+        self.input_private_key = input_private_key
+        self.input = Account(input_private_key)
         self.node = node
         self.utxo_value = 0
         self.fee = 10000
         self.state = ""
-        self.deposit_address = keytool.gen_deposit_address(self.node.owner_keystore.program_hash)
-        self.output_address = self.node.owner_keystore.address
-        self.deposit_amount = 5000 * constant.TO_SELA
-        self.info = self._producer_info()
+        self.deposit_amount = 5000 * util.TO_SELA
+        self.info = self._producer_info(self.node.owner_account, self.node.node_account, nick_name,
+                                        url, location, net_address)
 
-    def _producer_info(self):
+    @staticmethod
+    def _producer_info(owner_account: Account, node_account: Account, nick_name: str, url: str,
+                       location: int, net_address: str):
         info = ProducerInfo(
-            private_key=self.node.owner_keystore.private_key,
-            owner_public_key=self.node.owner_keystore.public_key,
-            node_public_key=self.node.node_keystore.public_key,
-            nickname="PRO-{:0>3d}".format(self.node.index),
-            url="https://elastos.org",
-            location=0,
-            net_address="127.0.0.1:" + str(self.node.reset_port(self.node.index, "ela", "arbiter_node_port"))
+            owner_account=owner_account,
+            node_account=node_account,
+            nickname=nick_name,
+            url=url,
+            location=location,
+            net_address=net_address
         )
         return info
 
-    def register(self):
+    def producer_info(self):
+        return self.info
+
+    def input_account(self):
+        return self.input
+
+    def owner_account(self):
+        return self.node.owner_account
+
+    def node_account(self):
+        return self.node.node_account
+
+    def register(self, rpc_port: int):
         tx = txbuild.create_register_transaction(
-            keystore=self.node.owner_keystore,
-            output_addresses=[self.deposit_address],
+            input_private_key=self.input_private_key,
             amount=self.deposit_amount,
-            payload=self.info
+            payload=self.info,
+            rpc_port=rpc_port
         )
 
         if tx is None:
             return None
 
-        tx = txbuild.single_sign_transaction(self.node.owner_keystore, tx)
+        tx = txbuild.single_sign_transaction(self.input_private_key, tx)
 
         return tx
 
-    def update(self, producer_info: ProducerInfo):
+    def update(self, producer_info: ProducerInfo, rpc_port: int):
         tx = txbuild.create_update_transaction(
-            keystore=self.node.owner_keystore,
+            input_private_key=self.input_private_key,
             payload=producer_info,
+            rpc_port=rpc_port
         )
 
         if tx is None:
             return None
         producer_info.gen_signature()
-        tx = txbuild.single_sign_transaction(self.node.owner_keystore, tx)
+        tx = txbuild.single_sign_transaction(self.input_private_key, tx)
 
         return tx
 
-    def cancel(self):
-        tx = txbuild.create_cancel_transaction(self.node.owner_keystore)
+    def cancel(self, rpc_port: int):
+        tx = txbuild.create_cancel_transaction(
+            input_private_key=self.input_private_key,
+            payload=self.producer_info(),
+            rpc_port=rpc_port
+        )
 
         if tx is None:
             return None
 
-        tx = txbuild.single_sign_transaction(self.node.owner_keystore, tx)
+        tx = txbuild.single_sign_transaction(self.input_private_key, tx)
 
         return tx
 
-    def redeem(self):
+    def redeem(self, amount: int, rpc_port: int):
 
-        tx = txbuild.create_redeem_transaction(self.node.owner_keystore, amount=4999 * constant.TO_SELA)
+        tx = txbuild.create_redeem_transaction(
+            payload=self.producer_info(),
+            output_address=self.input.address(),
+            amount=amount,
+            rpc_port=rpc_port
+        )
 
         if tx is None:
             return None
 
-        tx = txbuild.single_sign_transaction(self.node.owner_keystore, tx)
+        tx = txbuild.single_sign_transaction(self.producer_info().owner_account.private_key(), tx)
 
         return tx
 
-    def activate(self):
+    def active(self):
 
         # note activate producer transaction needn't to sign the whole transaction
-        tx = txbuild.create_activate_producer(self.node.node_keystore)
+        tx = txbuild.create_active_transaction(self.node_account().private_key(), self.node_account().public_key())
 
         if tx is None:
             return None
 
         return tx
+
+    def __repr__(self):
+        return self.producer_info().__repr__()
+
+
 

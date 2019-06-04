@@ -29,11 +29,12 @@ if __name__ == '__main__':
     test_cases["case6"] = "insufficient_producer_degradation_first_inactive"
     test_cases["case7"] = "insufficient_producer_degradation_cancel_no_stop"
     test_cases["case8"] = "insufficient_producer_degradation_cancel_and_stop"
-    test_cases["case9"] = "inactive_crc_test"
-    test_cases["case10"] = "majority_inactive_1_turn"
-    test_cases["case11"] = "majority_inactive_2_turns"
-    test_cases["case12"] = "inactive_single_multy_send_activate"
+    test_cases["case9"] = "inactive_single_multy_send_activate"
+    test_cases["case10"] = "inactive_crc_test"
+    test_cases["case11"] = "majority_inactive_1_turn"
+    test_cases["case12"] = "majority_inactive_2_turns"
     test_cases["case13"] = "cross_normal_test"
+    test_cases["case14"] = "cross_exception_test"
 
     current_time = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
     path = os.path.join("./datas/server_test_result", current_time)
@@ -41,7 +42,7 @@ if __name__ == '__main__':
     if not os.path.exists(path):
         os.makedirs(path)
 
-    for i in range(1, 14):
+    for i in range(1, 15):
 
         os.system("sh ./shell/killall.sh")
         Logger.info("Begin testing case{}".format(i))

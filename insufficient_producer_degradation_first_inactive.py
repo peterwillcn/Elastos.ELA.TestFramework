@@ -14,6 +14,7 @@ config = {
         "number": 16,
         "crc_number": 4,
         "pre_connect_offset": 5,
+        "later_start_number": 4,
         "crc_dpos_height": 300,
         "public_dpos_height": 308
     },
@@ -43,7 +44,7 @@ def test_content():
     # get inactive public keys related to inactive nodes
     inactive_public_keys = list()
     for node in inactive_producers_nodes:
-        inactive_public_keys.append(node.node_keystore.public_key.hex())
+        inactive_public_keys.append(node.get_node_public_key())
 
     stop_height = 0
 
@@ -71,7 +72,7 @@ def test_content():
 
         # after h1, show the current and next arbiters info by sort
         if current_height >= h1:
-            controller.show_current_next_info()
+            controller.show_arbiter_info()
 
         if stop_height == 0 and current_height >= h2 + 12:
             for node in inactive_producers_nodes:
@@ -96,7 +97,7 @@ def test_content():
 
         if not activate and stop_height != 0 and current_height > stop_height + 30:
             for producer in inactive_producers:
-                ret = controller.tx_manager.activate_producer(producer)
+                ret = controller.tx_manager.active_producer(producer)
                 controller.check_result("activate producer {}".format(producer.info.nickname), ret)
             controller.start_later_nodes()
             activate = True

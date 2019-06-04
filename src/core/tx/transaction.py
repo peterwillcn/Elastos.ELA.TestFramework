@@ -5,16 +5,10 @@
 
 import struct
 
-from src.tools import util, serialize
+from src.tools import serialize
 from src.tools.log import Logger
 
 from src.core.wallet import keytool
-from src.core.tx.attribute import Attribute
-from src.core.tx.input import Input
-from src.core.tx.output import Output
-from src.core.tx.program import Program
-from src.core.tx.payload.payload import Payload
-from src.core.tx.output_payload import OutputPayload
 
 
 class Transaction(object):
@@ -182,55 +176,55 @@ class Transaction(object):
             return "UPDATE_VERSION"
 
 
-if __name__ == '__main__':
-    txid = "16c90c1e3a45cdf11f39fe0aa9f5eaea8fd0e6ab8bf5830c8cec4029c5964498"
-    index = 2
-    tx_id = util.bytes_reverse(bytes.fromhex(txid))
-    input = Input(tx_id, index)
-    inputs = list()
-    inputs.append(input)
-
-    outputs = list()
-    address = "EUrmyVjtQkUijfffapHM6tJrw7EN2vUHxp"
-    program_hash = keytool.address_to_program_hash(address)
-    amount = 123
-    output_lock = 0
-    output = Output(
-        value=amount,
-        output_lock=output_lock,
-        program_hash=program_hash,
-        output_type=Output.OT_NONE,
-        output_payload=OutputPayload()
-    )
-    outputs.append(output)
-
-    programs = list()
-    redeem_script = bytes.fromhex("2102d5b81d2f002b1ace56f6da5a35322df75544d71699af31bd30cfbfd348a61e15ac")
-    program = Program(code=redeem_script, params=None)
-    programs.append(program)
-
-    # create attributes
-    attributes = list()
-    attribute = Attribute(
-        usage=Attribute.NONCE,
-        data=bytes("attributes".encode())
-    )
-    attributes.append(attribute)
-
-    tx = Transaction()
-    tx.version = Transaction.TX_VERSION_09
-    tx.tx_type = Transaction.TRANSFER_ASSET
-    tx.payload = Payload()
-    tx.attributes = attributes
-    tx.inputs = inputs
-    tx.outputs = outputs
-    tx.lock_time = 0
-    tx.programs = programs
-
-    r = tx.serialize()
-    r2 = tx.serialize_unsigned()
-
-    print(tx)
-    print("transaction serial: ", r.hex())
-    print("tx serial unsigned: ", r2.hex())
+# if __name__ == '__main__':
+#     txid = "16c90c1e3a45cdf11f39fe0aa9f5eaea8fd0e6ab8bf5830c8cec4029c5964498"
+#     index = 2
+#     tx_id = util.bytes_reverse(bytes.fromhex(txid))
+#     input = Input(tx_id, index)
+#     inputs = list()
+#     inputs.append(input)
+#
+#     outputs = list()
+#     address = "EUrmyVjtQkUijfffapHM6tJrw7EN2vUHxp"
+#     program_hash = keytool.address_to_program_hash(address)
+#     amount = 123
+#     output_lock = 0
+#     output = Output(
+#         value=amount,
+#         output_lock=output_lock,
+#         program_hash=program_hash,
+#         output_type=Output.OT_NONE,
+#         output_payload=OutputPayload()
+#     )
+#     outputs.append(output)
+#
+#     programs = list()
+#     redeem_script = bytes.fromhex("2102d5b81d2f002b1ace56f6da5a35322df75544d71699af31bd30cfbfd348a61e15ac")
+#     program = Program(code=redeem_script, params=None)
+#     programs.append(program)
+#
+#     # create attributes
+#     attributes = list()
+#     attribute = Attribute(
+#         usage=Attribute.NONCE,
+#         data=bytes("attributes".encode())
+#     )
+#     attributes.append(attribute)
+#
+#     tx = Transaction()
+#     tx.version = Transaction.TX_VERSION_09
+#     tx.tx_type = Transaction.TRANSFER_ASSET
+#     tx.payload = Payload()
+#     tx.attributes = attributes
+#     tx.inputs = inputs
+#     tx.outputs = outputs
+#     tx.lock_time = 0
+#     tx.programs = programs
+#
+#     r = tx.serialize()
+#     r2 = tx.serialize_unsigned()
+#
+#     print(tx)
+#     print("transaction serial: ", r.hex())
+#     print("tx serial unsigned: ", r2.hex())
 

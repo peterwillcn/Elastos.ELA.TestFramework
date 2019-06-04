@@ -15,6 +15,7 @@ config = {
         "number": 16,
         "crc_number": 4,
         "pre_connect_offset": 5,
+        "later_start_number": 4,
         "crc_dpos_height": 300,
         "public_dpos_height": 308
     },
@@ -35,14 +36,15 @@ def test_content():
     h1 = controller.params.ela_params.crc_dpos_height
     h2 = controller.params.ela_params.public_dpos_height
     pre_offset = config["ela"]["pre_connect_offset"]
+    crc_number = controller.params.ela_params.crc_number
 
     # prepare  cancel producers, which number will be between 4 and 8
     cancel_height = 0
     cancel_count = random.randrange(4, 8)
 
     # get cancel producer node
-    stop_nodes = list()
     cancel_producers = controller.tx_manager.register_producers_list[: cancel_count]
+    stop_nodes = list()
     for producer in cancel_producers:
         stop_nodes.append(producer.node)
 
@@ -74,7 +76,7 @@ def test_content():
 
         # after h1, show the current and next arbiters nicknames by sort
         if current_height >= h1:
-            controller.show_current_next_info()
+            controller.show_arbiter_info()
 
         # mining the height after h2 + 12(320), cancel producers and stop nodes \
         # which number is between 4 and 8 by random
@@ -85,7 +87,7 @@ def test_content():
             # cancel producers
             for producer in cancel_producers:
                 ret = controller.tx_manager.cancel_producer(producer)
-                controller.check_result("Cancel Producer {}".format(producer.node.name), ret)
+                controller.check_result("Cancel Producer {}".format(producer.info.nickname), ret)
 
             cancel_height = current_height
             Logger.debug("cancel height: {}".format(cancel_height))

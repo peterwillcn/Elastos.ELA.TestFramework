@@ -26,23 +26,23 @@ def test_content():
 
     controller = Controller(config)
     will_register_producer = controller.node_manager.ela_nodes[2]
-
+    rpc_port = controller.node_manager.ela_nodes[0].rpc_port
     current_height = controller.get_current_height()
     Logger.debug("current height: {}".format(current_height))
 
     controller.tx_manager.register_producer(will_register_producer)
     controller.discrete_mining_blocks(1)
-    list_producers_nickname = controller.rpc_manager.get_pubkey_nickname_list()
+    list_producers_nickname = controller.get_list_producers_names()
     producer_status_resp = rpc.producer_status(
-        will_register_producer.owner_keystore.public_key.hex())
+        will_register_producer.owner_account.public_key())
     Logger.debug("producers status: {}".format(producer_status_resp))
-    producer = controller.tx_manager.tx.register_producers_list[0]
-    ret = producer.cancel()
+    producer = controller.tx_manager.register_producers_list[0]
+    ret = producer.cancel(rpc_port)
     Logger.debug("cancel producer result: {}".format(ret))
     Logger.info("before cancel list producers: {}".format(list_producers_nickname))
-    Logger.info("after cancel list producers:  {}".format(controller.rpc_manager.get_pubkey_nickname_list()))
+    Logger.info("after cancel list producers:  {}".format(controller.get_list_producers_names()))
 
-    result = len(controller.rpc_manager.get_pubkey_nickname_list()) != 2
+    result = len(controller.get_list_producers_names()) != 2
     controller.check_result("cancel pending register list producer has two same nicknames", result)
     controller.terminate_all_process()
 

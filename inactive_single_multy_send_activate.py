@@ -13,6 +13,7 @@ config = {
     "ela": {
         "number": 16,
         "crc_number": 4,
+        "later_start_number": 4,
         "pre_connect_offset": 5,
         "crc_dpos_height": 300,
         "public_dpos_height": 308,
@@ -38,6 +39,7 @@ def test_content():
 
     # producer[PRO-005]
     inactive_producer = controller.tx_manager.register_producers_list[inactive_producer_index]
+    inactive_node = controller.node_manager.ela_nodes[inactive_producer_index + crc_number + 1]
 
     current_height = controller.get_current_height()
     if current_height < h1 - pre_offset - 1:
@@ -65,11 +67,11 @@ def test_content():
             break
 
         if current_height > h1:
-            controller.show_current_next_info()
+            controller.show_arbiter_info()
 
         if stop_height == 0 and current_height >= h2 + 12:
             controller.check_result("Ater H2", True)
-            inactive_producer.node.stop()
+            inactive_node.stop()
             stop_height = current_height
             Logger.error(
                 "[main] node {} stopped at height {} on success!".format(
@@ -85,18 +87,18 @@ def test_content():
             Logger.debug("get producer state: {}".format(state))
             controller.check_result("Before active producer, the stopped producer state is Inactive", result)
 
-            inactive_producer.node.start()
-            result = controller.tx_manager.activate_producer(inactive_producer)
+            inactive_node.start()
+            result = controller.tx_manager.active_producer(inactive_producer)
             Logger.info("activate the producer result: {}".format(result))
             controller.check_result("send activate producer transaction", result)
 
-            ret = controller.tx_manager.activate_producer(inactive_producer)
+            ret = controller.tx_manager.active_producer(inactive_producer)
             controller.check_result("1 same height and send activate producer again", not ret)
 
             while True:
                 current_height2 = controller.get_current_height()
                 if current_height2 - current_height < 6:
-                    ret = controller.tx_manager.activate_producer(inactive_producer)
+                    ret = controller.tx_manager.active_producer(inactive_producer)
                     controller.check_result("2 pending state and send activate producer again", not ret)
                 else:
                     break
@@ -110,7 +112,7 @@ def test_content():
             result = state == controller.PRODUCER_STATE_ACTIVE
             Logger.debug("activted producer state: {}".format(state))
             controller.check_result("activated producer state is activate", result)
-            ret = controller.tx_manager.activate_producer(inactive_producer)
+            ret = controller.tx_manager.active_producer(inactive_producer)
             controller.check_result("3 state is activated send activate producer again", not ret)
             controller.start_later_nodes()
             later_start = True

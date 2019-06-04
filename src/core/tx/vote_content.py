@@ -5,7 +5,7 @@
 
 import struct
 
-from src.tools import util, serialize
+from src.tools import serialize
 from src.tools.log import Logger
 
 
@@ -15,7 +15,6 @@ class VoteContent(object):
     TYPE_CRC = 0x01
 
     def __init__(self, vote_type: int, candidates: list):
-        self.tag = util.tag_from_path(__file__, VoteContent.__name__)
         self.vote_type = vote_type
         self.candidates = candidates
 

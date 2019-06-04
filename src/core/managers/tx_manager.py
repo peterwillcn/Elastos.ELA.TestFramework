@@ -8,12 +8,10 @@ import time
 
 
 from src.core.tx import txbuild
+from src.core.tx.producer import Producer
 from src.core.tx.transaction import Transaction
 from src.core.services import rpc
-from src.core.wallet.keystore import KeyStore
 from src.core.nodes.ela import ElaNode
-from src.core.tx.producer import Producer
-from src.core.parameters.params import Parameter
 from src.core.managers.node_manager import NodeManager
 from src.core.tx.payload.producer_info import ProducerInfo
 
@@ -29,138 +27,144 @@ class TransactionManager(object):
         self.node_manager = node_manager
         self.params = self.node_manager.params
         self.fee = 10000
+        self.rpc_port = rpc.DEFAULT_PORT
         self.register_producers_list = list()
         self.cancel_producers_list = list()
-        self.general_producer_public_keys = list()
-        self.candidate_public_keys = list()
-        self.tap_key_store = self.node_manager.keystore_manager.tap_key_store
 
-    def transfer_asset(self, input_keystore: KeyStore, output_addresses: list, amount: int):
+        self.tap_account = self.node_manager.keystore_manager.tap_account
+
+    def transfer_asset(self, input_private_key: str, output_addresses: list, amount: int):
 
         # create transfer asset tx
         tx = txbuild.create_transaction(
-            keystore=input_keystore,
+            input_private_key=input_private_key,
             output_addresses=output_addresses,
             amount=amount,
-            fee=self.fee,
-            output_lock=0
+            rpc_port=self.rpc_port
         )
 
         if tx is None:
             return False
         # single sign this tx
-        tx = txbuild.single_sign_transaction(input_keystore, tx)
+        tx = txbuild.single_sign_transaction(input_private_key, tx)
 
         # return the result
-        ret = self._handle_tx_result(tx)
+        ret = self.handle_tx_result(tx)
 
         return ret
 
-    def transfer_cross_chain_asset(self, input_keystore: KeyStore, lock_address: str, cross_address: str,
-                                   amount: int, port=rpc.DEFAULT_PORT):
-        tx = txbuild.create_cross_chain_asset(
-            keystore=input_keystore,
+    def transfer_cross_chain_asset(self, input_private_key: str, lock_address: str, cross_address: str,
+                                   amount: int, recharge: bool, port=rpc.DEFAULT_PORT):
+        tx = txbuild.create_cross_chain_transaction(
+            input_private_key=input_private_key,
             lock_address=lock_address,
             cross_chain_address=cross_address,
             amount=amount,
-            port=port
+            recharge=recharge,
+            rpc_port=port
         )
 
         if tx is None:
             return False
 
-        tx = txbuild.single_sign_transaction(input_keystore, tx)
-
-        Logger.debug("cross chain asset transaction: \n{}".format(tx))
-        ret = self._handle_tx_result(tx, port)
+        tx = txbuild.single_sign_transaction(input_private_key, tx)
+        Logger.warn("cross chain asset transaction: \n{}".format(tx))
+        ret = self.handle_tx_result(tx, port)
 
         return ret
 
     def register_producer(self, node: ElaNode):
 
-        producer = Producer(node)
-        tx = producer.register()
+        producer = Producer(
+            input_private_key=node.owner_account.private_key(),
+            node=node,
+            nick_name=node.name,
+            url="http://elastos.org",
+            location=0,
+            net_address="127.0.0.1:" + str(node.arbiter_node_port)
+        )
+        tx = producer.register(self.rpc_port)
 
         if tx is None:
             return False
 
-        ret = self._handle_tx_result(tx)
+        ret = self.handle_tx_result(tx)
         if ret:
             self.register_producers_list.append(producer)
 
         return ret
 
     def update_producer(self, producer: Producer, producer_info: ProducerInfo):
-        tx = producer.update(producer_info)
+        tx = producer.update(producer_info, self.rpc_port)
 
         print(tx)
         if tx is None:
             return False
 
-        ret = self._handle_tx_result(tx)
+        ret = self.handle_tx_result(tx)
 
         return ret
 
     def cancel_producer(self, producer: Producer):
-        tx = producer.cancel()
+        tx = producer.cancel(self.rpc_port)
 
         if tx is None:
             return False
 
-        ret = self._handle_tx_result(tx)
+        ret = self.handle_tx_result(tx)
 
         if ret:
             self.cancel_producers_list.append(producer)
         return ret
 
     def redeem_producer(self, producer: Producer):
-        tx = producer.redeem()
+        tx = producer.redeem(4999 * constant.TO_SELA, self.rpc_port)
 
         if tx is None:
             return False
 
-        ret = self._handle_tx_result(tx)
+        ret = self.handle_tx_result(tx)
 
         return ret
 
-    def activate_producer(self, producer: Producer):
-        tx = producer.activate()
+    def active_producer(self, producer: Producer):
+        tx = producer.active()
 
         if tx is None:
             return False
 
-        ret = self._handle_tx_result(tx)
+        ret = self.handle_tx_result(tx)
 
         return ret
 
-    def vote_producer(self, keystore: KeyStore, amount: int, candidates: list):
+    def vote_producer(self, input_private_key: str, amount: int, candidates: list):
 
         candidates_list = list()
         for producer in candidates:
-            candidates_list.append(producer.node.owner_keystore.public_key)
+            candidates_list.append(producer.owner_account().public_key())
 
         tx = txbuild.create_vote_transaction(
-            keystore=keystore,
-            cancadites_list=candidates_list,
+            input_private_key=input_private_key,
+            candidates_list=candidates_list,
             amount=amount,
-            fee=10000
+            rpc_port=self.rpc_port
         )
 
         if tx is None:
             return False
 
-        tx = txbuild.single_sign_transaction(keystore, tx)
+        tx = txbuild.single_sign_transaction(input_private_key, tx)
 
-        ret = self._handle_tx_result(tx)
+        ret = self.handle_tx_result(tx)
 
         return ret
 
-    def recharge_necessary_keystore(self, input_keystore: KeyStore, keystores: list, amount: int):
+    def recharge_necessary_keystore(self, input_private_key: str, accounts: list, amount: int):
         addresses = list()
-        for keystore in keystores:
-            addresses.append(keystore.address)
+        for a in accounts:
+            addresses.append(a.address())
 
-        ret = self.transfer_asset(input_keystore, addresses, amount)
+        ret = self.transfer_asset(input_private_key, addresses, amount)
 
         if ret:
             rpc.discrete_mining(1)
@@ -177,102 +181,84 @@ class TransactionManager(object):
         if side_node_type is None or side_node_type is "":
             return False
 
-        global cross_key_store
+        global cross_key_account
         global side_port
         global result
+        global balance_port
 
         if side_node_type is "did":
-            side_port = 10036
-            cross_key_store = self.node_manager.keystore_manager.special_key_stores[5]
+            side_port = 10136
+            cross_key_account = self.node_manager.keystore_manager.cross_did_account
         elif side_node_type is "token":
+<<<<<<< HEAD
             side_port = 10046
             cross_key_store = self.node_manager.keystore_manager.special_key_stores[5]
         elif side_node_type is "neo":
             side_port = 10056
             cross_key_store = self.node_manager.keystore_manager.special_key_stores[5]
+=======
+            side_port = 10146
+            cross_key_account = self.node_manager.keystore_manager.cross_token_account
+        elif side_node_type is "neo":
+            side_port = 10156
+            cross_key_account = self.node_manager.keystore_manager.cross_neo_account
+>>>>>>> sdk_test
 
         if recharge:
-
-            balance1 = rpc.get_balance_by_address(cross_key_store.address, side_port)
-
-            ret = self.transfer_cross_chain_asset(
-                input_keystore=self.tap_key_store,
-                lock_address=self.params.arbiter_params.side_info[side_node_type][constant.SIDE_RECHARGE_ADDRESS],
-                cross_address=cross_key_store.address,
-                amount=200 * constant.TO_SELA,
-            )
-
-            if not ret:
-                Logger.info("{} cross chain recharge failed".format(self.tag))
-                return False
-
-            Logger.debug("{} cross chain transaction on success".format(self.tag))
-
-            current_height = rpc.get_block_count()
-            side_height_begin = rpc.get_block_count(side_port)
-            while True:
-                main_height = rpc.get_block_count()
-                side_height = rpc.get_block_count(side_port)
-
-                Logger.debug("{} main height: {}, side height: {}".format(self.tag, main_height, side_height))
-
-                if main_height - current_height > 7:
-                    time.sleep(2)
-
-                if side_height - side_height_begin > 6:
-                    break
-
-                rpc.discrete_mining(1)
-                time.sleep(1)
-
-            balance2 = rpc.get_balance_by_address(cross_key_store.address, side_port)
-            Logger.debug("{} recharge balance1: {}".format(self.tag, balance1))
-            Logger.debug("{} recharge balance2: {}".format(self.tag, balance2))
-
-            result = (float(balance2) - float(balance1)) * constant.TO_SELA > float(200 * constant.TO_SELA - 3 * 10000)
-            Logger.debug("{} recharge result: {}".format(self.tag, result))
+            port = self.rpc_port
+            balance_port = side_port
+            input_private_key = self.tap_account.private_key()
+            lock_address = self.params.arbiter_params.side_info[side_node_type][constant.SIDE_RECHARGE_ADDRESS]
+            cross_address = cross_key_account.address()
+            amount = 200 * constant.TO_SELA
 
         else:
+            port = side_port
+            balance_port = self.rpc_port
+            input_private_key = cross_key_account.private_key()
+            lock_address = self.params.arbiter_params.side_info[side_node_type][constant.SIDE_WITHDRAW_ADDRESS]
+            cross_address = self.tap_account.address()
+            amount = 100 * constant.TO_SELA
 
-            balance1 = rpc.get_balance_by_address(self.tap_key_store.address)
-            ret = self.transfer_cross_chain_asset(
-                input_keystore=cross_key_store,
-                lock_address=self.params.arbiter_params.withdraw_address,
-                cross_address=self.tap_key_store.address,
-                amount=100 * constant.TO_SELA,
-                port=side_port
-            )
+        balance1 = rpc.get_balance_by_address(cross_address, balance_port)
 
-            if not ret:
-                Logger.info("{} cross chain withdraw failed".format(self.tag))
-                return False
+        ret = self.transfer_cross_chain_asset(
+            input_private_key=input_private_key,
+            lock_address=lock_address,
+            cross_address=cross_address,
+            amount=amount,
+            recharge=recharge,
+            port=port
+        )
 
-            Logger.debug("{} cross chain transaction on success".format(self.tag))
+        if not ret:
+            Logger.error("{} transfer cross chain asset failed".format(self.tag))
+            return False
 
-            current_height = rpc.get_block_count(side_port)
-            while True:
-                main_height = rpc.get_block_count()
-                side_height = rpc.get_block_count(side_port)
+        side_height_begin = rpc.get_block_count(side_port)
 
-                Logger.debug("{} main height: {}, side height: {}".format(self.tag, main_height, side_height))
+        while True:
+            main_height = rpc.get_block_count()
+            side_height = rpc.get_block_count(side_port)
 
-                if side_height - current_height > 10:
-                    break
+            Logger.debug("{} main height: {}, side height: {}".format(self.tag, main_height, side_height))
 
-                rpc.discrete_mining(1)
-                time.sleep(5)
+            if side_height - side_height_begin > 10:
+                break
 
-            balance2 = rpc.get_balance_by_address(self.tap_key_store.address)
-            Logger.debug("{} withdraw balance1: {}".format(self.tag, balance1))
-            Logger.debug("{} withdraw balance2: {}".format(self.tag, balance2))
+            rpc.discrete_mining(1)
+            time.sleep(3)
 
-            result = (float(balance2) - float(balance1)) * constant.TO_SELA > float(100 * constant.TO_SELA - 3 * 10000)
-            Logger.debug("{} withdraw result: {}".format(self.tag, result))
+        balance2 = rpc.get_balance_by_address(cross_address, balance_port)
+        Logger.debug("{} recharge balance1: {}".format(self.tag, balance1))
+        Logger.debug("{} recharge balance2: {}".format(self.tag, balance2))
+
+        result = (float(balance2) - float(balance1)) * constant.TO_SELA > float(amount - 3 * 10000)
+        Logger.debug("{} recharge result: {}".format(self.tag, result))
 
         return result
 
     def register_producers_candidates(self):
-        num = 0
 
         global result
         result = False
@@ -281,7 +267,7 @@ class TransactionManager(object):
                 self.params.ela_params.number - round(self.params.ela_params.later_start_number / 2) + 1
         ):
             ela_node = self.node_manager.ela_nodes[i]
-            public_key = ela_node.node_keystore.public_key.hex()
+            public_key = ela_node.node_account.public_key()
             ret = self.register_producer(ela_node)
             if not ret:
                 return False
@@ -293,20 +279,14 @@ class TransactionManager(object):
             if not result:
                 Logger.error("{} register producer {} failed".format(self.tag, ela_node.name))
                 break
-            num += 1
-            if num <= self.params.ela_params.crc_number * 2:
-                self.general_producer_public_keys.append(public_key)
-            else:
-                self.candidate_public_keys.append(public_key)
+
             Logger.info("{} register node-{} to be a producer on success!\n".format(self.tag, i))
 
         return result
 
     def register_producers(self, start: int, end: int, without_mining=False):
-        num = 0
         for i in range(start, end):
             ela_node = self.node_manager.ela_nodes[i]
-            public_key = ela_node.node_keystore.public_key.hex()
             ret = self.register_producer(ela_node)
             if not ret:
                 return False
@@ -321,11 +301,6 @@ class TransactionManager(object):
                     break
                 time.sleep(1)
 
-            num += 1
-            if num <= self.params.ela_params.crc_number * 2:
-                self.general_producer_public_keys.append(public_key)
-            else:
-                self.candidate_public_keys.append(public_key)
             Logger.info("{} register node-{} to be a producer on success!\n".format(self.tag, i))
         return True
 
@@ -368,7 +343,7 @@ class TransactionManager(object):
             producer = self.register_producers_list[i - self.params.ela_params.crc_number - 1]
             vote_amount = (self.params.ela_params.number - i + 1) * constant.TO_SELA
             ret = self.vote_producer(
-                keystore=self.node_manager.keystore_manager.node_key_stores[i],
+                input_private_key=producer.node_account().private_key(),
                 amount=vote_amount,
                 candidates=[producer],
             )
@@ -383,7 +358,7 @@ class TransactionManager(object):
             producer = self.register_producers_list[i - self.params.ela_params.crc_number - 1]
             vote_amount = (self.params.ela_params.number - i + 1) * constant.TO_SELA
             ret = self.vote_producer(
-                keystore=self.node_manager.keystore_manager.node_key_stores[i],
+                input_private_key=producer.node_account().private_key(),
                 amount=vote_amount,
                 candidates=[producer]
             )
@@ -393,7 +368,7 @@ class TransactionManager(object):
             rpc.discrete_mining(1)
         return True
 
-    def _handle_tx_result(self, tx: Transaction, port=rpc.DEFAULT_PORT):
+    def handle_tx_result(self, tx: Transaction, port=rpc.DEFAULT_PORT):
 
         # Logger.debug("{} {}".format(self.tag, tx))
 
@@ -408,6 +383,7 @@ class TransactionManager(object):
         reverse_res = util.bytes_reverse(bytes.fromhex(response)).hex()
         Logger.debug("{} tx hash : {}".format(self.tag, tx.hash()))
         Logger.debug("{} response: {}".format(self.tag, reverse_res))
+        Logger.debug("{} reverse:  {}".format(self.tag, response))
 
         return tx.hash() == reverse_res
 

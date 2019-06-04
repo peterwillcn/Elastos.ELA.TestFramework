@@ -14,6 +14,7 @@ config = {
         "number": 24,
         "crc_number": 4,
         "pre_connect_offset": 5,
+        "later_start_number": 4,
         "crc_dpos_height": 300,
         "public_dpos_height": 308
     },
@@ -37,6 +38,10 @@ def test_content():
 
     # init inactive producers [5,6,7,8, 9,10,11,12, 13,14,15,16]
     inactive_producers = controller.tx_manager.register_producers_list[4: 16]
+    inactive_nodes = list()
+
+    for producer in inactive_producers:
+        inactive_nodes.append(producer.node)
 
     stop_height = 0
 
@@ -64,24 +69,25 @@ def test_content():
 
         # after h1, show the current and next arbiters info
         if current_height >= h1:
-            controller.show_current_next_info()
+            controller.show_arbiter_info()
 
         if stop_height == 0 and current_height >= h2 + 12:
             controller.check_result("Ater H2，the first round of consensus", True)
 
-            for producer in inactive_producers:
-                producer.node.stop()
+            for node in inactive_nodes:
+                node.stop()
 
             stop_height = current_height
             print("stop_height 1: ", stop_height)
 
         if not activate and stop_height != 0 and current_height > stop_height + 20:
-            inactive_producers = inactive_producers[:4]
-            for producer in inactive_producers:
-                producer.node.start()
+            first_inactive_producers = inactive_producers[:4]
+            first_inactive_nodes = inactive_nodes[:4]
+            for node in first_inactive_nodes:
+                node.start()
 
-            for producer in inactive_producers:
-                ret = controller.tx_manager.activate_producer(producer)
+            for producer in first_inactive_producers:
+                ret = controller.tx_manager.active_producer(producer)
                 controller.check_result("activate producer {}".format(producer.info.nickname), ret)
 
             # start stopped nodes again and look at their height are sync them
@@ -91,7 +97,7 @@ def test_content():
         if stop_height != 0 and current_height > stop_height + 100:
             current_arbiter_public_keys = controller.get_current_arbiter_public_keys()
             controller.check_result("check all nodes have the same height", controller.check_nodes_height())
-            result = set(controller.rpc_manager.normal_dpos_pubkeys).issubset(current_arbiter_public_keys)
+            result = set(controller.node_manager.normal_dpos_pubkeys).issubset(current_arbiter_public_keys)
             break
 
         controller.discrete_mining_blocks(1)

@@ -3,9 +3,9 @@
     "enable": true,
     "arbiter_enable": true,
     "password": "123",
-    "number": 12,
+    "number": 16,
     "crc_number": 4,
-    "later_start_number": 4,
+    "later_start_number": 0,
     "active_net": "regnet",
     "print_level": 0,
     "disable_dns": true,
@@ -45,7 +45,15 @@
   "token": {
     "enable": false,
     "number": 5,
-    "instant_block": true
+    "active_net": "regnet",
+    "log_level": 0,
+    "instant_block": true,
+    "mining_enable": false,
+    "disable_dns": true,
+    "spv_disable_dns": true,
+    "rest_port_enable": true,
+    "ws_port_enable": true,
+    "rpc_port_enable": true
   },
   "neo": {
     "enable": false,

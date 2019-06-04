@@ -38,17 +38,4 @@ class Program(object):
         return "Program: {\n\t" + "code: " + arg1 + "\n\t" + "parameter: " + arg2 + "\n}"
 
 
-if __name__ == '__main__':
-    redeem_script = bytes.fromhex("2102d5b81d2f002b1ace56f6da5a35322df75544d71699af31bd30cfbfd348a61e15ac")
-    program = Program(code=redeem_script, params=None)
 
-    r = program.serialize()
-    print("program serial: ", r.hex())
-
-    a = b""
-    b = bytes(0)
-    c = a + b
-
-    print("a = ", a)
-    print("b = ", b)
-    print("c = ", c)

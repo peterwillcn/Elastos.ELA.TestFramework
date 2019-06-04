@@ -39,5 +39,6 @@ def post_request(url, method, params):
         Logger.error("{} post request error: {}".format(tag, e))
         return False
 
+
 if __name__ == "__main__":
     print(tag)
