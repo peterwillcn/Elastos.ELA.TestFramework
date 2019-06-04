@@ -244,8 +244,6 @@ class Controller(object):
 
         return tx_fee
 
-
-
     @staticmethod
     def get_inflation_per_year():
         inflation_per_year = 3300 * 10000 * constant.TO_SELA * 4 / 100

@@ -190,19 +190,11 @@ class TransactionManager(object):
             side_port = 10136
             cross_key_account = self.node_manager.keystore_manager.cross_did_account
         elif side_node_type is "token":
-<<<<<<< HEAD
-            side_port = 10046
-            cross_key_store = self.node_manager.keystore_manager.special_key_stores[5]
-        elif side_node_type is "neo":
-            side_port = 10056
-            cross_key_store = self.node_manager.keystore_manager.special_key_stores[5]
-=======
             side_port = 10146
             cross_key_account = self.node_manager.keystore_manager.cross_token_account
         elif side_node_type is "neo":
             side_port = 10156
             cross_key_account = self.node_manager.keystore_manager.cross_neo_account
->>>>>>> sdk_test
 
         if recharge:
             port = self.rpc_port

@@ -97,10 +97,6 @@ class NodeManager(object):
             for i in range(len(self.neo_nodes)):
                 self.neo_nodes[i].start()
                 time.sleep(0.2)
-<<<<<<< HEAD
-=======
-
->>>>>>> sdk_test
             self.wait_rpc_ready(self.neo_nodes[0].rpc_port)
             self.create_side_info("neo")
 
