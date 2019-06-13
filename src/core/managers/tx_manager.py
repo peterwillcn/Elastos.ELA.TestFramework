@@ -181,33 +181,41 @@ class TransactionManager(object):
         if side_node_type is None or side_node_type is "":
             return False
 
-        global cross_key_account
+        global cross_address
         global side_port
         global result
         global balance_port
+        global cross_input_key
 
         if side_node_type is "did":
             side_port = 10136
-            cross_key_account = self.node_manager.keystore_manager.cross_did_account
+            cross_did_account = self.node_manager.keystore_manager.cross_did_account
+            cross_address = cross_did_account.address()
+            cross_input_key = cross_did_account.private_key()
+
         elif side_node_type is "token":
             side_port = 10146
-            cross_key_account = self.node_manager.keystore_manager.cross_token_account
+            cross_token_account = self.node_manager.keystore_manager.cross_token_account
+            cross_address = cross_token_account.address()
+            cross_input_key = cross_token_account.private_key()
+
         elif side_node_type is "neo":
             side_port = 10156
-            cross_key_account = self.node_manager.keystore_manager.cross_neo_account
+            cross_neo_account = self.node_manager.keystore_manager.cross_neo_account
+            cross_address = cross_neo_account.address()
+            cross_input_key = cross_neo_account.private_key()
 
         if recharge:
             port = self.rpc_port
             balance_port = side_port
             input_private_key = self.tap_account.private_key()
             lock_address = self.params.arbiter_params.side_info[side_node_type][constant.SIDE_RECHARGE_ADDRESS]
-            cross_address = cross_key_account.address()
             amount = 200 * constant.TO_SELA
 
         else:
             port = side_port
             balance_port = self.rpc_port
-            input_private_key = cross_key_account.private_key()
+            input_private_key = cross_input_key
             lock_address = self.params.arbiter_params.side_info[side_node_type][constant.SIDE_WITHDRAW_ADDRESS]
             cross_address = self.tap_account.address()
             amount = 100 * constant.TO_SELA
@@ -245,7 +253,17 @@ class TransactionManager(object):
         Logger.debug("{} recharge balance1: {}".format(self.tag, balance1))
         Logger.debug("{} recharge balance2: {}".format(self.tag, balance2))
 
-        result = (float(balance2) - float(balance1)) * constant.TO_SELA > float(amount - 3 * 10000)
+        if isinstance(balance1, dict):
+            before_balance = list(balance1.values())[0]
+        else:
+            before_balance = balance1
+
+        if isinstance(balance2, dict):
+            after_balance = list(balance2.values())[0]
+        else:
+            after_balance = balance2
+
+        result = (float(after_balance) - float(before_balance)) * constant.TO_SELA > float(amount - 3 * 10000)
         Logger.debug("{} recharge result: {}".format(self.tag, result))
 
         return result

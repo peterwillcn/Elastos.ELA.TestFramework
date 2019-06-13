@@ -58,6 +58,7 @@ def test_content():
     h2 = controller.params.ela_params.public_dpos_height
     pre_offset = config["ela"]["pre_connect_offset"]
     did_enable = config["did"]["enable"]
+    token_enable = config["token"]["enable"]
     neo_enable = config["neo"]["enable"]
 
     global test_case
@@ -137,6 +138,27 @@ def test_content():
                 test_case = "cross chain withdraw did after H2"
                 Logger.info("### Testing {} ###".format(test_case))
                 result = controller.tx_manager.cross_chain_transaction("did", False)
+                controller.check_result(test_case, result)
+
+                controller.discrete_mining_blocks(1)
+                time.sleep(2)
+                controller.discrete_mining_blocks(1)
+                time.sleep(2)
+
+            if token_enable:
+                test_case = "cross chain recharge token after H2"
+                Logger.info("### Testing {} ###".format(test_case))
+                result = controller.tx_manager.cross_chain_transaction("token", True)
+                controller.check_result(test_case, result)
+
+                controller.discrete_mining_blocks(1)
+                time.sleep(2)
+                controller.discrete_mining_blocks(1)
+                time.sleep(2)
+
+                test_case = "cross chain withdraw token after H2"
+                Logger.info("### Testing {} ###".format(test_case))
+                result = controller.tx_manager.cross_chain_transaction("token", False)
                 controller.check_result(test_case, result)
 
                 controller.discrete_mining_blocks(1)

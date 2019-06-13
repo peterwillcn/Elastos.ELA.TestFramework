@@ -8,7 +8,7 @@ import time
 from src.tools.log import Logger
 from src.control.control import Controller
 
-from elasdk.wallet.account import Account
+from src.core.wallet.account import Account
 
 
 config = {

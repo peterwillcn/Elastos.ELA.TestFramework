@@ -3,10 +3,8 @@
 # date: 2019/5/13 3:05 PM
 # author: liteng
 
-import random
-from decimal import Decimal
-from elasdk.wallet.account import Account
-from elasdk.wallet.keystore import Keystore
+from src.core.wallet import keytool
+from src.tools import serialize
 
 
 def hello():
@@ -15,14 +13,24 @@ def hello():
 
 if __name__ == '__main__':
 
-    a = Account()
-    data = str.encode("hello")
+    balance = dict()
 
-    k = Keystore(a, "123")
-    print(k)
-    k.save_to_file("./")
+    balance["a"] = 1
+    balance["b"] = 2
+    balance["c"] = 3
+    balance["d"] = 4
 
-    k2 = Keystore("./keystore.dat", "12")
+    keys = balance.values()
+    a = list(keys)
+
+    for key in keys:
+        print(key)
+
+    print(type(keys))
+
+    print(type(a))
+
+    print(a[0])
 
 
 
