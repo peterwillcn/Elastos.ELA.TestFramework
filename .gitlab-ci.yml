@@ -6,9 +6,20 @@ stages:
 
 job_test2:
   stage: test
+  variables:
+    GOPATH: $HOME
   image: python:3
+  before_script:
+  - mkdir -p $GOPATH/src/github.com/elastos/Elastos.ELA
+  - cd $GOPATH/src/github.com/elastos/Elastos.ELA
+  - ls -l
+  - pwd
+  - wget http://172.16.0.120/ela
+  - wget http://172.16.0.120/ela-cli
+  - cd ${CI_PROJECT_PATH}
   script:
     - python -V
+    - python dpos_normal_test.py
     - echo Something in the test step in a python:3 image
     - echo case1
 
