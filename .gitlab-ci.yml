@@ -1,0 +1,14 @@
+stages:
+  - test
+  - build
+  - release
+  - deploy
+
+job_test2:
+  stage: test
+  image: python:3
+  script:
+    - python -V
+    - echo Something in the test step in a python:3 image
+    - echo case1
+
