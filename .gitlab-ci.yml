@@ -18,10 +18,10 @@ job_test2:
   - pwd
   - wget http://172.16.0.120/ela
   - wget http://172.16.0.120/ela-cli
-  - cd ${CI_PROJECT_PATH}
-  - ls -l
-  - pwd
   script:
+    - cd /builds/${CI_PROJECT_PATH}
+    - ls -l
+    - pwd
     - python -V
     - python dpos_normal_test.py
     - echo Something in the test step in a python:3 image
