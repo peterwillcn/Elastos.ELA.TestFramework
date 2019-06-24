@@ -8,7 +8,7 @@ job_test2:
   stage: test
   variables:
     GOPATH: $HOME
-  image: python:3.6-alpine
+  image: python:3.6-jessie
   before_script:
   - ls -l
   - pwd
