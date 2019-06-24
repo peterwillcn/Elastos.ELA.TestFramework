@@ -23,6 +23,7 @@ job_test2:
     - ls -l
     - pwd
     - python -V
+    - pip3 install -r requirements.txt
     - python dpos_normal_test.py
     - echo Something in the test step in a python:3 image
     - echo case1
