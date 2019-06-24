@@ -18,6 +18,9 @@ job_test2:
   - pwd
   - wget http://172.16.0.120/ela
   - wget http://172.16.0.120/ela-cli
+  - export http_proxy=http://221.220.136.163:13128
+  - export https_proxy=$http_proxy
+
   script:
     - cd /builds/${CI_PROJECT_PATH}
     - ls -l
