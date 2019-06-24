@@ -10,6 +10,8 @@ job_test2:
     GOPATH: $HOME
   image: python:3
   before_script:
+  - ls -l
+  - pwd
   - mkdir -p $GOPATH/src/github.com/elastos/Elastos.ELA
   - cd $GOPATH/src/github.com/elastos/Elastos.ELA
   - ls -l
