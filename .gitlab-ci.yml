@@ -8,7 +8,7 @@ job_test2:
   stage: test
   variables:
     GOPATH: $HOME
-  image: python:3
+  image: python:3.6-alpine
   before_script:
   - ls -l
   - pwd
@@ -18,8 +18,8 @@ job_test2:
   - pwd
   - wget http://172.16.0.120/ela
   - wget http://172.16.0.120/ela-cli
-  - export http_proxy=http://221.220.136.163:13128
-  - export https_proxy=$http_proxy
+#  - export http_proxy=http://221.220.136.163:13128
+#  - export https_proxy=$http_proxy
 
   script:
     - cd /builds/${CI_PROJECT_PATH}
