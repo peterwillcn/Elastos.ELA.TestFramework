@@ -59,10 +59,7 @@ class NodeManager(object):
             ret = self._deploy_nodes("ela", self.params.ela_params.number)
             self.later_start_nodes = \
                 self.ela_nodes[self.params.ela_params.number - self.params.ela_params.later_start_number + 1:]
-            self.create_address_name_dict()
-            self.create_owner_pubkey_name_dict()
-            self.create_node_pubkey_name_dict()
-            self.create_normal_dpos_pubkey()
+
         if self.params.did_params.enable:
             ret = self._deploy_nodes("did", self.params.did_params.number)
         if self.params.token_params.enable:

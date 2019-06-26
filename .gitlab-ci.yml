@@ -6,9 +6,14 @@ stages:
 
 job_test:
   stage: test
+  image: python:3.6-jessie
   variables:
     GOPATH: $HOME
-  image: python:3.6-jessie
+    PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  cache:
+    paths:
+    - .cache/pip
+    - venv/
   before_script:
   - ls -l
   - pwd
