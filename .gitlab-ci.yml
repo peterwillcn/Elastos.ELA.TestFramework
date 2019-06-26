@@ -27,4 +27,15 @@ job_test:
     - python -V
     - python -m pip install -r requirements.txt
     - python dpos_normal_test.py
-
+    - python cancel_pending_register.py
+    - python rotation_onebyone_test.py
+    - python rotation_whole_test.py
+    - python inactive_single_multy_send_activate.py
+    - python insufficient_producer_degradation_cancel_no_stop.py
+    - python insufficient_producer_degradation_cancel_and_stop.py
+    - python insufficient_producer_degradation_pre_connect.py
+    - python insufficient_producer_degradation_first_inactive.py
+    - python inactive_crc_test.py
+    - python majority_inactive_1_turn.py
+    - python majority_inactive_2_turns.py
+    - python majority_inactive_crc_degradation.py
