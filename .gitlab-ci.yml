@@ -23,6 +23,8 @@ job_test:
   - pwd
   - wget http://172.16.0.120/ela
   - wget http://172.16.0.120/ela-cli
+  - ls -l
+  - pwd
 #  - export http_proxy=http://221.220.136.163:13128
 #  - export https_proxy=$http_proxy
 
