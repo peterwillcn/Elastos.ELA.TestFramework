@@ -8,7 +8,7 @@ job_test:
   stage: test
   image: python:3.6-jessie
   variables:
-    GOPATH: $HOME
+    GOPATH: "$HOME/dev"
     PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
   cache:
     paths:
@@ -16,6 +16,7 @@ job_test:
     - venv/
   before_script:
   - echo $HOME
+  - echo $GOPATH
   - ls -l
   - pwd
   - mkdir -p $GOPATH/src/github.com/elastos/Elastos.ELA
