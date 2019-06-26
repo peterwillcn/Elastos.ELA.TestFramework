@@ -4,7 +4,7 @@ stages:
   - release
   - deploy
 
-job_test2:
+job_test:
   stage: test
   variables:
     GOPATH: $HOME

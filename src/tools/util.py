@@ -12,7 +12,7 @@ import struct
 
 from src.tools.log import Logger
 
-PROJECT_NAME = "Elastos.ELA.TestFramework"
+PROJECT_NAME = "TestFramework"
 
 node_type_dict = {
     "ela": 10,

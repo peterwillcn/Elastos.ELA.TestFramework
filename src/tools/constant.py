@@ -119,8 +119,6 @@ CONFIG_EMERGENCY_INACTIVE_PENALTY = "EmergencyInactivePenalty"
 SIDE_GENESIS_ADDRESS = "GenesisAddress"
 SIDE_RECHARGE_ADDRESS = "SideRechargeAddress"
 SIDE_WITHDRAW_ADDRESS = "SideWithdrawAddress"
-PROJECT_NAME = "TestFramework"
-
 
 TO_SELA = 100000000
 
