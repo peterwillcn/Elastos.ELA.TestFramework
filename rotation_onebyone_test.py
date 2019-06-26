@@ -94,7 +94,7 @@ def one_by_one_rotation_test():
         time.sleep(1)
 
     controller.check_result(test_case, True)
-    controller.terminate_all_process()
+    controller.terminate_all_process(result)
 
 
 if __name__ == '__main__':

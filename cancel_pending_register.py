@@ -44,7 +44,7 @@ def test_content():
 
     result = len(controller.get_list_producers_names()) != 2
     controller.check_result("cancel pending register list producer has two same nicknames", result)
-    controller.terminate_all_process()
+    controller.terminate_all_process(result)
 
 
 if __name__ == '__main__':

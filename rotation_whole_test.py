@@ -105,7 +105,7 @@ def test_content():
 
     time.sleep(2)
     controller.check_result(test_case, result)
-    controller.terminate_all_process()
+    controller.terminate_all_process(result)
 
 
 if __name__ == '__main__':

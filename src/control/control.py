@@ -184,11 +184,15 @@ class Controller(object):
                 for k in _config.keys():
                     self.config[key][k] = _config[k]
 
-    def terminate_all_process(self):
+    def terminate_all_process(self, result: bool):
         Logger.info("{} terminal all the process and exit...".format(self.tag))
         self.node_manager.stop_nodes()
         time.sleep(1)
         os.system("sh {}/shell/killall.sh".format(self.root_path))
+        if result:
+            exit(0)
+        else:
+            exit(1)
 
     def start_later_nodes(self):
         for node in self.later_nodes:
@@ -200,8 +204,8 @@ class Controller(object):
             print(current_time + Logger.COLOR_GREEN + " [PASS!] " + Logger.COLOR_END + case + "\n")
         else:
             print(current_time + Logger.COLOR_RED + " [NOT PASS!] " + Logger.COLOR_END + case + "\n")
-            self.terminate_all_process()
-            exit(0)
+            self.terminate_all_process(result)
+            exit(1)
 
     def check_nodes_height(self):
         Logger.debug("{} check the all nodes whether have the same height".format(self.tag))

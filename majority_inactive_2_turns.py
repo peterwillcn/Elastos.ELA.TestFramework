@@ -147,7 +147,7 @@ def test_content():
     # Finally, output the test result and exit
     controller.check_result(test_case, result)
     if result:
-        controller.terminate_all_process()
+        controller.terminate_all_process(result)
 
 
 if __name__ == '__main__':

@@ -116,7 +116,7 @@ def test_content():
 
     # check result and terminate all the processes
     controller.check_result(test_case, result)
-    controller.terminate_all_process()
+    controller.terminate_all_process(result)
 
 
 if __name__ == '__main__':

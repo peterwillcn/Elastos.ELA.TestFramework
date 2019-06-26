@@ -81,7 +81,7 @@ if __name__ == '__main__':
 
     Logger.debug("after deposit balance: {}".format(c.get_address_balance(deposit_address)))
 
-    c.terminate_all_process()
+    c.terminate_all_process(True)
 
 
 

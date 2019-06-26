@@ -35,6 +35,7 @@ config = {
 
 if __name__ == '__main__':
 
+    global ret
     controller = Controller(config)
     controller.ready_for_dpos()
 
@@ -79,5 +80,5 @@ if __name__ == '__main__':
         controller.discrete_mining_blocks(1)
         time.sleep(1)
 
-    controller.terminate_all_process()
+    controller.terminate_all_process(ret)
 
