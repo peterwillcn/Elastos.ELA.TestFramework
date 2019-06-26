@@ -12,7 +12,7 @@ import struct
 
 from src.tools.log import Logger
 
-PROJECT_NAME = "TestFramework"
+PROJECT_NAME = "testingwork"
 
 node_type_dict = {
     "ela": 10,
