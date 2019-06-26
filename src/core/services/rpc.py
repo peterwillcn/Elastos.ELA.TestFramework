@@ -11,7 +11,7 @@ DEFAULT_PORT = 10016
 
 
 def post_request(method, params, port: int):
-    url = DEFAULT_HOST2 + ":" + str(port)
+    url = DEFAULT_HOST + ":" + str(port)
     return net.post_request(url, method, params)
 
 
