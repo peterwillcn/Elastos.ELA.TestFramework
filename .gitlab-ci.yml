@@ -10,33 +10,21 @@ job_test:
   variables:
     GOPATH: "$HOME/dev"
     PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+
   cache:
     paths:
     - .cache/pip
-    - venv/
+
   before_script:
-  - echo $HOME
-  - echo $GOPATH
-  - ls -l
-  - pwd
   - mkdir -p $GOPATH/src/github.com/elastos/Elastos.ELA
   - cd $GOPATH/src/github.com/elastos/Elastos.ELA
-  - ls -l
-  - pwd
   - wget http://172.16.0.120/ela
   - wget http://172.16.0.120/ela-cli
-  - ls -l
-  - pwd
-#  - export http_proxy=http://221.220.136.163:13128
-#  - export https_proxy=$http_proxy
+  - chmod +x *
 
   script:
     - cd /builds/${CI_PROJECT_PATH}
-    - ls -l
-    - pwd
     - python -V
     - python -m pip install -r requirements.txt
     - python dpos_normal_test.py
-    - echo Something in the test step in a python:3 image
-    - echo case1
 
