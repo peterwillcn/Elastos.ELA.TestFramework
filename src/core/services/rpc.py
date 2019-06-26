@@ -6,6 +6,7 @@
 from src.core.services import net
 
 DEFAULT_HOST = "http://127.0.0.1"
+DEFAULT_HOST2 = "http://0.0.0.0"
 DEFAULT_PORT = 10016
 
 
