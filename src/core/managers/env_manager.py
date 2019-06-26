@@ -16,7 +16,9 @@ class EnvManager(object):
         self.tag = util.tag_from_path(__file__, self.__class__.__name__)
         self.home_path = self.get_env_path("HOME")
         self.go_path = self.get_env_path("GOPATH")
+        print("go path: ", self.go_path)
         self.elastos_path = os.path.join(self.go_path, "src/github.com/elastos")
+        print("elastos path: ", self.elastos_path)
         self.test_path = os.path.join(self.home_path, "TestingWork")
         self.current_date_time = time.strftime('%Y-%m-%d_%H:%M:%S', time.localtime())
 
