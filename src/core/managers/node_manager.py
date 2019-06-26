@@ -308,7 +308,9 @@ class NodeManager(object):
             self.node_pubkey_name_dict[node.node_account.public_key()] = node.name
 
     def create_normal_dpos_pubkey(self):
+        print("crc_number: ", self.params.ela_params.crc_number)
         for i in range(1, self.params.ela_params.crc_number * 3 + 1):
+            print("i = ", i)
             self.normal_dpos_pubkeys.append(self.ela_nodes[i].get_node_public_key())
 
 
