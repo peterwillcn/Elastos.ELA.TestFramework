@@ -12,8 +12,6 @@ import struct
 
 from src.tools.log import Logger
 
-PROJECT_NAME = "testingwork"
-
 node_type_dict = {
     "ela": 10,
     "arbiter": 20,
@@ -51,17 +49,19 @@ def get_go_path():
 
 def tag_from_path(path: str, class_name: str):
     elements = path.split("/")
-    index = elements.index(PROJECT_NAME)
+    elements.reverse()
+    index = elements.index("src")
     tag = "["
-    for i in range(index + 1, len(elements)):
-        if i == len(elements) - 1:
-            tag += elements[i].split(".")[0]
+    while True:
+        if index == 0:
+            tag += elements[index].split(".")[0]
             if class_name is not "":
                 tag += "."
                 tag += class_name
             break
-        tag += elements[i]
+        tag += elements[index]
         tag += "."
+        index -= 1
     tag += "]"
     return tag
 
