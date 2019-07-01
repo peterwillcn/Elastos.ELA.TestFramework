@@ -168,7 +168,10 @@ def test_content():
                 return_type="Integer",
                 port=side_port,
             )
+
             Logger.info("after invoke deploy function, result: {}".format(response))
+            result = int(response["result"]) == 3000000
+            controller.check_result("invoke deploy balance test", result)
 
             test_case = "invoke neo contract function transfer test"
             transfer_account = controller.keystore_manager.sub1_accounts[0]
@@ -204,6 +207,9 @@ def test_content():
 
             Logger.info("after transfer contract, result: {}".format(result))
 
+            transfer_account_balance = result["result"]
+            result = int(transfer_account_balance) == 1000000
+            controller.check_result("invoke transfer balance test", result)
             Logger.debug("Start later nodes and check all nodes height")
             controller.start_later_nodes()
             result = controller.check_nodes_height()
