@@ -26,6 +26,7 @@ def get_request(url):
 
 def post_request(url, method, params):
     try:
+        Logger.debug("{} url: {}".format(tag, url))
         Logger.debug("{} method: {}".format(tag, method))
         Logger.debug("{} params: {}".format(tag, params))
         response = requests.post(url, json={"method": method, "params": params},

@@ -14,6 +14,8 @@ from src.core.services import rpc
 from src.core.nodes.ela import ElaNode
 from src.core.managers.node_manager import NodeManager
 from src.core.tx.payload.producer_info import ProducerInfo
+from src.core.tx.payload.neo_contract_deploy import NeoDeployContract
+from src.core.tx.payload.neo_contract_invoke import NeoInvokeContract
 
 from src.tools import util
 from src.tools import constant
@@ -159,6 +161,46 @@ class TransactionManager(object):
 
         return ret
 
+    def deploy_neo_contract(self, input_private_key: str, output_addresses: list, payload: NeoDeployContract,
+                            amount: int, rpc_port: int):
+
+        tx = txbuild.deploy_contract_transaction(
+            input_private_key=input_private_key,
+            output_addresses=output_addresses,
+            payload=payload,
+            amount=amount,
+            rpc_port=rpc_port,
+        )
+
+        if tx is None:
+            return False
+
+        tx = txbuild.single_sign_transaction(input_private_key, tx)
+
+        ret = self.handle_tx_result(tx, rpc_port)
+
+        return ret
+
+    def invoke_neo_contract(self, input_private_key: str, output_addresses: list, payload: NeoInvokeContract,
+                            amount: int, rpc_port: int):
+
+        tx = txbuild.invoke_contract_transaction(
+            input_private_key=input_private_key,
+            output_addresses=output_addresses,
+            payload=payload,
+            amount=amount,
+            rpc_port=rpc_port
+        )
+
+        if tx is None:
+            return False
+
+        tx = txbuild.single_sign_transaction(input_private_key, tx)
+
+        ret = self.handle_tx_result(tx, rpc_port)
+
+        return ret
+
     def recharge_necessary_keystore(self, input_private_key: str, accounts: list, amount: int):
         addresses = list()
         for a in accounts:
@@ -177,7 +219,7 @@ class TransactionManager(object):
             Logger.debug("{} arbiter {} wallet balance: {}".format(self.tag, i, value))
         return ret
 
-    def cross_chain_transaction(self, side_node_type: str, recharge: bool):
+    def cross_chain_transaction(self, side_node_type: str, recharge: bool, target_address=""):
         if side_node_type is None or side_node_type is "":
             return False
 
@@ -202,7 +244,10 @@ class TransactionManager(object):
         elif side_node_type is "neo":
             side_port = 10156
             cross_neo_account = self.node_manager.keystore_manager.cross_neo_account
-            cross_address = cross_neo_account.address()
+            if target_address == "":
+                cross_address = cross_neo_account.address()
+            else:
+                cross_address = target_address
             cross_input_key = cross_neo_account.private_key()
 
         if recharge:
@@ -210,7 +255,7 @@ class TransactionManager(object):
             balance_port = side_port
             input_private_key = self.tap_account.private_key()
             lock_address = self.params.arbiter_params.side_info[side_node_type][constant.SIDE_RECHARGE_ADDRESS]
-            amount = 200 * constant.TO_SELA
+            amount = 1000 * constant.TO_SELA
 
         else:
             port = side_port
@@ -218,7 +263,7 @@ class TransactionManager(object):
             input_private_key = cross_input_key
             lock_address = self.params.arbiter_params.side_info[side_node_type][constant.SIDE_WITHDRAW_ADDRESS]
             cross_address = self.tap_account.address()
-            amount = 100 * constant.TO_SELA
+            amount = 300 * constant.TO_SELA
 
         balance1 = rpc.get_balance_by_address(cross_address, balance_port)
 
@@ -236,7 +281,6 @@ class TransactionManager(object):
             return False
 
         side_height_begin = rpc.get_block_count(side_port)
-
         while True:
             main_height = rpc.get_block_count()
             side_height = rpc.get_block_count(side_port)

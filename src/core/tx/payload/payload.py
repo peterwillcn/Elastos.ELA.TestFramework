@@ -24,3 +24,13 @@ class Payload(object):
         return ""
 
 
+if __name__ == '__main__':
+
+    program_hash = "21cd3ce7d81cef33d7522133bdaa20050b37084869"
+
+    program2 = program_hash[2:]
+
+    print("program1: ", program_hash)
+    print("program2: ", program2)
+
+

@@ -87,6 +87,13 @@ def assert_equal(send_resp, jar_txid):
     return result
 
 
+def read_avm_file(file_path):
+    with open(file_path, "rb") as f:
+        content = f.read()
+
+    return content
+
+
 def read_config_file(config_file_path):
     with open(config_file_path, "r", encoding="utf8") as f:
         content = f.read()

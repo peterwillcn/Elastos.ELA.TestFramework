@@ -8,6 +8,7 @@ from src.core.services import net
 DEFAULT_HOST = "http://127.0.0.1"
 DEFAULT_HOST2 = "http://0.0.0.0"
 DEFAULT_PORT = 10016
+DEFAULT_NEO_PORT = 10156
 
 
 def post_request(method, params, port: int):
@@ -108,3 +109,16 @@ def producer_status( publickey: str, port=DEFAULT_PORT):
 
 def get_arbiters_info( port=DEFAULT_PORT):
     return post_request("getarbitersinfo", params={}, port=port)
+
+
+def invoke_function(operation: str, param: dict, return_type: str, port=DEFAULT_NEO_PORT):
+    return post_request(
+        "invokefunction",
+        params={
+            "scripthash": "1c7779c302193ebc1523a7fe627497a31808fede95",
+            "operation": operation,
+            "params": [param],
+            "returntype": return_type
+        },
+        port=port,
+    )

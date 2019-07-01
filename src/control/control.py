@@ -419,9 +419,23 @@ class Controller(object):
     def discrete_mining_blocks(num: int):
         rpc.discrete_mining(num)
 
+    def mining_side_blocks(self, side_port: int, num=1):
+        side_height_begin = rpc.get_block_count(side_port)
+        while True:
+            main_height = rpc.get_block_count()
+            side_height = rpc.get_block_count(side_port)
+
+            Logger.debug("{} main height: {}, side height: {}".format(self.tag, main_height, side_height))
+
+            if side_height - side_height_begin > num:
+                break
+
+            rpc.discrete_mining(1)
+            time.sleep(3)
+
     @staticmethod
-    def get_address_balance(address: str):
-        return rpc.get_balance_by_address(address)
+    def get_address_balance(address: str, port=rpc.DEFAULT_PORT):
+        return rpc.get_balance_by_address(address, port)
 
     @staticmethod
     def get_height_times(height_times: dict, current_height: int):

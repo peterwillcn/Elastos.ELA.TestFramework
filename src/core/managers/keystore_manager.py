@@ -23,9 +23,10 @@ class KeyStoreManager(object):
     INDEX_TAP = 3
     INDEX_CROSS_DID = 4
     INDEX_CROSS_TOKEN = 5
-    INDEX_CROSS_NEO = 6
+    INDEX_CROSS_NEO1 = 6
     INDEX_CROSS_ETH = 7
     INDEX_BACK_UP = 8
+    INDEX_CROSS_NEO2 = 9
 
     def __init__(self, params: Parameter):
         self.tag = util.tag_from_path(__file__, self.__class__.__name__)
@@ -56,7 +57,7 @@ class KeyStoreManager(object):
         self.tap_account = self.special_accounts[self.INDEX_TAP]
         self.cross_did_account = self.special_accounts[self.INDEX_CROSS_DID]
         self.cross_token_account = self.special_accounts[self.INDEX_CROSS_TOKEN]
-        self.cross_neo_account = self.special_accounts[self.INDEX_CROSS_NEO]
+        self.cross_neo_account = self.special_accounts[self.INDEX_CROSS_NEO1]
         self.cross_eth_account = self.special_accounts[self.INDEX_CROSS_ETH]
 
         self._gen_crc_pubkeys()
@@ -71,7 +72,7 @@ class KeyStoreManager(object):
             time.sleep(1)
             exit(-1)
 
-        self._read_key_stores("special", 10)
+        self._read_key_stores("special", 12)
         self._read_key_stores("node", self.params.ela_params.number + 1)
         self._read_key_stores("owner", self.params.ela_params.number + 1)
         self._read_key_stores("origin", 5)

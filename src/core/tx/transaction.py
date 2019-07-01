@@ -41,6 +41,8 @@ class Transaction(object):
 
     UPDATE_VERSION = 0x13
 
+    INVOKE = 0xf0
+
     def __init__(self):
         self.version = 0
         self.tx_type = 0
@@ -85,13 +87,13 @@ class Transaction(object):
         # version
         r = b""
         if self.version >= self.TX_VERSION_09:
-            r += struct.pack(">B", self.version)
+            r += struct.pack("<B", self.version)
 
         # tx type
-        r += struct.pack(">B", self.tx_type)
+        r += struct.pack("<B", self.tx_type)
 
         # payload version
-        r += struct.pack(">B", self.payload_version)
+        r += struct.pack("<B", self.payload_version)
 
         # payload
         if self.payload is None:

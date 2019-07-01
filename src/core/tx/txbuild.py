@@ -22,6 +22,8 @@ from src.core.tx.payload.payload import Payload
 from src.core.tx.payload.producer_info import ProducerInfo
 from src.core.tx.payload.process_producer import ProcessProducer
 from src.core.tx.payload.cross_chain_asset import TransferCrossChainAsset
+from src.core.tx.payload.neo_contract_deploy import NeoDeployContract
+from src.core.tx.payload.neo_contract_invoke import NeoInvokeContract
 
 from src.core.wallet import keytool
 from src.core.wallet.account import Account
@@ -484,6 +486,108 @@ def create_vote_output(output_address: str, amount: int, candidates_bytes_list: 
     outputs.append(output)
 
     return outputs
+
+
+def deploy_contract_transaction(input_private_key: str, output_addresses: list, payload: NeoDeployContract, amount: int,
+                                rpc_port: int):
+    account = Account(input_private_key)
+    # check output
+    if output_addresses is None or len(output_addresses) == 0:
+        Logger.error("Invalid output addresses")
+        return None
+
+    # create outputs
+    outputs, total_amount = create_normal_outputs(
+        output_addresses=output_addresses,
+        amount=amount,
+        fee=util.TX_FEE,
+        output_lock=0
+    )
+
+    # create inputs
+    inputs, change_outputs = create_normal_inputs(account.address(), total_amount, rpc_port)
+
+    if inputs is None or change_outputs is None:
+        Logger.error("Create normal inputs failed")
+        return None
+    outputs.extend(change_outputs)
+
+    # create program
+    programs = list()
+    redeem_script = bytes.fromhex(account.redeem_script())
+    program = Program(code=redeem_script, params=None)
+    programs.append(program)
+
+    # create attributes
+    attributes = list()
+    attribute = Attribute(
+        usage=Attribute.NONCE,
+        data=bytes("attributes".encode())
+    )
+    attributes.append(attribute)
+
+    tx = Transaction()
+    tx.version = Transaction.TX_VERSION_DEFAULT
+    tx.tx_type = Transaction.DEPLOY
+    tx.payload = payload
+    tx.attributes = attributes
+    tx.inputs = inputs
+    tx.outputs = outputs
+    tx.lock_time = 0
+    tx.programs = programs
+
+    return tx
+
+
+def invoke_contract_transaction(input_private_key: str, output_addresses: list, payload: NeoInvokeContract, amount: int,
+                                rpc_port: int):
+    account = Account(input_private_key)
+    # check output
+    if output_addresses is None or len(output_addresses) == 0:
+        Logger.error("Invalid output addresses")
+        return None
+
+    # create outputs
+    outputs, total_amount = create_normal_outputs(
+        output_addresses=output_addresses,
+        amount=amount,
+        fee=util.TX_FEE,
+        output_lock=0
+    )
+
+    # create inputs
+    inputs, change_outputs = create_normal_inputs(account.address(), total_amount, rpc_port)
+
+    if inputs is None or change_outputs is None:
+        Logger.error("Create normal inputs failed")
+        return None
+    outputs.extend(change_outputs)
+
+    # create program
+    programs = list()
+    redeem_script = bytes.fromhex(account.redeem_script())
+    program = Program(code=redeem_script, params=None)
+    programs.append(program)
+
+    # create attributes
+    attributes = list()
+    attribute = Attribute(
+        usage=Attribute.NONCE,
+        data=bytes("attributes".encode())
+    )
+    attributes.append(attribute)
+
+    tx = Transaction()
+    tx.version = Transaction.TX_VERSION_DEFAULT
+    tx.tx_type = Transaction.INVOKE
+    tx.payload = payload
+    tx.attributes = attributes
+    tx.inputs = inputs
+    tx.outputs = outputs
+    tx.lock_time = 0
+    tx.programs = programs
+
+    return tx
 
 
 def single_sign_transaction(input_private_key: str, tx: Transaction):
