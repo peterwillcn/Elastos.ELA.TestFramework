@@ -108,6 +108,7 @@ class Parameter(object):
                     "PreConnectOffset": 5,
                     "PublicKey": "0342eeb0d664e2507d732382c66d0eedbd0a0f989179fd33d71679aa607d5d3b57"
                 },
+                "EnableUtxoDB": True,
                 "CheckAddressHeight": 101,
                 "VoteStartHeight": 100,
                 "CRCOnlyDPOSHeight": 300,
