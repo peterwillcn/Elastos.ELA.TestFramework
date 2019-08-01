@@ -7,8 +7,8 @@
 import time
 
 from src.tools.log import Logger
-from wallet_python_sdk.wallet.account import Account
-from wallet_python_sdk.tx.producer import Producer
+from src.core.wallet.account import Account
+from src.core.tx.producer import Producer
 from src.control.control import Controller
 
 config = {
@@ -30,13 +30,12 @@ config = {
 if __name__ == '__main__':
 
     c = Controller(config)
-
+    input_account = c.keystore_manager.tap_account
     node = c.node_manager.ela_nodes[2]
     rpc_port = 10016
     producer = Producer(
-        input_private_key=node.owner_account.private_key(),
-        owner_private_key=node.owner_account.private_key(),
-        node_private_key=node.node_account.private_key(),
+        input_private_key=input_account.private_key(),
+        node=node,
         nick_name="James-007",
         url="http://www.007.com",
         location=0,
@@ -51,15 +50,15 @@ if __name__ == '__main__':
 
     c.discrete_mining_blocks(6)
 
-    Logger.info("producer owner pubkey: {}".format(producer.owner_public_key()))
-    payload = producer.get_payload()
+    Logger.info("producer owner pubkey: {}".format(producer.owner_account().public_key()))
+    payload = producer.producer_info()
     payload.nickname = "HAHA"
     # payload.node_account = Account()
 
     tx = producer.update(payload, rpc_port)
     ret = c.tx_manager.handle_tx_result(tx, rpc_port)
     Logger.info("update tx: {}".format(tx))
-    Logger.info("producer owner pubkey: {}".format(producer.owner_public_key()))
+    Logger.info("producer owner pubkey: {}".format(producer.owner_account().public_key()))
 
     c.check_result("producer update", ret)
     time.sleep(1)
@@ -73,7 +72,7 @@ if __name__ == '__main__':
     time.sleep(1)
     c.discrete_mining_blocks(2170)
 
-    deposit_address = producer.get_payload().get_deposit_address()
+    deposit_address = producer.producer_info().get_deposit_address()
     Logger.debug("before deposit balance: {}".format(c.get_address_balance(deposit_address)))
     tx = producer.redeem(4999 * 100000000, rpc_port)
     c.tx_manager.handle_tx_result(tx, rpc_port)
