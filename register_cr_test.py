@@ -41,7 +41,7 @@ def test_content():
     Logger.info("result: {}".format(ret))
 
     # controller.ready_for_dpos()
-
+    controller.discrete_mining_blocks(10)
     controller.terminate_all_process(True)
 
 

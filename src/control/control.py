@@ -151,6 +151,8 @@ class Controller(object):
 
         self.check_result("register a cr", ret)
 
+        return ret
+
     def mining_blocks_ready(self, foundation_address):
         time.sleep(3)
         rpc.discrete_mining(110)
