@@ -13,6 +13,8 @@ from src.core.managers.env_manager import EnvManager
 from src.core.managers.node_manager import NodeManager
 from src.core.managers.keystore_manager import KeyStoreManager
 from src.core.managers.tx_manager import TransactionManager
+from src.core.tx.payload.cr_info import CRInfo
+
 from src.tools import util
 from src.tools import constant
 from src.tools.log import Logger
@@ -139,14 +141,21 @@ class Controller(object):
 
         self.get_dpos_votes()
 
-    def register_a_cr(self, input_private_key: str, register_private_key: str, nickname: str, url: str, location=0):
-        ret = self.tx_manager.register_cr(
-            input_private_key=input_private_key,
-            amount=50000 * constant.TO_SELA,
-            register_private_key=register_private_key,
+    def create_cr_info(self, register_private_key: str, nickname: str, url: str, location: int):
+        cr_info = CRInfo(
+            private_key=register_private_key,
             nickname=nickname,
             url=url,
             location=location
+        )
+        Logger.info("{} create cr_info on success. \n{}".format(self.tag, cr_info))
+        return cr_info
+
+    def register_a_cr(self, input_private_key: str, cr_info: CRInfo):
+        ret = self.tx_manager.register_cr(
+            input_private_key=input_private_key,
+            amount=5000 * constant.TO_SELA,
+            cr_info=cr_info
         )
 
         self.check_result("register a cr", ret)

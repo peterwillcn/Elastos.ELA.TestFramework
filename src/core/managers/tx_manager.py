@@ -15,6 +15,7 @@ from src.core.nodes.ela import ElaNode
 from src.core.managers.node_manager import NodeManager
 from src.core.tx.payload.producer_info import ProducerInfo
 from src.core.tx.payload.cr_info import CRInfo
+from src.core.tx.payload.un_register_cr import UnRegisterCR
 from src.core.tx.payload.neo_contract_deploy import NeoDeployContract
 from src.core.tx.payload.neo_contract_invoke import NeoInvokeContract
 
@@ -76,15 +77,7 @@ class TransactionManager(object):
 
         return ret
 
-    def register_cr(self, input_private_key: str, amount: int, register_private_key: str, nickname: str,
-                    url: str, location=0, port=rpc.DEFAULT_PORT):
-
-        cr_info = CRInfo(
-            private_key=register_private_key,
-            nickname=nickname,
-            url=url,
-            location=location
-        )
+    def register_cr(self, input_private_key: str, amount: int, cr_info: CRInfo, port=rpc.DEFAULT_PORT):
 
         tx = txbuild.create_cr_register_transaction(
             input_private_key=input_private_key,
@@ -98,6 +91,60 @@ class TransactionManager(object):
 
         tx = txbuild.single_sign_transaction(input_private_key, tx)
         Logger.info("register cr transaction:\n{} ".format(tx))
+        ret = self.handle_tx_result(tx, port)
+
+        return ret
+
+    def update_cr(self, input_private_key: str, update_cr_info: CRInfo, port=rpc.DEFAULT_PORT):
+
+        tx = txbuild.create_cr_update_transaction(
+            input_private_key=input_private_key,
+            update_payload=update_cr_info,
+            rpc_port=port
+        )
+
+        if tx is None:
+            return False
+
+        tx = txbuild.single_sign_transaction(input_private_key, tx)
+        Logger.info("update cr transaction:\n{}".format(tx))
+        ret = self.handle_tx_result(tx, port)
+
+        return ret
+
+    def unregister_cr(self, input_private_key: str, register_private_key: str, port=rpc.DEFAULT_PORT):
+
+        un_register_cr = UnRegisterCR(register_private_key)
+
+        tx = txbuild.create_cr_cancel_transaction(
+            input_private_key=input_private_key,
+            payload=un_register_cr,
+            rpc_port=port
+        )
+
+        if tx is None:
+            return False
+
+        tx = txbuild.single_sign_transaction(input_private_key, tx)
+        Logger.info("ungister cr transaction:\n{}".format(tx))
+        ret = self.handle_tx_result(tx, port)
+
+        return ret
+
+    def redeem_cr(self, crc_info: CRInfo, return_address: str, amount: int, port=rpc.DEFAULT_PORT):
+
+        tx = txbuild.create_cr_redeem_transaction(
+            payload=crc_info,
+            output_address=return_address,
+            amount=amount,
+            rpc_port=port
+        )
+
+        if tx is None:
+            return False
+
+        tx = txbuild.single_sign_transaction(crc_info.account.private_key(), tx)
+        Logger.info("redeem cr transaction:\n{}".format(tx))
         ret = self.handle_tx_result(tx, port)
 
         return ret

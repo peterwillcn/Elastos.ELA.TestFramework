@@ -26,6 +26,7 @@ from src.core.tx.payload.neo_contract_deploy import NeoDeployContract
 from src.core.tx.payload.neo_contract_invoke import NeoInvokeContract
 
 from src.core.tx.payload.cr_info import CRInfo
+from src.core.tx.payload.un_register_cr import UnRegisterCR
 
 from src.core.wallet import keytool
 from src.core.wallet.account import Account
@@ -278,6 +279,49 @@ def create_update_transaction(input_private_key: str, payload: ProducerInfo, rpc
     return tx
 
 
+def create_cr_update_transaction(input_private_key: str, update_payload: CRInfo, rpc_port: int):
+
+    # create inputs
+    account = Account(input_private_key)
+    inputs, change_outputs = create_normal_inputs(account.address(), util.TX_FEE, rpc_port)
+    if inputs is None or change_outputs is None:
+        Logger.error("Create normal inputs failed")
+        return None
+
+    # create outputs
+    outputs = list()
+    outputs.extend(change_outputs)
+
+    # create program
+    programs = list()
+    redeem_script = bytes.fromhex(account.redeem_script())
+    program = Program(code=redeem_script, params=None)
+    programs.append(program)
+
+    # create attributes
+    attributes = list()
+    attribute = Attribute(
+        usage=Attribute.NONCE,
+        data=bytes("attributes".encode())
+    )
+    attributes.append(attribute)
+
+    update_payload.gen_signature()
+
+    tx = Transaction()
+    tx.version = Transaction.TX_VERSION_09
+    tx.tx_type = Transaction.UPDATE_CR
+    tx.payload_version = 0
+    tx.payload = update_payload
+    tx.attributes = attributes
+    tx.inputs = inputs
+    tx.outputs = outputs
+    tx.lock_time = 0
+    tx.programs = programs
+
+    return tx
+
+
 def create_cancel_transaction(input_private_key: str, payload: ProducerInfo, rpc_port: int):
 
     # create inputs
@@ -310,6 +354,47 @@ def create_cancel_transaction(input_private_key: str, payload: ProducerInfo, rpc
     tx = Transaction()
     tx.version = Transaction.TX_VERSION_09
     tx.tx_type = Transaction.CANCEL_PRODUCER
+    tx.payload_version = 0
+    tx.payload = payload
+    tx.attributes = attributes
+    tx.inputs = inputs
+    tx.outputs = outputs
+    tx.lock_time = 0
+    tx.programs = programs
+
+    return tx
+
+
+def create_cr_cancel_transaction(input_private_key: str, payload: UnRegisterCR, rpc_port: int):
+
+    # create inputs
+    account = Account(input_private_key)
+    inputs, change_outputs = create_normal_inputs(account.address(), util.TX_FEE, rpc_port)
+    if inputs is None or change_outputs is None:
+        Logger.error("Create normal inputs failed")
+        return None
+
+    # create outputs
+    outputs = list()
+    outputs.extend(change_outputs)
+
+    # create program
+    programs = list()
+    redeem_script = bytes.fromhex(account.redeem_script())
+    program = Program(code=redeem_script, params=None)
+    programs.append(program)
+
+    # create attributes
+    attributes = list()
+    attribute = Attribute(
+        usage=Attribute.NONCE,
+        data=bytes("attributes".encode())
+    )
+    attributes.append(attribute)
+
+    tx = Transaction()
+    tx.version = Transaction.TX_VERSION_09
+    tx.tx_type = Transaction.UN_REGISTER_CR
     tx.payload_version = 0
     tx.payload = payload
     tx.attributes = attributes
@@ -357,6 +442,53 @@ def create_redeem_transaction(payload: ProducerInfo, output_address: str, amount
     tx = Transaction()
     tx.version = Transaction.TX_VERSION_09
     tx.tx_type = Transaction.RETURN_DEPOSIT_CHAIN
+    tx.payload_version = 0
+    tx.payload = Payload(Payload.DEFAULT_VERSION)
+    tx.attributes = attributes
+    tx.inputs = inputs
+    tx.outputs = outputs
+    tx.lock_time = 0
+    tx.programs = programs
+
+    return tx
+
+
+def create_cr_redeem_transaction(payload: CRInfo, output_address: str, amount: int, rpc_port: int):
+
+    # create outputs
+    outputs, total_amount = create_normal_outputs(
+        output_addresses=[output_address],
+        amount=amount,
+        fee=util.TX_FEE,
+        output_lock=0
+    )
+
+    # create inputs
+
+    deposit_address = payload.get_deposit_address()
+    inputs, change_outputs = create_normal_inputs(deposit_address, total_amount, rpc_port)
+    if inputs is None or change_outputs is None:
+        Logger.error("Create normal inputs failed")
+        return None
+    outputs.extend(change_outputs)
+
+    # create program
+    programs = list()
+    redeem_script = bytes.fromhex(payload.account.redeem_script())
+    program = Program(code=redeem_script, params=None)
+    programs.append(program)
+
+    # create attributes
+    attributes = list()
+    attribute = Attribute(
+        usage=Attribute.NONCE,
+        data=bytes("attributes".encode())
+    )
+    attributes.append(attribute)
+
+    tx = Transaction()
+    tx.version = Transaction.TX_VERSION_09
+    tx.tx_type = Transaction.RETURN_CR_DEPOSIT_COIN
     tx.payload_version = 0
     tx.payload = Payload(Payload.DEFAULT_VERSION)
     tx.attributes = attributes

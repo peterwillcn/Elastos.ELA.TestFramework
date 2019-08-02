@@ -23,7 +23,8 @@ class CRInfo(Payload):
         self.location = location
         self.code = self.account.redeem_script()
         self.did = self.account.cr_did()
-        self.signature = self._gen_signature()
+        self.signature = None
+        self.gen_signature()
         self.serialize_data = None
 
     def data(self, version: int):
@@ -57,11 +58,11 @@ class CRInfo(Payload):
     def get_deposit_address(self):
         return self.account.deposit_address()
 
-    def _gen_signature(self):
+    def gen_signature(self):
         r = b""
         r = self.serialize_unsigned(r, self.version)
         signature = keytool.ecdsa_sign(bytes.fromhex(self.account.private_key()), r)
-
+        self.signature = signature
         return signature
 
     def __repr__(self):
