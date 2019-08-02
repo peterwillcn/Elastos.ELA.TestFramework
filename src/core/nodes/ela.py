@@ -110,7 +110,6 @@ class ElaNode(Node):
         _config[constant.CONFIG_ARBITER_CONFIGURATION][constant.CONFIG_MAX_INACTIVATE_ROUNDS] = \
             self.params.max_inactivate_rounds
 
-
     def start(self):
         if self.running:
             return

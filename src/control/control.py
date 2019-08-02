@@ -478,3 +478,7 @@ class Controller(object):
     def get_current_arbiter_public_keys():
         return rpc.get_arbiters_info()["arbiters"]
 
+    @staticmethod
+    def get_cr_candidates_list():
+        return rpc.list_cr_candidates(0, 100)["crcandidatesinfo"]
+

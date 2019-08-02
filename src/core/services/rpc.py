@@ -99,6 +99,10 @@ def list_producers( start: int, limit: int, port=DEFAULT_PORT):
     return post_request("listproducers", params={"start": start, "limit": limit, "state": "all"}, port=port)
 
 
+def list_cr_candidates(start: int, limit: int, port=DEFAULT_PORT):
+    return post_request("listcrcandidates", params={"start": start, "limit": limit}, port=port)
+
+
 def vote_status( address: str, port=DEFAULT_PORT):
     return post_request("votestatus", params={"address": address}, port=port)
 

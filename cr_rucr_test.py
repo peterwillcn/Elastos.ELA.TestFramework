@@ -50,10 +50,18 @@ def test_content():
 
     Logger.info("result: {}".format(ret))
 
+    i = 7
+    while i != 0:
+        controller.discrete_mining_blocks(1)
+        cr_list = controller.get_cr_candidates_list()
+        cr_nick_name = cr_list[0]["nickname"]
+        cr_state = cr_list[0]["state"]
+        Logger.info("cr {} state: {}".format(cr_nick_name, cr_state))
+        i -= 1
     # controller.ready_for_dpos()
-    controller.discrete_mining_blocks(10)
+    controller.discrete_mining_blocks(1)
 
-    # time.sleep(60)
+    # time.sleep(1)
     # update cr
     cr_info.url = "www.elastos.com"
     cr_info.nickname = "HAHA ^_^"
@@ -66,16 +74,29 @@ def test_content():
 
     controller.check_result("update a cr: ", ret)
 
-    controller.discrete_mining_blocks(7)
+    controller.discrete_mining_blocks(2)
+    cr_list = controller.get_cr_candidates_list()
+    cr_nick_name = cr_list[0]["nickname"]
+    cr_url = cr_list[0]["url"]
+    cr_location = cr_list[0]["location"]
+    cr_state = cr_list[0]["state"]
+
+    Logger.info("after update cr, nickname: {}".format(cr_nick_name))
+    Logger.info("after update cr, location: {}".format(cr_location))
+    Logger.info("after update cr, url: {}".format(cr_url))
+    Logger.info("after update cr, state: {}".format(cr_state))
 
     # unregister cr
     ret = controller.tx_manager.unregister_cr(
         input_private_key=input_account.private_key(),
         register_private_key=register_private_key
     )
-
     controller.check_result("unregister a cr: ", ret)
-    controller.discrete_mining_blocks(3000)
+    controller.discrete_mining_blocks(2)
+    # cr_list = controller.get_cr_candidates_list()
+    # cr_state = cr_list[0]["state"]
+    # Logger.info("after unregister a cr, state: {}".format(cr_state))
+    controller.discrete_mining_blocks(2120)
 
     # time.sleep(60)
 
@@ -90,6 +111,10 @@ def test_content():
 
     controller.check_result("redeem a cr: ", ret)
     controller.discrete_mining_blocks(6)
+
+    # cr_list = controller.get_cr_candidates_list()
+    # cr_state = cr_list[0]["state"]
+    # Logger.info("after redeem a cr, state: {}".format(cr_state))
 
     balance2 = controller.get_address_balance(cr_info.get_deposit_address())
 
