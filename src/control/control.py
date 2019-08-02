@@ -139,6 +139,18 @@ class Controller(object):
 
         self.get_dpos_votes()
 
+    def register_a_cr(self, input_private_key: str, register_private_key: str, nickname: str, url: str, location=0):
+        ret = self.tx_manager.register_cr(
+            input_private_key=input_private_key,
+            amount=50000 * constant.TO_SELA,
+            register_private_key=register_private_key,
+            nickname=nickname,
+            url=url,
+            location=location
+        )
+
+        self.check_result("register a cr", ret)
+
     def mining_blocks_ready(self, foundation_address):
         time.sleep(3)
         rpc.discrete_mining(110)

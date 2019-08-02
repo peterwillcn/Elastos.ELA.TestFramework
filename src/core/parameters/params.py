@@ -125,6 +125,14 @@ class Parameter(object):
                     "127.0.0.1:10818",
                     "127.0.0.1:10918"
                 ],
+                "CRVotingStartHeight": 300,
+                "CRCommitteeStartHeight": 5000,
+                "CRConfiguration": {
+                    "MemberCount": 12,
+                    "VotingPeriod": 2000,
+                    "DutyPeriod": 4000
+                },
+                "CheckRewardHeight": 100,
                 "FoundationAddress": "EgLe9ZAQyLmjxFZLp5em9VfqsYKvdhpGys"
             }
         }

@@ -10,12 +10,19 @@ from src.core.wallet import keytool
 
 class Account(object):
 
+    PREFIX_STANDARD = 0x21
+    PREFIX_MULTI_SIG = 0x12
+    PREFIX_CROSS_CHAIN = 0x4B
+    PREFIX_DEPOSIT = 0x1F
+    PREFIX_CR_DID = 0x67
+
     def __init__(self, private_key_str=""):
 
         self._private_key = bytes.fromhex(private_key_str)
         self._public_key = None
         self._redeem_script = None
         self._program_hash = None
+        self._cr_did = None
         self._address = None
         self._create_account()
         self.signature = None
@@ -29,6 +36,7 @@ class Account(object):
         self._public_key = keytool.encode_point(ecc_pair.public_key(), True)
         self._redeem_script = keytool.create_redeem_script(self._public_key)
         self._program_hash = keytool.create_program_hash(self._redeem_script)
+        self._cr_did = keytool.create_did_program_hash(self._redeem_script)
         self._address = keytool.create_address(self._program_hash)
 
     def ecc_pair(self):
@@ -48,6 +56,9 @@ class Account(object):
 
     def program_hash(self):
         return self._program_hash.hex()
+
+    def cr_did(self):
+        return self._cr_did.hex()
 
     def address(self):
         return self._address

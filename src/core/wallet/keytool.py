@@ -50,6 +50,14 @@ def create_program_hash(redeem_script: bytes):
     return program_hash
 
 
+def create_did_program_hash(redeem_script: bytes):
+    temp = sha256_hash(redeem_script, 1)
+    data = ripemd160_hash(temp, 1)
+    # sign_type = redeem_script[len(redeem_script) - 1]
+    program_hash = bytes([0x67]) + data
+    return program_hash
+
+
 def create_address(program_hash: bytes):
     data = program_hash
     double_value = sha256_hash(data, 2)

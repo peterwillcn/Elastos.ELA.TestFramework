@@ -14,6 +14,7 @@ from src.core.services import rpc
 from src.core.nodes.ela import ElaNode
 from src.core.managers.node_manager import NodeManager
 from src.core.tx.payload.producer_info import ProducerInfo
+from src.core.tx.payload.cr_info import CRInfo
 from src.core.tx.payload.neo_contract_deploy import NeoDeployContract
 from src.core.tx.payload.neo_contract_invoke import NeoInvokeContract
 
@@ -71,6 +72,32 @@ class TransactionManager(object):
 
         tx = txbuild.single_sign_transaction(input_private_key, tx)
         Logger.warn("cross chain asset transaction: \n{}".format(tx))
+        ret = self.handle_tx_result(tx, port)
+
+        return ret
+
+    def register_cr(self, input_private_key: str, amount: int, register_private_key: str, nickname: str,
+                    url: str, location=0, port=rpc.DEFAULT_PORT):
+
+        cr_info = CRInfo(
+            private_key=register_private_key,
+            nickname=nickname,
+            url=url,
+            location=location
+        )
+
+        tx = txbuild.create_cr_register_transaction(
+            input_private_key=input_private_key,
+            amount=amount,
+            payload=cr_info,
+            rpc_port=port
+        )
+
+        if tx is None:
+            return False
+
+        tx = txbuild.single_sign_transaction(input_private_key, tx)
+        Logger.info("register cr transaction:\n{} ".format(tx))
         ret = self.handle_tx_result(tx, port)
 
         return ret

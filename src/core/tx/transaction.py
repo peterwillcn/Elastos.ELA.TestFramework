@@ -40,8 +40,12 @@ class Transaction(object):
     INACTIVE_ARBITRATORS = 0x12
 
     UPDATE_VERSION = 0x13
-
     INVOKE = 0xf0
+
+    REGISTER_CR = 0x21
+    UN_REGISTER_CR = 0x22
+    UPDATE_CR = 0x23
+    RETURN_CR_DEPOSIT_COIN = 0x24
 
     def __init__(self):
         self.version = 0
@@ -56,6 +60,7 @@ class Transaction(object):
         self.fee = 0
         self.fee_per_kb = 0
         self.tx_hash = ""
+        self.serialize_data = None
 
     def __repr__(self):
         return "Transaction {" + "\n\t" \
@@ -74,12 +79,17 @@ class Transaction(object):
                 + "}"
 
     def serialize(self):
+
+        if self.serialize_data is not None:
+            return self.serialize_data
+
         r = self.serialize_unsigned()
         r += serialize.write_var_uint(len(self.programs))
 
         for program in self.programs:
             r += program.serialize()
 
+        self.serialize_data = r
         return r
 
     # serialize the Transaction data without contracts

@@ -78,6 +78,15 @@ class ElaNode(Node):
         _config[constant.CONFIG_VOTE_START_HEIGHT] = self.params.vote_start_height
         _config[constant.CONFIG_ONLY_DPOS_HEIGHT] = self.params.crc_dpos_height
         _config[constant.CONFIG_PUBLIC_DPOS_HEIGHT] = self.params.public_dpos_height
+
+        # cr set
+        _config[constant.CONFIG_CR_VOTING_START_HEIGHT] = self.params.cr_voting_start_height
+        _config[constant.CONFIG_CR_COMMITTEE_START_HEIGHT] = self.params.cr_committee_start_height
+        _config[constant.CONFIG_CR_CONFIGURATION][constant.CONFIG_CR_MEMBER_COUNT] = self.params.cr_member_count
+        _config[constant.CONFIG_CR_CONFIGURATION][constant.CONFIG_CR_VOTING_PERIOD] = self.params.cr_voting_period
+        _config[constant.CONFIG_CR_CONFIGURATION][constant.CONFIG_CR_DUTY_PERIOD] = self.params.cr_duty_period
+        _config[constant.CONFIG_CR_CHECK_REWARD_HEIGHT] = self.params.cr_check_reward_height
+
         # rpc accept set
 
         _config[constant.CONFIG_ARBITER_CONFIGURATION][constant.CONFIG_PUBLIC_KEY] = self.node_account.public_key()
@@ -100,6 +109,7 @@ class ElaNode(Node):
             self.params.pre_connect_offset
         _config[constant.CONFIG_ARBITER_CONFIGURATION][constant.CONFIG_MAX_INACTIVATE_ROUNDS] = \
             self.params.max_inactivate_rounds
+
 
     def start(self):
         if self.running:

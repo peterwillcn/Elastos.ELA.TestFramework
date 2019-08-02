@@ -19,7 +19,13 @@
     "check_address_height": 101,
     "vote_start_height": 100,
     "crc_dpos_height": 190,
-    "public_dpos_height": 200
+    "public_dpos_height": 200,
+    "cr_check_reward_height": 100,
+    "cr_voting_start_height": 100,
+    "cr_committee_start_height": 2000,
+    "cr_member_count": 12,
+    "cr_voting_period": 2000,
+    "cr_duty_period": 4000
   },
   "arbiter": {
     "enable": false,
