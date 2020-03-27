@@ -14,7 +14,7 @@ class UnRegisterCR(Payload):
     def __init__(self, register_private_key: str):
         Payload.__init__(self, self.DEFAULT_VERSION)
         self.account = Account(register_private_key)
-        self.code = self.account.redeem_script()
+        self.cid = self.account.cid()
         self.signature = None
         self.gen_signature()
         self.serialize_data = None
@@ -40,8 +40,8 @@ class UnRegisterCR(Payload):
             r = serialize.write_var_bytes(r, self.signature)
         return r
 
-    def serialize_unsigned(self,r: bytes,version: int):
-        r = serialize.write_var_bytes(r, bytes.fromhex(self.code))
+    def serialize_unsigned(self, r: bytes, version: int):
+        r += bytes.fromhex(self.cid)
 
         return r
 

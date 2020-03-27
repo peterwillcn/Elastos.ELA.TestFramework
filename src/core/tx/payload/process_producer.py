@@ -10,7 +10,6 @@ from src.core.wallet import keytool
 
 
 class ProcessProducer(Payload):
-
     PROCESS_PRODUCER_VERSION = 0x00
 
     def __init__(self, pub_key=None, pri_key=None, signature=None):
@@ -59,9 +58,7 @@ class ProcessProducer(Payload):
             arg3 = self.signature.hex()
 
         return "ProcessProducer{\n\t" \
-                + "node_public_key: {}".format(arg1) + "\n\t" \
-                + "node_private_key: {}".format(arg2) + "\n\t" \
-                + "signature: {}".format(arg3) + "\n" \
-                + "}"
-
-
+               + "node_public_key: {}".format(arg1) + "\n\t" \
+               + "node_private_key: {}".format(arg2) + "\n\t" \
+               + "signature: {}".format(arg3) + "\n" \
+               + "}"

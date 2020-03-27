@@ -47,6 +47,12 @@ class Transaction(object):
     UPDATE_CR = 0x23
     RETURN_CR_DEPOSIT_COIN = 0x24
 
+    CRC_PROPOSAL = 0x25
+    CRC_PROPOSAL_REVIEW = 0x26
+    CRC_PROPOSAL_TRACKING = 0x27
+    CRC_APPROPRIATION = 0x28
+    CRC_PROPOSAL_WITHDRAW = 0x29
+
     def __init__(self):
         self.version = 0
         self.tx_type = 0

@@ -104,7 +104,7 @@ class NodeManager(object):
                 self.start_arbiter_nodes()
 
     def wait_rpc_ready(self, port: int, content=1, timeout=60):
-        time.sleep(1)
+        time.sleep(3)
         stop_time = time.time() + timeout
         while time.time() <= stop_time:
             result = []
@@ -119,7 +119,7 @@ class NodeManager(object):
                     Logger.debug('{} Nodes connect with each other, '
                                  'rpc service is started on success!.'.format(self.tag))
                     return True
-                time.sleep(0.1)
+                time.sleep(0.2)
         Logger.error('{} Node can not connect with each other, wait rpc service timed out!')
         return False
 

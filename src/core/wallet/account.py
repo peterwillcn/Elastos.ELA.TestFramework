@@ -22,7 +22,8 @@ class Account(object):
         self._public_key = None
         self._redeem_script = None
         self._program_hash = None
-        self._cr_did = None
+        self._cid = None
+        self._did = None
         self._address = None
         self._create_account()
         self.signature = None
@@ -35,8 +36,10 @@ class Account(object):
         ecc_pair = keytool.get_ecc_by_private_key(self._private_key.hex())
         self._public_key = keytool.encode_point(ecc_pair.public_key(), True)
         self._redeem_script = keytool.create_redeem_script(self._public_key)
+        self._did_redeem_script = keytool.create_did_redeem_script(self._public_key)
         self._program_hash = keytool.create_program_hash(self._redeem_script)
-        self._cr_did = keytool.create_did_program_hash(self._redeem_script)
+        self._cid = keytool.create_id_program_hash(self._redeem_script)
+        self._did = keytool.create_id_program_hash(self._did_redeem_script)
         self._address = keytool.create_address(self._program_hash)
 
     def ecc_pair(self):
@@ -57,8 +60,17 @@ class Account(object):
     def program_hash(self):
         return self._program_hash.hex()
 
-    def cr_did(self):
-        return self._cr_did.hex()
+    def cid(self):
+        return self._cid.hex()
+
+    def cid_address(self):
+        return keytool.create_address(self._cid)
+
+    def did(self):
+        return self._did.hex()
+
+    def did_address(self):
+        return keytool.create_address(self._did)
 
     def address(self):
         return self._address

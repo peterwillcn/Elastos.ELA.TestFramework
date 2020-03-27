@@ -16,7 +16,6 @@ from src.core.parameters.ela_params import ElaParams
 
 
 class ElaNode(Node):
-
     TYPE_MINER = "miner"
     TYPE_CRC = "crc"
     TYPE_PRODUCER = "producer"
@@ -33,6 +32,7 @@ class ElaNode(Node):
         self.name = ""
         self.type = ela_type
         self.owner_account = keystore_manager.owner_accounts[self.index]
+        self.cr_account = self.owner_account
         self.node_account = keystore_manager.node_accounts[self.index]
         self.cwd_dir = cwd_dir
         self.password = self.params.password
@@ -78,13 +78,23 @@ class ElaNode(Node):
         _config[constant.CONFIG_VOTE_START_HEIGHT] = self.params.vote_start_height
         _config[constant.CONFIG_ONLY_DPOS_HEIGHT] = self.params.crc_dpos_height
         _config[constant.CONFIG_PUBLIC_DPOS_HEIGHT] = self.params.public_dpos_height
+        _config[constant.MAX_NODE_PER_HOST] = self.params.max_node_per_host
 
         # cr set
         _config[constant.CONFIG_CR_VOTING_START_HEIGHT] = self.params.cr_voting_start_height
         _config[constant.CONFIG_CR_COMMITTEE_START_HEIGHT] = self.params.cr_committee_start_height
-        _config[constant.CONFIG_CR_CONFIGURATION][constant.CONFIG_CR_MEMBER_COUNT] = self.params.cr_member_count
+        _config[constant.CONFIG_CR_CONFIGURATION][constant.CONFIG_MEMBER_COUNT] = self.params.crc_number    ## crc_number = member_count
         _config[constant.CONFIG_CR_CONFIGURATION][constant.CONFIG_CR_VOTING_PERIOD] = self.params.cr_voting_period
         _config[constant.CONFIG_CR_CONFIGURATION][constant.CONFIG_CR_DUTY_PERIOD] = self.params.cr_duty_period
+        _config[constant.CONFIG_CR_CONFIGURATION][constant.CONFIG_DEPOSIT_LOCKUP_BLOCKS] = self.params.deposit_lockup_blocks
+        _config[constant.CONFIG_CR_CONFIGURATION][constant.CONFIG_CRC_APPROPRIATE_PERCENTAGE] = self.params.crc_appropriate_percentage
+        _config[constant.CONFIG_CR_CONFIGURATION][constant.CONFIG_MAX_COMMITTEE_PROPOSAL_COUNT] = self.params.max_committee_proposal_count
+        _config[constant.CONFIG_CR_CONFIGURATION][constant.CONFIG_MAX_PROPOSAL_TRACKING_COUNT] = self.params.max_proposal_tracking_count
+        _config[constant.CONFIG_CR_CONFIGURATION][constant.CONFIG_PROPOSAL_CR_VOTING_PERIOD] = self.params.proposal_cr_voting_period
+        _config[constant.CONFIG_CR_CONFIGURATION][constant.CONFIG_PROPOSAL_PUBLIC_VOTING_PERIOD] = self.params.proposal_public_voting_period
+        _config[constant.CONFIG_CR_CONFIGURATION][constant.CONFIG_CR_AGREEMENT_COUNT] = self.params.cr_agreement_count
+        _config[constant.CONFIG_CR_CONFIGURATION][constant.CONFIG_VOTER_REJECT_PERCENTAGE] = self.params.voter_reject_percentage
+        _config[constant.CONFIG_CR_CONFIGURATION][constant.CONFIG_REGISTER_CR_BY_DID_HEIGHT] = self.params.register_cr_by_did_height
         _config[constant.CONFIG_CR_CHECK_REWARD_HEIGHT] = self.params.cr_check_reward_height
 
         # rpc accept set
@@ -181,5 +191,3 @@ class ElaNode(Node):
 
     def get_owner_private_key(self):
         return self.owner_account.private_key()
-
-

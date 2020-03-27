@@ -1,7 +1,3 @@
-#!/usr/bin/env python
-# -*- coding:utf-8 -*-
-# date: 2019/8/1 7:26 PM
-# author: liteng
 
 import struct
 
@@ -14,6 +10,8 @@ from src.core.wallet import keytool
 
 
 class CRInfo(Payload):
+    CR_INFO_VERSION = 0x00
+    CR_INFO_DID_VERSION = 0x01
 
     def __init__(self, private_key: str, nickname: str, url: str, location: int):
         Payload.__init__(self, self.DEFAULT_VERSION)
@@ -22,7 +20,8 @@ class CRInfo(Payload):
         self.url = url
         self.location = location
         self.code = self.account.redeem_script()
-        self.did = self.account.cr_did()
+        self.cid = self.account.cid()
+        self.did = self.account.did()
         self.signature = None
         self.gen_signature()
         self.serialize_data = None
@@ -45,6 +44,7 @@ class CRInfo(Payload):
 
     def serialize_unsigned(self, r: bytes, version=0):
         r = serialize.write_var_bytes(r, bytes.fromhex(self.code))
+        r += bytes.fromhex(self.cid)
         r += bytes.fromhex(self.did)
         r = serialize.write_var_bytes(r, bytes(self.nickname.encode()))
         r = serialize.write_var_bytes(r, bytes(self.url.encode()))
@@ -68,7 +68,8 @@ class CRInfo(Payload):
     def __repr__(self):
         return "CRInfo {" + "\n\t" \
                + "code: {}".format(self.code) + "\n\t" \
-               + "did : {}".format(self.did) + "\n\t" \
+               + "cid : {}".format(keytool.create_address(bytes.fromhex(self.cid))) + "\n\t" \
+               + "did : {}".format(keytool.create_address(bytes.fromhex(self.did))) + "\n\t" \
                + "nickname: {}".format(self.nickname) + "\n\t" \
                + "url: {}".format(self.url) + "\n\t" \
                + "location: {}".format(self.location) + "\n\t" \
@@ -77,5 +78,4 @@ class CRInfo(Payload):
 
 
 if __name__ == '__main__':
-
     sig = "10e04ca9c43999fe7479ce0249c34f1f82aa97f073b667f08a49cdd0afa5663f93f16acb0f26a04500597d0eb62f4c50ab225e9af3c03c81a899fedd2f22ce6f"

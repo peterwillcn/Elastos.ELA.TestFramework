@@ -16,6 +16,7 @@ PUSH_M1 = 0x4f
 PUSH_0 = 0x00
 PUSH_1 = 0x51
 
+UINT256SIZE = 32
 
 def write_var_uint(var: int):
     r = b""

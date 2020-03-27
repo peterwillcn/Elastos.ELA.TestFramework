@@ -71,31 +71,31 @@ def get_block_hash_by_height(height: int, port=DEFAULT_PORT):
     return post_request("getblockhash", params={"height": height}, port=port)
 
 
-def get_raw_mempool( port=DEFAULT_PORT):
+def get_raw_mempool(port=DEFAULT_PORT):
     return post_request("getrawmempool", params={}, port=port)
 
 
-def get_raw_transaction( txid, verbose=True, port=DEFAULT_PORT):
+def get_raw_transaction(txid, verbose=True, port=DEFAULT_PORT):
     return post_request("getrawtransaction", params={"txid": txid, "verbose": verbose}, port=port)
 
 
-def get_neighbors( port=DEFAULT_PORT):
+def get_neighbors(port=DEFAULT_PORT):
     return post_request("getneighbors", params={}, port=port)
 
 
-def get_node_state( port=DEFAULT_PORT):
+def get_node_state(port=DEFAULT_PORT):
     return post_request("getnodestate", params={}, port=port)
 
 
-def get_arbitrator_group_by_height( height: int, port=DEFAULT_PORT):
+def get_arbitrator_group_by_height(height: int, port=DEFAULT_PORT):
     return post_request("getarbitratorgroupbyheight", params={"height": height}, port=port)
 
 
-def set_log_level( level: int, port=DEFAULT_PORT):
+def set_log_level(level: int, port=DEFAULT_PORT):
     return post_request("setloglevel", params={"level": level}, port=port)
 
 
-def list_producers( start: int, limit: int, port=DEFAULT_PORT):
+def list_producers(start: int, limit: int, port=DEFAULT_PORT):
     return post_request("listproducers", params={"start": start, "limit": limit, "state": "all"}, port=port)
 
 
@@ -103,15 +103,23 @@ def list_cr_candidates(start: int, limit: int, port=DEFAULT_PORT):
     return post_request("listcrcandidates", params={"start": start, "limit": limit}, port=port)
 
 
-def vote_status( address: str, port=DEFAULT_PORT):
+def list_current_crs(port=DEFAULT_PORT):
+    return post_request("listcurrentcrs", params={"state": "all"}, port=port)
+
+
+def vote_status(address: str, port=DEFAULT_PORT):
     return post_request("votestatus", params={"address": address}, port=port)
 
 
-def producer_status( publickey: str, port=DEFAULT_PORT):
+def producer_status(publickey: str, port=DEFAULT_PORT):
     return post_request("producerstatus", params={"publickey": publickey}, port=port)
 
 
-def get_arbiters_info( port=DEFAULT_PORT):
+def get_cr_proposal_state(proposal_hash: str, port=DEFAULT_PORT):
+    return post_request("getcrproposalstate", params={"proposalhash": proposal_hash}, port=port)
+
+
+def get_arbiters_info(port=DEFAULT_PORT):
     return post_request("getarbitersinfo", params={}, port=port)
 
 

@@ -126,14 +126,29 @@ class Parameter(object):
                     "127.0.0.1:10918"
                 ],
                 "CRVotingStartHeight": 300,
-                "CRCommitteeStartHeight": 5000,
+                "CRCommitteeStartHeight": 350,
+                "MaxNodePerHost": 100,
                 "CRConfiguration": {
-                    "MemberCount": 12,
+                    "MemberCount": 4,
                     "VotingPeriod": 2000,
-                    "DutyPeriod": 4000
+                    "DutyPeriod": 4000,
+                    "DepositLockupBlocks": 2160,
+                    "CRCAppropriatePercentage": 10,
+                    "MaxCommitteeProposalCount": 128,
+                    "MaxProposalTrackingCount": 128,
+                    "ProposalCRVotingPeriod": 10,
+                    "ProposalPublicVotingPeriod": 10,
+                    "CRAgreementCount": 4,
+                    "VoterRejectPercentage": 10,
+                    "RegisterCRByDIDHeight": 300,
+                    "SecretaryGeneral": "02A9D37E010950F810485512926BA13713BAF7F7675CC08DC4040E9802A84F410C"  # privateKey:E0076A271A137A2BD4429FA46E79BE3E10F2A730585F8AC2763D570B60469F11
                 },
                 "CheckRewardHeight": 100,
-                "FoundationAddress": "EgLe9ZAQyLmjxFZLp5em9VfqsYKvdhpGys"
+                "FoundationAddress": "EgLe9ZAQyLmjxFZLp5em9VfqsYKvdhpGys",
+                "CRCFoundation": "EULhetag9FKS6Jd6aifFaPqjFTpZbSMY7u",  # privateKey:E0076A271A137A2BD4429FA46E79BE3E10F2A730585F8AC2763D570B60469F11
+                "CRCCommitteeAddress": "Ec8gwTF8FwvVrekhwngTwJsKnSpeRdQAHs", # privateKey:8CD05DA8CB94EF2D991EEC747474E6ED194850F37FF14324FE8162F6424F6695
+                "RPCServiceLevel": "MiningPermitted",
+                "NodeProfileStrategy": "Balanced",
             }
         }
         return ela_config

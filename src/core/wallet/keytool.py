@@ -14,7 +14,6 @@ from Crypto.Hash import RIPEMD160
 from Crypto.PublicKey import ECC
 from Crypto.Cipher import AES
 
-
 PREFIX_STANDARD = 0x21
 PREFIX_MULTI_SIGN = 0x12
 PREFIX_CROSS_CHAIN = 0x4B
@@ -38,6 +37,10 @@ def create_redeem_script(public_key: bytes):
     return bytes([len(public_key)]) + public_key + bytes([0xac])
 
 
+def create_did_redeem_script(public_key: bytes):
+    return bytes([len(public_key)]) + public_key + bytes([0xad])
+
+
 def create_program_hash(redeem_script: bytes):
     temp = sha256_hash(redeem_script, 1)
     data = ripemd160_hash(temp, 1)
@@ -50,7 +53,7 @@ def create_program_hash(redeem_script: bytes):
     return program_hash
 
 
-def create_did_program_hash(redeem_script: bytes):
+def create_id_program_hash(redeem_script: bytes):
     temp = sha256_hash(redeem_script, 1)
     data = ripemd160_hash(temp, 1)
     # sign_type = redeem_script[len(redeem_script) - 1]
@@ -189,7 +192,6 @@ def aes_decrypt(cipher_text, key, iv):
 
 
 def ecdsa_sign(private_key: bytes, data: bytes):
-
     data_hash = sha256_hash(data, 1)
 
     g = ecdsa.generator_256
@@ -210,7 +212,6 @@ def ecdsa_sign(private_key: bytes, data: bytes):
 
 
 def ecdsa_verify(private_key: bytes, data: bytes, signature: bytes):
-
     if len(signature) != 64:
         return False
 

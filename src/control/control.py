@@ -6,6 +6,9 @@
 import os
 import math
 import time
+from decimal import Decimal
+
+from Crypto import Random
 
 from src.core.services import rpc
 from src.core.parameters.params import Parameter
@@ -13,17 +16,25 @@ from src.core.managers.env_manager import EnvManager
 from src.core.managers.node_manager import NodeManager
 from src.core.managers.keystore_manager import KeyStoreManager
 from src.core.managers.tx_manager import TransactionManager
+from src.core.tx.payload.budget import Budget
 from src.core.tx.payload.cr_info import CRInfo
+from src.core.tx.payload.crc_proposal import CRCProposal
+from src.core.tx.payload.crc_proposal_review import CRCProposalReview
+from src.core.tx.payload.crc_proposal_tracking import CRCProposalTracking
+from src.core.tx.payload.crc_proposal_withdraw import CRCProposalWithdraw
 
-from src.tools import util
+from src.tools import util, serialize
 from src.tools import constant
 from src.tools.log import Logger
 
 
 class Controller(object):
-
     PRODUCER_STATE_ACTIVE = "Active"
     PRODUCER_STATE_INACTIVE = "Inactive"
+
+    CR_Foundation_TEMP = "EULhetag9FKS6Jd6aifFaPqjFTpZbSMY7u"
+    SECRETARY_PRIVATE_KEY = "E0076A271A137A2BD4429FA46E79BE3E10F2A730585F8AC2763D570B60469F11"
+    CRC_COMMITTEEPRIVATE_KEY = "8CD05DA8CB94EF2D991EEC747474E6ED194850F37FF14324FE8162F6424F6695"
 
     def __init__(self, up_config: dict):
         self.tag = util.tag_from_path(__file__, Controller.__name__)
@@ -98,7 +109,6 @@ class Controller(object):
         Logger.info("{} recharge producer on success!".format(self.tag))
 
         if self.params.arbiter_params.enable:
-
             ret = self.tx_manager.recharge_necessary_keystore(
                 input_private_key=self.tap_account.private_key(),
                 accounts=self.keystore_manager.sub1_accounts,
@@ -138,8 +148,227 @@ class Controller(object):
         ret = self.tx_manager.vote_producers_candidates()
         self.check_result("vote producers", ret)
         Logger.info("{} vote producer on success!".format(self.tag))
-
         self.get_dpos_votes()
+
+    def ready_for_cr(self):
+        ret = self.register_cr_candidates()
+        self.get_current_height()
+        self.check_result("register cr", ret)
+        Logger.info("{} register producers on success!".format(self.tag))
+
+        ret = self.tx_manager.vote_cr_candidates()
+        self.get_current_height()
+        self.check_result("vote cr", ret)
+        Logger.info("{} vote cr on success!".format(self.tag))
+
+        # transfer to CRFoundation
+        self.tx_manager.transfer_asset(self.tap_account.private_key(), [self.CR_Foundation_TEMP], 5000 * util.TO_SELA)
+        if ret:
+            rpc.discrete_mining(1)
+            value = rpc.get_balance_by_address(self.CR_Foundation_TEMP)
+            Logger.debug("{} CRFoundation {} wallet balance: {}".format(self.tag, self.CR_Foundation_TEMP, value))
+        else:
+            Logger.error("{} CRFoundation transfer failed".format(self.tag))
+
+    def ready_for_crc_proposal(self):
+        ret, p_hash = self.crc_proposal()
+        self.get_current_height()
+        self.check_result("crc proposal", ret)
+        Logger.info("{} crc proposal on success!".format(self.tag))
+        return p_hash
+
+    def ready_for_crc_proposal_review(self, p_hash: bytes):
+        ret = self.crc_proposal_review(p_hash)
+        self.get_current_height()
+        self.check_result("crc proposal review", ret)
+        Logger.info("{} crc proposal review on success!".format(self.tag))
+        self.discrete_miner(self.params.ela_params.proposal_cr_voting_period)
+
+        ret = self.tx_manager.vote_crc_proposal_candidates()
+        self.get_current_height()
+        self.check_result("vote cr proposal", ret)
+        Logger.info("{} vote crc proposal  on success!".format(self.tag))
+        self.discrete_miner(self.params.ela_params.proposal_public_voting_period)
+
+    def ready_for_crc_proposal_tracking(self, p_hash: bytes):
+        ela_node = self.node_manager.ela_nodes[1]
+        leader_private_key = ela_node.cr_account.private_key()
+        # common
+        ret = self.crc_proposal_tracking(p_hash, leader_private_key, None, CRCProposalTracking.COMMON, 0)
+        self.get_current_height()
+        self.check_result("crc proposal tracking common type", ret)
+        Logger.info("{} crc proposal tracking common on success!".format(self.tag))
+
+        # progress
+        ret = self.crc_proposal_tracking(p_hash, leader_private_key, None, CRCProposalTracking.PROGRESS, 1)
+        self.get_current_height()
+        self.check_result("crc proposal tracking progress type", ret)
+        Logger.info("{} crc proposal tracking progress on success!".format(self.tag))
+
+        # Reject
+        ret = self.crc_proposal_tracking(p_hash, leader_private_key, None, CRCProposalTracking.REJECTED, 2)
+        self.get_current_height()
+        self.check_result("crc proposal tracking reject type", ret)
+        Logger.info("{} crc proposal tracking reject on success!".format(self.tag))
+
+        # progress
+        ret = self.crc_proposal_tracking(p_hash, leader_private_key, None, CRCProposalTracking.PROGRESS, 2)
+        self.get_current_height()
+        self.check_result("crc proposal tracking progress type", ret)
+        Logger.info("{} crc proposal tracking progress on success!".format(self.tag))
+
+        # proposal leader
+        ela_node = self.node_manager.ela_nodes[2]
+        new_leader_private_key = ela_node.cr_account.private_key()
+        ret = self.crc_proposal_tracking(p_hash, leader_private_key, new_leader_private_key, CRCProposalTracking.PROPOSAL_LEADER, 0)
+        self.get_current_height()
+        self.check_result("crc proposal tracking proposal leader type", ret)
+        Logger.info("{} crc proposal tracking proposal leader on success!".format(self.tag))
+
+        # finalized
+        ret = self.crc_proposal_tracking(p_hash, new_leader_private_key, None, CRCProposalTracking.FINALIZED, 0)
+        self.get_current_height()
+        self.check_result("crc proposal tracking finalized type", ret)
+        Logger.info("{} crc proposal tracking finalized on success!".format(self.tag))
+
+        # Terminated
+        # ret = self.crc_proposal_tracking(p_hash, leader_private_key, None, CRCProposalTracking.TERMINATED, 0)
+        # self.get_current_height()
+        # self.check_result("crc proposal tracking terminated type", ret)
+        # Logger.info("{} crc proposal tracking terminated on success!".format(self.tag))
+
+    def ready_for_crc_proposal_withdraw(self, p_hash: bytes):
+        ret = self.crc_proposal_withdraw(p_hash)
+        self.get_current_height()
+        self.check_result("crc proposal withdraw", ret)
+        Logger.info("{} crc proposal withdraw on success!".format(self.tag))
+
+    def crc_proposal_withdraw(self, p_hash: bytes):
+        global result
+        result = True
+
+        # Recipient
+        ela_node = self.node_manager.ela_nodes[1]
+        recipient = ela_node.cr_account.address()
+
+        # leader privatekey
+        ela_node = self.node_manager.ela_nodes[2]
+        cr_private_key = ela_node.cr_account.private_key()
+
+        withdraw = CRCProposalWithdraw(
+            private_key=cr_private_key,
+            proposal_hash=p_hash,
+        )
+        Logger.info("{} create crc proposal withdraw on success. \n{}".format(self.tag, withdraw))
+
+        amount = self.get_withdraw_amount(p_hash.hex()) - util.TX_FEE
+        ret = self.tx_manager.crc_proposal_withdraw(input_private_key=self.CRC_COMMITTEEPRIVATE_KEY,
+                                                    amount=amount,
+                                                    crc_proposal_withdraw=withdraw,
+                                                    output_address=recipient)
+        if not ret:
+            return False
+        self.discrete_miner(1)
+        return result
+
+    def crc_proposal_review(self, p_hash: bytes):
+        global result
+        result = True
+        for i in range(1, self.params.ela_params.crc_number + 1):
+            ela_node = self.node_manager.ela_nodes[i]
+            cr_private_key = ela_node.cr_account.private_key()
+            review = CRCProposalReview(
+                private_key=cr_private_key,
+                proposal_hash=p_hash,
+                vote_result=CRCProposalReview.APPROVE
+            )
+            Logger.info("{} create crc proposal review on success. \n{}".format(self.tag, review))
+            ret = self.tx_manager.crc_proposal_review(input_private_key=self.tap_account.private_key(),
+                                                      amount=10 * constant.TO_SELA,
+                                                      crc_proposal_review=review)
+            if not ret:
+                return False
+            self.discrete_miner(1)
+            Logger.info("{} node-{} review on success!\n".format(self.tag, i))
+        return result
+
+    def crc_proposal_tracking(self, p_hash: bytes, leader_private_key: str, new_leader_private_key, tracking_type: int, stage: int):
+        global result
+        result = True
+        tracking = CRCProposalTracking(
+            secretary_private_key=self.SECRETARY_PRIVATE_KEY,
+            leader_private_key=leader_private_key,
+            new_leader_private_key=new_leader_private_key,
+            tracking_type=tracking_type,
+            proposal_hash=p_hash,
+            document_hash=Random.get_random_bytes(serialize.UINT256SIZE),
+            stage=stage,
+            secretary_opinion_hash=Random.get_random_bytes(serialize.UINT256SIZE),
+        )
+        Logger.info("{} create crc proposal tracking on success. \n{}".format(self.tag, tracking))
+        ret = self.tx_manager.crc_proposal_tracking(input_private_key=self.tap_account.private_key(),
+                                                    amount=10 * constant.TO_SELA,
+                                                    crc_proposal_tracking=tracking)
+        if not ret:
+            return False
+        self.discrete_miner(1)
+        return result
+
+    def crc_proposal(self):
+        ela_node = self.node_manager.ela_nodes[1]
+        cr_private_key = ela_node.cr_account.private_key()
+        budget_list = list()
+        budget_list.append(Budget(budget_type=Budget.IMPREST, stage=0, amount=100000))
+        budget_list.append(Budget(budget_type=Budget.NORMAL_PAYMENT, stage=1, amount=200000))
+        budget_list.append(Budget(budget_type=Budget.NORMAL_PAYMENT, stage=2, amount=300000))
+        budget_list.append(Budget(budget_type=Budget.FINAL_PAYMENT, stage=3, amount=400000))
+        result = True
+        crc_proposal = CRCProposal(
+            private_key=cr_private_key,
+            cr_private_key=cr_private_key,
+            proposal_type=CRCProposal.NORMAL,
+            category_data="normal",
+            draft_hash=Random.get_random_bytes(serialize.UINT256SIZE),
+            budget=budget_list,
+            recipient=bytes.fromhex(ela_node.cr_account.program_hash()),
+            cr_opinion_hash=Random.get_random_bytes(serialize.UINT256SIZE)
+        )
+        Logger.info("{} create crc proposal on success. \n{}".format(self.tag, crc_proposal))
+
+        ret = self.tx_manager.crc_proposal(input_private_key=self.tap_account.private_key(),
+                                           amount=10 * constant.TO_SELA,
+                                           crc_proposal=crc_proposal)
+        if not ret:
+            return False, crc_proposal.hash
+        self.discrete_miner(1)
+        return result, crc_proposal.hash
+
+    def register_cr_candidates(self):
+
+        global result
+        result = True
+        for i in range(1, self.params.ela_params.crc_number + 1):
+            ela_node = self.node_manager.ela_nodes[i]
+            cid = ela_node.cr_account.cid_address()
+            cr_info = self.create_cr_info(register_private_key=ela_node.cr_account.private_key(),
+                                          nickname="CR-00{}".format(i),
+                                          url="www.00{}.com".format(i),
+                                          location=0)
+            ret = self.tx_manager.register_cr(input_private_key=self.tap_account.private_key(),
+                                              amount=5000 * constant.TO_SELA,
+                                              cr_info=cr_info)
+            if not ret:
+                return False
+            self.discrete_miner(7)
+            status = self.get_cr_status(cid)
+            Logger.debug("After mining 7 blocks, register status: {}".format(status))
+            result = status == "Active"
+            if not result:
+                Logger.error("{} register CR {} failed".format(self.tag, ela_node.name))
+                break
+            Logger.info("{} register node-{} to be a CR on success!\n".format(self.tag, i))
+
+        return result
 
     def create_cr_info(self, register_private_key: str, nickname: str, url: str, location: int):
         cr_info = CRInfo(
@@ -162,6 +391,36 @@ class Controller(object):
 
         return ret
 
+    def create_crc_proposal(self, register_private_key: str, nickname: str, url: str, location: int):
+        cr_info = CRInfo(
+            private_key=register_private_key,
+            nickname=nickname,
+            url=url,
+            location=location
+        )
+        Logger.info("{} create create_crc_proposal on success. \n{}".format(self.tag, cr_info))
+        return cr_info
+
+    def create_crc_proposal_review(self, register_private_key: str, nickname: str, url: str, location: int):
+        cr_info = CRInfo(
+            private_key=register_private_key,
+            nickname=nickname,
+            url=url,
+            location=location
+        )
+        Logger.info("{} create create_crc_proposal_review on success. \n{}".format(self.tag, cr_info))
+        return cr_info
+
+    def create_crc_tracking(self, register_private_key: str, nickname: str, url: str, location: int):
+        cr_info = CRInfo(
+            private_key=register_private_key,
+            nickname=nickname,
+            url=url,
+            location=location
+        )
+        Logger.info("{} create create_crc_tracking on success. \n{}".format(self.tag, cr_info))
+        return cr_info
+
     def mining_blocks_ready(self, foundation_address):
         time.sleep(3)
         rpc.discrete_mining(110)
@@ -171,7 +430,7 @@ class Controller(object):
     def check_params(self):
         if self.params.ela_params.number < 3 * self.params.ela_params.crc_number + \
                 self.params.ela_params.later_start_number:
-            Logger.error("Ela node number should be >= 3 * crc number + later start number , " 
+            Logger.error("Ela node number should be >= 3 * crc number + later start number , "
                          "please check your config in the beginning of your test case or config.json, exit...")
             time.sleep(1)
             exit(-1)
@@ -214,8 +473,6 @@ class Controller(object):
         os.system("sh {}/shell/killall.sh".format(self.root_path))
         if result:
             exit(0)
-        else:
-            exit(1)
 
     def start_later_nodes(self):
         for node in self.later_nodes:
@@ -436,7 +693,9 @@ class Controller(object):
 
     @staticmethod
     def get_current_height():
-        return rpc.get_block_count() - 1
+        height = rpc.get_block_count() - 1
+        Logger.info("current height: {}".format(height))
+        return height
 
     @staticmethod
     def discrete_mining_blocks(num: int):
@@ -482,3 +741,23 @@ class Controller(object):
     def get_cr_candidates_list():
         return rpc.list_cr_candidates(0, 100)["crcandidatesinfo"]
 
+    @staticmethod
+    def discrete_miner(num: int):
+        while num > 0:
+            rpc.discrete_mining(1)
+            num -= 1
+            time.sleep(0.5)
+
+    @staticmethod
+    def get_cr_status(cid: str):
+        crs = rpc.list_cr_candidates(0, 100)["crcandidatesinfo"]
+        for cr in crs:
+            if cr['cid'] == cid:
+                return cr['state']
+
+    @staticmethod
+    def get_withdraw_amount(proposal_hash: str):
+        state = rpc.get_cr_proposal_state(proposal_hash)
+        info = state["RpcProposalState"]
+        amount = info["availableamount"]
+        return int(Decimal(amount) * util.TO_SELA)

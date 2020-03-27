@@ -8,11 +8,13 @@ import struct
 from src.tools import serialize
 from src.tools.log import Logger
 
-from src.core.tx.vote_content import VoteContent
+from src.core.tx.outputPayload.vote_content import VoteContent
 from src.core.tx.output_payload import OutputPayload
 
 
-class VoteInfo(OutputPayload):
+class VoteOutput(OutputPayload):
+    PRODUCER_VERSION = 0x00
+    VOTE_PRODUCER_AND_CR_VERSION = 0x01
 
     def __init__(self, version: int, vote_contents: list):
         self.version = version
@@ -52,7 +54,7 @@ class VoteInfo(OutputPayload):
                 return False
             type_list.append(content.vote_type)
 
-            if content.vote_type != VoteContent.TYPE_DELEGATE:
+            if content.vote_type != VoteContent.DELEGATE:
                 Logger.error("{} invalid vote type")
 
             if len(content.candidates) == 0 or len(content.candidates) > 36:
@@ -70,6 +72,6 @@ class VoteInfo(OutputPayload):
 
     def __repr__(self):
         return "VoteInfo {\n\t" \
-                + "version: {}".format(self.version) + "\n\t" \
-                + "contents: {}".format(self.contents) + "\n" \
-                + "}"
+               + "version: {}".format(self.version) + "\n\t" \
+               + "contents: {}".format(self.contents) + "\n" \
+               + "}"

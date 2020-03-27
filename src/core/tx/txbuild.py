@@ -6,6 +6,10 @@
 
 from decimal import Decimal
 
+from src.core.tx.payload.crc_proposal import CRCProposal
+from src.core.tx.payload.crc_proposal_review import CRCProposalReview
+from src.core.tx.payload.crc_proposal_tracking import CRCProposalTracking
+from src.core.tx.payload.crc_proposal_withdraw import CRCProposalWithdraw
 from src.tools import util, serialize
 from src.tools.log import Logger
 
@@ -13,10 +17,10 @@ from src.core.services import rpc
 from src.core.tx.input import Input
 from src.core.tx.output import Output
 from src.core.tx.program import Program
-from src.core.tx.vote_info import VoteInfo
+from src.core.tx.outputPayload.vote_output import VoteOutput
 from src.core.tx.attribute import Attribute
 from src.core.tx.transaction import Transaction
-from src.core.tx.vote_content import VoteContent
+from src.core.tx.outputPayload.vote_content import VoteContent
 from src.core.tx.output_payload import OutputPayload
 from src.core.tx.payload.payload import Payload
 from src.core.tx.payload.producer_info import ProducerInfo
@@ -82,7 +86,8 @@ def create_transaction(input_private_key: str, output_addresses: list, amount: i
     return tx
 
 
-def create_cross_chain_transaction(input_private_key: str, lock_address: str, cross_chain_address: str, amount: int, recharge: bool, rpc_port: int):
+def create_cross_chain_transaction(input_private_key: str, lock_address: str, cross_chain_address: str, amount: int,
+                                   recharge: bool, rpc_port: int):
     if lock_address is None or lock_address is "":
         Logger.error("Invalid lock address")
         return None
@@ -145,7 +150,6 @@ def create_cross_chain_transaction(input_private_key: str, lock_address: str, cr
 
 
 def create_register_transaction(input_private_key: str, amount: int, payload: ProducerInfo, rpc_port: int):
-
     # create outputs
     outputs, total_amount = create_normal_outputs(
         output_addresses=[payload.get_deposit_address()],
@@ -191,7 +195,6 @@ def create_register_transaction(input_private_key: str, amount: int, payload: Pr
 
 
 def create_cr_register_transaction(input_private_key: str, amount: int, payload: CRInfo, rpc_port: int):
-
     # create outputs
     outputs, total_amount = create_normal_outputs(
         output_addresses=[payload.get_deposit_address()],
@@ -236,8 +239,187 @@ def create_cr_register_transaction(input_private_key: str, amount: int, payload:
     return tx
 
 
-def create_update_transaction(input_private_key: str, payload: ProducerInfo, rpc_port: int):
+def create_crc_proposal_review_transaction(input_private_key: str, amount: int, payload: CRCProposalReview,
+                                           rpc_port: int):
+    # create outputs
+    account = Account(input_private_key)
+    outputs, total_amount = create_normal_outputs(
+        output_addresses=[account.address()],
+        amount=amount,
+        fee=util.TX_FEE,
+        output_lock=0
+    )
 
+    # create inputs
+    inputs, change_outputs = create_normal_inputs(account.address(), total_amount, rpc_port)
+    if inputs is None or change_outputs is None:
+        Logger.error("Create normal inputs failed")
+        return None
+    outputs.extend(change_outputs)
+
+    # create program
+    programs = list()
+    redeem_script = bytes.fromhex(account.redeem_script())
+    program = Program(code=redeem_script, params=None)
+    programs.append(program)
+
+    # create attributes
+    attributes = list()
+    attribute = Attribute(
+        usage=Attribute.NONCE,
+        data=bytes("attributes".encode())
+    )
+    attributes.append(attribute)
+
+    tx = Transaction()
+    tx.version = Transaction.TX_VERSION_09
+    tx.tx_type = Transaction.CRC_PROPOSAL_REVIEW
+    tx.payload_version = 0
+    tx.payload = payload
+    tx.attributes = attributes
+    tx.inputs = inputs
+    tx.outputs = outputs
+    tx.lock_time = 0
+    tx.programs = programs
+
+    return tx
+
+
+def create_crc_proposal_withdraw_transaction(input_private_key: str, amount: int, payload: CRCProposalWithdraw,
+                                             rpc_port: int, output_address: str):
+    # create outputs
+    account = Account(input_private_key)
+    outputs, total_amount = create_normal_outputs(
+        output_addresses=[output_address],
+        amount=amount,
+        fee=util.TX_FEE,
+        output_lock=0
+    )
+
+    # create inputs
+    inputs, change_outputs = create_normal_inputs(account.address(), total_amount, rpc_port)
+    if inputs is None or change_outputs is None:
+        Logger.error("Create normal inputs failed")
+        return None
+    outputs.extend(change_outputs)
+
+    # create program
+    programs = list()
+
+    # create attributes
+    attributes = list()
+    attribute = Attribute(
+        usage=Attribute.NONCE,
+        data=bytes("attributes".encode())
+    )
+    attributes.append(attribute)
+
+    tx = Transaction()
+    tx.version = Transaction.TX_VERSION_09
+    tx.tx_type = Transaction.CRC_PROPOSAL_WITHDRAW
+    tx.payload_version = 0
+    tx.payload = payload
+    tx.attributes = attributes
+    tx.inputs = inputs
+    tx.outputs = outputs
+    tx.lock_time = 0
+    tx.programs = programs
+
+    return tx
+
+
+def create_crc_proposal_tracking_transaction(input_private_key: str, amount: int, payload: CRCProposalTracking,
+                                             rpc_port: int):
+    # create outputs
+    account = Account(input_private_key)
+    outputs, total_amount = create_normal_outputs(
+        output_addresses=[account.address()],
+        amount=amount,
+        fee=util.TX_FEE,
+        output_lock=0
+    )
+
+    # create inputs
+    inputs, change_outputs = create_normal_inputs(account.address(), total_amount, rpc_port)
+    if inputs is None or change_outputs is None:
+        Logger.error("Create normal inputs failed")
+        return None
+    outputs.extend(change_outputs)
+
+    # create program
+    programs = list()
+    redeem_script = bytes.fromhex(account.redeem_script())
+    program = Program(code=redeem_script, params=None)
+    programs.append(program)
+
+    # create attributes
+    attributes = list()
+    attribute = Attribute(
+        usage=Attribute.NONCE,
+        data=bytes("attributes".encode())
+    )
+    attributes.append(attribute)
+
+    tx = Transaction()
+    tx.version = Transaction.TX_VERSION_09
+    tx.tx_type = Transaction.CRC_PROPOSAL_TRACKING
+    tx.payload_version = 0
+    tx.payload = payload
+    tx.attributes = attributes
+    tx.inputs = inputs
+    tx.outputs = outputs
+    tx.lock_time = 0
+    tx.programs = programs
+
+    return tx
+
+
+def create_crc_proposal_transaction(input_private_key: str, amount: int, payload: CRCProposal, rpc_port: int):
+    # create outputs
+    account = Account(input_private_key)
+    outputs, total_amount = create_normal_outputs(
+        output_addresses=[account.address()],
+        amount=amount,
+        fee=util.TX_FEE,
+        output_lock=0
+    )
+
+    # create inputs
+    inputs, change_outputs = create_normal_inputs(account.address(), total_amount, rpc_port)
+    if inputs is None or change_outputs is None:
+        Logger.error("Create normal inputs failed")
+        return None
+    outputs.extend(change_outputs)
+
+    # create program
+    programs = list()
+    redeem_script = bytes.fromhex(account.redeem_script())
+    program = Program(code=redeem_script, params=None)
+    programs.append(program)
+
+    # create attributes
+    attributes = list()
+    attribute = Attribute(
+        usage=Attribute.NONCE,
+        data=bytes("attributes".encode())
+    )
+    attributes.append(attribute)
+
+    tx = Transaction()
+    tx.version = Transaction.TX_VERSION_09
+    tx.tx_type = Transaction.CRC_PROPOSAL
+    tx.payload_version = 0
+    tx.payload = payload
+    tx.attributes = attributes
+    tx.inputs = inputs
+    tx.outputs = outputs
+    tx.lock_time = 0
+    tx.programs = programs
+
+    return tx
+
+
+def create_update_transaction(input_private_key: str, payload: ProducerInfo, rpc_port: int):
     # create inputs
     account = Account(input_private_key)
     inputs, change_outputs = create_normal_inputs(account.address(), util.TX_FEE, rpc_port)
@@ -280,7 +462,6 @@ def create_update_transaction(input_private_key: str, payload: ProducerInfo, rpc
 
 
 def create_cr_update_transaction(input_private_key: str, update_payload: CRInfo, rpc_port: int):
-
     # create inputs
     account = Account(input_private_key)
     inputs, change_outputs = create_normal_inputs(account.address(), util.TX_FEE, rpc_port)
@@ -323,7 +504,6 @@ def create_cr_update_transaction(input_private_key: str, update_payload: CRInfo,
 
 
 def create_cancel_transaction(input_private_key: str, payload: ProducerInfo, rpc_port: int):
-
     # create inputs
     account = Account(input_private_key)
     inputs, change_outputs = create_normal_inputs(account.address(), util.TX_FEE, rpc_port)
@@ -366,7 +546,6 @@ def create_cancel_transaction(input_private_key: str, payload: ProducerInfo, rpc
 
 
 def create_cr_cancel_transaction(input_private_key: str, payload: UnRegisterCR, rpc_port: int):
-
     # create inputs
     account = Account(input_private_key)
     inputs, change_outputs = create_normal_inputs(account.address(), util.TX_FEE, rpc_port)
@@ -407,7 +586,6 @@ def create_cr_cancel_transaction(input_private_key: str, payload: UnRegisterCR, 
 
 
 def create_redeem_transaction(payload: ProducerInfo, output_address: str, amount: int, rpc_port: int):
-
     # create outputs
     outputs, total_amount = create_normal_outputs(
         output_addresses=[output_address],
@@ -454,7 +632,6 @@ def create_redeem_transaction(payload: ProducerInfo, output_address: str, amount
 
 
 def create_cr_redeem_transaction(payload: CRInfo, output_address: str, amount: int, rpc_port: int):
-
     # create outputs
     outputs, total_amount = create_normal_outputs(
         output_addresses=[output_address],
@@ -518,20 +695,20 @@ def create_active_transaction(node_private_key: str, node_public_key: str):
     return tx
 
 
-def create_vote_transaction(input_private_key: str, candidates_list: list, amount: int, rpc_port: int):
+def create_vote_transaction(input_private_key: str, candidates_list: list, amount: int, rpc_port: int, vote_content):
     # check output
     if candidates_list is None or len(candidates_list) == 0:
         Logger.error("Invalid output addresses")
         return None
 
-    candidates_bytes_list = list()
-
-    for candidate in candidates_list:
-        candidates_bytes_list.append(bytes.fromhex(candidate))
+    # candidates_bytes_list = list()
+    #
+    # for candidate in candidates_list:
+    #     candidates_bytes_list.append(bytes.fromhex(candidate))
 
     # create outputs
     account = Account(input_private_key)
-    outputs = create_vote_output(account.address(), amount, candidates_bytes_list)
+    outputs = create_vote_output(account.address(), amount, vote_content)
 
     # create inputs
     total_amount = amount + util.TX_FEE
@@ -598,11 +775,12 @@ def create_normal_inputs(address: str, total_amount: int, rpc_port: int):
         amount = int(Decimal(utxo["amount"]) * util.TO_SELA)
 
         if amount < total_amount_global:
-            total_amount -= amount
-        elif amount == total_amount:
+            # total_amount -= amount
+            total_amount_global -= amount
+        elif amount == total_amount_global:
             total_amount_global = 0
             break
-        elif amount > total_amount:
+        elif amount > total_amount_global:
             change = Output(
                 value=amount - total_amount_global,
                 output_lock=0,
@@ -646,14 +824,12 @@ def create_normal_outputs(output_addresses: list, amount: int, fee: int, output_
     return outputs, total_amount
 
 
-def create_vote_output(output_address: str, amount: int, candidates_bytes_list: list):
-
+def create_vote_output(output_address: str, amount: int, vote_content):
     outputs = list()
     program_hash = keytool.address_to_program_hash(output_address)
 
     # create output paylaod
-    vote_content = VoteContent(VoteContent.TYPE_DELEGATE, candidates_bytes_list)
-    vote_info = VoteInfo(0, [vote_content])
+    vote_info = VoteOutput(VoteOutput.VOTE_PRODUCER_AND_CR_VERSION, [vote_content])
 
     output = Output(
         value=amount,
@@ -781,5 +957,4 @@ def single_sign_transaction(input_private_key: str, tx: Transaction):
 
 
 if __name__ == '__main__':
-
     pass
