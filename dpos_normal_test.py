@@ -103,7 +103,7 @@ def test_content():
         controller.discrete_mining_blocks(1)
         time.sleep(0.5)
 
-    controller.terminate_all_process(result)
+    controller.terminate_all_process()
 
 
 if __name__ == '__main__':

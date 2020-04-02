@@ -466,7 +466,7 @@ class Controller(object):
                 for k in _config.keys():
                     self.config[key][k] = _config[k]
 
-    def terminate_all_process(self, result: bool):
+    def terminate_all_process(self, result=True):
         Logger.info("{} terminal all the process and exit...".format(self.tag))
         self.node_manager.stop_nodes()
         time.sleep(1)
