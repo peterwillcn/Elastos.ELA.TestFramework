@@ -17,7 +17,8 @@ config = {
         "later_start_number": 0,
         "pre_connect_offset": 5,
         "crc_dpos_height": 300,
-        "public_dpos_height": 308
+        "public_dpos_height": 308,
+        "cr_committee_start_height": 350
     },
     "side": True,
     "arbiter": {
@@ -56,6 +57,7 @@ def test_content():
 
     h1 = controller.params.ela_params.crc_dpos_height
     h2 = controller.params.ela_params.public_dpos_height
+    h3 = controller.params.ela_params.cr_committee_start_height
     pre_offset = config["ela"]["pre_connect_offset"]
     did_enable = config["did"]["enable"]
     token_enable = config["token"]["enable"]
@@ -122,10 +124,16 @@ def test_content():
         #         result = controller.tx_manager.cross_chain_transaction("neo", False)
         #         controller.check_result(test_case, result)
 
-        if current_height > h2 + 2:
+        if current_height == h2 + 2:
+            Logger.info("H2 PASS!")
+            Logger.info("H2 PASS!")
 
+            # register cr
+            controller.ready_for_cr()
+
+        if current_height == h3 + 1:
             if did_enable:
-                test_case = "cross chain recharge did after H2"
+                test_case = "cross chain recharge did after H3"
                 Logger.info("### Testing {} ###".format(test_case))
                 result = controller.tx_manager.cross_chain_transaction("did", True)
                 controller.check_result(test_case, result)
@@ -135,7 +143,7 @@ def test_content():
                 controller.discrete_mining_blocks(1)
                 time.sleep(2)
 
-                test_case = "cross chain withdraw did after H2"
+                test_case = "cross chain withdraw did after H3"
                 Logger.info("### Testing {} ###".format(test_case))
                 result = controller.tx_manager.cross_chain_transaction("did", False)
                 controller.check_result(test_case, result)
@@ -146,7 +154,7 @@ def test_content():
                 time.sleep(2)
 
             if token_enable:
-                test_case = "cross chain recharge token after H2"
+                test_case = "cross chain recharge token after H3"
                 Logger.info("### Testing {} ###".format(test_case))
                 result = controller.tx_manager.cross_chain_transaction("token", True)
                 controller.check_result(test_case, result)
@@ -156,7 +164,7 @@ def test_content():
                 controller.discrete_mining_blocks(1)
                 time.sleep(2)
 
-                test_case = "cross chain withdraw token after H2"
+                test_case = "cross chain withdraw token after H3"
                 Logger.info("### Testing {} ###".format(test_case))
                 result = controller.tx_manager.cross_chain_transaction("token", False)
                 controller.check_result(test_case, result)
@@ -167,7 +175,7 @@ def test_content():
                 time.sleep(2)
 
             if neo_enable:
-                test_case = "cross chain recharge noe after H2"
+                test_case = "cross chain recharge noe after H3"
                 Logger.info("### Testing {} ###".format(test_case))
                 result = controller.tx_manager.cross_chain_transaction("neo", True)
                 controller.check_result(test_case, result)
@@ -177,7 +185,7 @@ def test_content():
                 controller.discrete_mining_blocks(1)
                 time.sleep(2)
 
-                test_case = "cross chain withdraw neo after H2"
+                test_case = "cross chain withdraw neo after H3"
                 Logger.info("### Testing {} ###".format(test_case))
                 result = controller.tx_manager.cross_chain_transaction("neo", False)
                 controller.check_result(test_case, result)

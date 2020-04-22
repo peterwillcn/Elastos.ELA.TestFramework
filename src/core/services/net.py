@@ -4,6 +4,9 @@
 # author: liteng
 
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3 import Retry
+
 from src.tools import util
 from src.tools.log import Logger
 
@@ -29,8 +32,12 @@ def post_request(url, method, params):
         Logger.debug("{} url: {}".format(tag, url))
         Logger.debug("{} method: {}".format(tag, method))
         Logger.debug("{} params: {}".format(tag, params))
-        response = requests.post(url, json={"method": method, "params": params},
-                             headers={"content-type": "application/json"})
+        requests.adapters.DEFAULT_RETRIES = 5
+        s = requests.Session()
+        s.keep_alive = False
+        response = s.post(url, json={"method": method, "params": params},
+                             headers={"content-type": "application/json"}, timeout=120)
+        s.close()
         resp = response.json()
         if resp["error"] == None:
             return resp["result"]

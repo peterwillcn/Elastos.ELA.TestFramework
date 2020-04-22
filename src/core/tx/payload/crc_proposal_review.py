@@ -14,11 +14,12 @@ class CRCProposalReview(Payload):
     REJECT = 0x01
     ABSTAIN = 0x02
 
-    def __init__(self, private_key: str, proposal_hash: bytes, vote_result: int):
+    def __init__(self, private_key: str, proposal_hash: bytes, vote_result: int, opinion_hash: bytes):
         Payload.__init__(self, self.DEFAULT_VERSION)
         self.account = Account(private_key)
         self.proposal_hash = proposal_hash
         self.vote_result = vote_result
+        self.opinion_hash = opinion_hash
         self.did = bytes.fromhex(self.account.did())
         self.sign = None
         self.gen_signature()
@@ -40,6 +41,7 @@ class CRCProposalReview(Payload):
     def serialize_unsigned(self, r: bytes, version=0):
         r += self.proposal_hash
         r += struct.pack("<B", self.vote_result)
+        r += self.opinion_hash
         r += self.did
         return r
 
@@ -56,6 +58,7 @@ class CRCProposalReview(Payload):
         return "CRCProposalReview {" + "\n\t" \
                + "proposal_hash: {}".format(self.proposal_hash.hex()) + "\n\t" \
                + "vote_result : {}".format(self.vote_result) + "\n\t" \
+               + "cr_opinion_hash: {}".format(self.opinion_hash.hex()) + "\n\t" \
                + "did : {}".format(keytool.create_address(self.did)) + "\n\t" \
                + "sign: {}".format(self.sign.hex()) + "\n\t" \
                + "}"

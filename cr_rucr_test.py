@@ -16,8 +16,9 @@ config = {
         "crc_number": 4,
         "later_start_number": 0,
         "pre_connect_offset": 5,
-        "crc_dpos_height": 30000,
-        "public_dpos_height": 30800
+        "crc_dpos_height": 300,
+        "public_dpos_height": 308,
+        "cr_committee_start_height": 100000
     },
     "side": False,
     "times": 1
@@ -26,6 +27,33 @@ config = {
 
 def test_content():
     controller = Controller(config)
+    controller.ready_for_dpos()
+
+    h1 = controller.params.ela_params.crc_dpos_height
+    h2 = controller.params.ela_params.public_dpos_height
+
+    pre_offset = config["ela"]["pre_connect_offset"]
+    current_height = controller.get_current_height()
+    if current_height < h1 - pre_offset - 1:
+        controller.discrete_miner(h1 - pre_offset - 1 - current_height)
+
+    while True:
+        current_height = controller.get_current_height()
+
+        if current_height >= h1:
+            controller.show_arbiter_info()
+
+        if current_height == h1 + 1:
+            Logger.info("H1 PASS!")
+            Logger.info("H1 PASS!")
+
+        if current_height == h2 + 2:
+            Logger.info("H2 PASS!")
+            Logger.info("H2 PASS!")
+            break
+
+        controller.discrete_miner(1)
+        time.sleep(0.5)
 
     input_account = controller.keystore_manager.tap_account
     register_account = controller.keystore_manager.special_accounts[8]
@@ -50,18 +78,13 @@ def test_content():
 
     Logger.info("result: {}".format(ret))
 
-    i = 7
-    while i != 0:
-        controller.discrete_mining_blocks(1)
-        cr_list = controller.get_cr_candidates_list()
-        cr_nick_name = cr_list[0]["nickname"]
-        cr_state = cr_list[0]["state"]
-        Logger.info("cr {} state: {}".format(cr_nick_name, cr_state))
-        i -= 1
-    # controller.ready_for_dpos()
-    controller.discrete_mining_blocks(1)
+    controller.discrete_miner(7)
 
-    # time.sleep(1)
+    cr_list = controller.get_cr_candidates_list()
+    cr_nick_name = cr_list[0]["nickname"]
+    cr_state = cr_list[0]["state"]
+    Logger.info("cr {} state: {}".format(cr_nick_name, cr_state))
+
     # update cr
     cr_info.url = "www.elastos.com"
     cr_info.nickname = "HAHA ^_^"
@@ -69,12 +92,12 @@ def test_content():
 
     ret = controller.tx_manager.update_cr(
         input_private_key=input_account.private_key(),
-        update_cr_info=cr_info,
+        cr_info=cr_info,
     )
 
     controller.check_result("update a cr: ", ret)
 
-    controller.discrete_mining_blocks(2)
+    controller.discrete_miner(2)
     cr_list = controller.get_cr_candidates_list()
     cr_nick_name = cr_list[0]["nickname"]
     cr_url = cr_list[0]["url"]
@@ -92,11 +115,11 @@ def test_content():
         register_private_key=register_private_key
     )
     controller.check_result("unregister a cr: ", ret)
-    controller.discrete_mining_blocks(2)
+    controller.discrete_miner(2)
     # cr_list = controller.get_cr_candidates_list()
     # cr_state = cr_list[0]["state"]
     # Logger.info("after unregister a cr, state: {}".format(cr_state))
-    controller.discrete_mining_blocks(2120)
+    # controller.discrete_miner(2160)
 
     # time.sleep(60)
 
@@ -110,7 +133,7 @@ def test_content():
     )
 
     controller.check_result("redeem a cr: ", ret)
-    controller.discrete_mining_blocks(6)
+    controller.discrete_miner(6)
 
     # cr_list = controller.get_cr_candidates_list()
     # cr_state = cr_list[0]["state"]
@@ -132,4 +155,3 @@ if __name__ == '__main__':
         test_content()
         Logger.warn("[main] end testing {} times".format(i + 1))
         time.sleep(3)
-

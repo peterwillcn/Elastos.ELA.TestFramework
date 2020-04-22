@@ -62,6 +62,27 @@ class TransactionManager(object):
 
         return ret
 
+    def transfer_abnormal_asset(self, input_private_key: str, output_addresses: list, amount: int, attributes=None):
+
+        # create transfer asset tx
+        tx = txbuild.create_abnormal_transaction(
+            input_private_key=input_private_key,
+            output_addresses=output_addresses,
+            amount=amount,
+            rpc_port=self.rpc_port,
+            attributes=attributes
+        )
+
+        if tx is None:
+            return False
+        # single sign this tx
+        tx = txbuild.single_sign_transaction(input_private_key, tx)
+
+        # return the result
+        ret = self.handle_tx_result(tx)
+
+        return ret
+
     def transfer_cross_chain_asset(self, input_private_key: str, lock_address: str, cross_address: str,
                                    amount: int, recharge: bool, port=rpc.DEFAULT_PORT):
         tx = txbuild.create_cross_chain_transaction(
@@ -170,16 +191,17 @@ class TransactionManager(object):
             self.register_cr_list.append(cr_info)
         return ret
 
-    def update_cr(self, input_private_key: str, update_cr_info: CRInfo, port=rpc.DEFAULT_PORT):
+    def update_cr(self, input_private_key: str, cr_info: CRInfo, port=rpc.DEFAULT_PORT):
         tx = txbuild.create_cr_update_transaction(
             input_private_key=input_private_key,
-            update_payload=update_cr_info,
+            update_payload=cr_info,
             rpc_port=port
         )
 
         if tx is None:
             return False
 
+        tx.payload_version = cr_info.CR_INFO_DID_VERSION
         tx = txbuild.single_sign_transaction(input_private_key, tx)
         Logger.info("update cr transaction:\n{}".format(tx))
         ret = self.handle_tx_result(tx, port)

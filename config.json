@@ -29,7 +29,7 @@
     "member_count": 4,
     "voting_period": 2000,
     "duty_period": 4000,
-    "deposit_lockup_blocks": 2160,
+    "deposit_lockup_blocks": 1,
     "crc_appropriate_percentage": 10,
     "max_committee_proposal_count": 128,
     "max_proposal_tracking_count": 128,

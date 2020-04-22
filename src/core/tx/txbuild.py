@@ -2,8 +2,7 @@
 # -*- coding:utf-8 -*-
 # date: 2019/5/4 11:44 AM
 # author: liteng
-
-
+import time
 from decimal import Decimal
 
 from src.core.tx.payload.crc_proposal import CRCProposal
@@ -36,7 +35,58 @@ from src.core.wallet import keytool
 from src.core.wallet.account import Account
 
 
-def create_transaction(input_private_key: str, output_addresses: list, amount: int, rpc_port: int):
+def create_abnormal_transaction(input_private_key: str, output_addresses: list, amount: int, rpc_port: int, attributes=None):
+    account = Account(input_private_key)
+    # check output
+    if output_addresses is None or len(output_addresses) == 0:
+        Logger.error("Invalid output addresses")
+        return None
+
+    # create outputs
+    outputs, total_amount = create_normal_outputs(
+        output_addresses=output_addresses,
+        amount=amount,
+        fee=util.TX_FEE,
+        output_lock=0
+    )
+
+    # create inputs
+    inputs, change_outputs = create_normal_inputs(account.address(), total_amount, rpc_port)
+
+    if inputs is None or change_outputs is None:
+        Logger.error("Create normal inputs failed")
+        return None
+    outputs.extend(change_outputs)
+
+    # create program
+    programs = list()
+    redeem_script = bytes.fromhex(account.redeem_script())
+    program = Program(code=redeem_script, params=None)
+    programs.append(program)
+
+    # create attributes
+    if attributes is None:
+        attributes = list()
+        attribute = Attribute(
+            usage=Attribute.NONCE,
+            data=bytes("attributes".encode())
+        )
+        attributes.append(attribute)
+
+    tx = Transaction()
+    tx.version = Transaction.TX_VERSION_09
+    tx.tx_type = Transaction.TRANSFER_ASSET
+    tx.payload = Payload(Payload.DEFAULT_VERSION)
+    tx.attributes = attributes
+    tx.inputs = inputs
+    tx.outputs = outputs
+    tx.lock_time = 0
+    tx.programs = programs
+
+    return tx
+
+
+def create_transaction(input_private_key: str, output_addresses: list, amount: int, rpc_port: int,):
     account = Account(input_private_key)
     # check output
     if output_addresses is None or len(output_addresses) == 0:
@@ -84,7 +134,6 @@ def create_transaction(input_private_key: str, output_addresses: list, amount: i
     tx.programs = programs
 
     return tx
-
 
 def create_cross_chain_transaction(input_private_key: str, lock_address: str, cross_chain_address: str, amount: int,
                                    recharge: bool, rpc_port: int):
@@ -487,7 +536,7 @@ def create_cr_update_transaction(input_private_key: str, update_payload: CRInfo,
     )
     attributes.append(attribute)
 
-    update_payload.gen_signature()
+    # update_payload.gen_signature()
 
     tx = Transaction()
     tx.version = Transaction.TX_VERSION_09

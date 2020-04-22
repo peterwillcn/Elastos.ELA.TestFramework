@@ -16,12 +16,14 @@ from src.core.managers.env_manager import EnvManager
 from src.core.managers.node_manager import NodeManager
 from src.core.managers.keystore_manager import KeyStoreManager
 from src.core.managers.tx_manager import TransactionManager
+from src.core.tx.attribute import Attribute
 from src.core.tx.payload.budget import Budget
 from src.core.tx.payload.cr_info import CRInfo
 from src.core.tx.payload.crc_proposal import CRCProposal
 from src.core.tx.payload.crc_proposal_review import CRCProposalReview
 from src.core.tx.payload.crc_proposal_tracking import CRCProposalTracking
 from src.core.tx.payload.crc_proposal_withdraw import CRCProposalWithdraw
+from src.core.wallet.account import Account
 
 from src.tools import util, serialize
 from src.tools import constant
@@ -60,7 +62,8 @@ class Controller(object):
         # necessary keystore
         self.foundation_account = self.keystore_manager.foundation_account
         self.tap_account = self.keystore_manager.tap_account
-
+        # pressure keystore
+        self.pressure_account = Account()
         self.init_for_testing()
         self.later_nodes = self.node_manager.ela_nodes[(self.params.ela_params.number -
                                                         self.params.ela_params.later_start_number + 1):]
@@ -141,6 +144,67 @@ class Controller(object):
             self.check_result("recharge sub4 keystore", ret)
             Logger.info("{} recharge each sub4 keystore {} ELAs on success!")
 
+    def ready_for_pressure_inputs(self, inputs_num: int):
+        ret = self.pressure_inputs(inputs_num)
+        self.check_result("pressure inputs number:{}".format(inputs_num), ret)
+        Logger.info("{}pressure inputs on success!".format(self.tag))
+
+    def ready_for_pressure_big_block(self, data_size: int):
+        ret = self.pressure_big_block(data_size)
+        self.check_result("pressure big block size:{} ".format(data_size), ret)
+        Logger.info("{}pressure big block on success!".format(self.tag, data_size))
+
+    def pressure_inputs(self, inputs_num: int):
+        output_addresses = list()
+        for i in range(inputs_num):
+            output_addresses.append(self.pressure_account.address())
+        ret = self.tx_manager.transfer_asset(self.tap_account.private_key(), output_addresses, 1 * util.TO_SELA)
+        if ret:
+            self.wait_block()
+            value = rpc.get_balance_by_address(self.pressure_account.address())
+            Logger.debug("{} account {} wallet balance: {}".format(self.tag, self.pressure_account.address(), value))
+
+            ret = self.tx_manager.transfer_asset(self.pressure_account.private_key(), [self.pressure_account.address()],
+                                                 int(Decimal(value) * util.TO_SELA - util.TX_FEE))
+            if ret:
+                self.wait_block()
+                return True
+            else:
+                Logger.error("{} pressure inputs transfer failed".format(self.tag))
+                return False
+        else:
+            Logger.error("{} pressure outupts transfer failed".format(self.tag))
+
+        return ret
+
+    def pressure_big_block(self, data_size):
+        attributes = list()
+        attribute = Attribute(
+            usage=Attribute.NONCE,
+            data=Random.get_random_bytes(data_size)
+        )
+        attributes.append(attribute)
+        ret = self.tx_manager.transfer_abnormal_asset(self.tap_account.private_key(), [self.tap_account.address()],
+                                                      1 * util.TO_SELA, attributes= attributes)
+        if ret:
+            self.wait_block()
+            return True
+        else:
+            Logger.error("{} pressure big block transfer failed".format(self.tag))
+            return False
+
+    def wait_block(self):
+        Logger.info("waiting for the block ... ")
+        count_height = 0
+        height = self.get_current_height()
+        while True:
+            if height + 1 >= count_height:
+                rpc.discrete_mining(1)
+                time.sleep(1)
+                count_height = self.get_current_height()
+            else:
+                break
+
     def ready_for_dpos(self):
         ret = self.tx_manager.register_producers_candidates()
         self.check_result("register producers", ret)
@@ -220,13 +284,14 @@ class Controller(object):
         # proposal leader
         ela_node = self.node_manager.ela_nodes[2]
         new_leader_private_key = ela_node.cr_account.private_key()
-        ret = self.crc_proposal_tracking(p_hash, leader_private_key, new_leader_private_key, CRCProposalTracking.PROPOSAL_LEADER, 0)
+        ret = self.crc_proposal_tracking(p_hash, leader_private_key, new_leader_private_key,
+                                         CRCProposalTracking.PROPOSAL_LEADER, 0)
         self.get_current_height()
         self.check_result("crc proposal tracking proposal leader type", ret)
         Logger.info("{} crc proposal tracking proposal leader on success!".format(self.tag))
 
         # finalized
-        ret = self.crc_proposal_tracking(p_hash, new_leader_private_key, None, CRCProposalTracking.FINALIZED, 0)
+        ret = self.crc_proposal_tracking(p_hash, new_leader_private_key, None, CRCProposalTracking.FINALIZED, 3)
         self.get_current_height()
         self.check_result("crc proposal tracking finalized type", ret)
         Logger.info("{} crc proposal tracking finalized on success!".format(self.tag))
@@ -280,7 +345,8 @@ class Controller(object):
             review = CRCProposalReview(
                 private_key=cr_private_key,
                 proposal_hash=p_hash,
-                vote_result=CRCProposalReview.APPROVE
+                vote_result=CRCProposalReview.APPROVE,
+                opinion_hash=Random.get_random_bytes(serialize.UINT256SIZE)
             )
             Logger.info("{} create crc proposal review on success. \n{}".format(self.tag, review))
             ret = self.tx_manager.crc_proposal_review(input_private_key=self.tap_account.private_key(),
@@ -292,17 +358,18 @@ class Controller(object):
             Logger.info("{} node-{} review on success!\n".format(self.tag, i))
         return result
 
-    def crc_proposal_tracking(self, p_hash: bytes, leader_private_key: str, new_leader_private_key, tracking_type: int, stage: int):
+    def crc_proposal_tracking(self, p_hash: bytes, leader_private_key: str, new_leader_private_key, tracking_type: int,
+                              stage: int):
         global result
         result = True
         tracking = CRCProposalTracking(
             secretary_private_key=self.SECRETARY_PRIVATE_KEY,
             leader_private_key=leader_private_key,
             new_leader_private_key=new_leader_private_key,
-            tracking_type=tracking_type,
             proposal_hash=p_hash,
             document_hash=Random.get_random_bytes(serialize.UINT256SIZE),
             stage=stage,
+            tracking_type=tracking_type,
             secretary_opinion_hash=Random.get_random_bytes(serialize.UINT256SIZE),
         )
         Logger.info("{} create crc proposal tracking on success. \n{}".format(self.tag, tracking))
@@ -330,8 +397,7 @@ class Controller(object):
             category_data="normal",
             draft_hash=Random.get_random_bytes(serialize.UINT256SIZE),
             budget=budget_list,
-            recipient=bytes.fromhex(ela_node.cr_account.program_hash()),
-            cr_opinion_hash=Random.get_random_bytes(serialize.UINT256SIZE)
+            recipient=bytes.fromhex(ela_node.cr_account.program_hash())
         )
         Logger.info("{} create crc proposal on success. \n{}".format(self.tag, crc_proposal))
 
@@ -746,7 +812,7 @@ class Controller(object):
         while num > 0:
             rpc.discrete_mining(1)
             num -= 1
-            time.sleep(0.5)
+            time.sleep(0.2)
 
     @staticmethod
     def get_cr_status(cid: str):

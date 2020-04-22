@@ -60,6 +60,7 @@ class KeyStoreManager(object):
         self.cross_neo_account = self.special_accounts[self.INDEX_CROSS_NEO1]
         self.cross_eth_account = self.special_accounts[self.INDEX_CROSS_ETH]
 
+
         self._gen_crc_pubkeys()
 
         # self._create_keystore_files()

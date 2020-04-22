@@ -104,7 +104,7 @@ class NodeManager(object):
                 self.start_arbiter_nodes()
 
     def wait_rpc_ready(self, port: int, content=1, timeout=60):
-        time.sleep(3)
+        time.sleep(5)
         stop_time = time.time() + timeout
         while time.time() <= stop_time:
             result = []

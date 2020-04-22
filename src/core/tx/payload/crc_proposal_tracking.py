@@ -25,12 +25,12 @@ class CRCProposalTracking(Payload):
         self.secretary_general_account = Account(secretary_private_key)
         self.leader_account = Account(leader_private_key)
         self.new_leader_account = None
-        self.proposal_tracking_type = tracking_type
         self.proposal_hash = proposal_hash
         self.document_hash = document_hash
         self.stage = stage
         self.leader_public_key = bytes.fromhex(self.leader_account.public_key())
         self.new_leader_public_key = None
+        self.proposal_tracking_type = tracking_type
         self.secretary_opinion_hash = secretary_opinion_hash
         self.secretary_general_sign = None
         self.leader_sign = None
@@ -54,12 +54,12 @@ class CRCProposalTracking(Payload):
             r = serialize.write_var_bytes(r, self.new_leader_sign)
         else:
             r += struct.pack("<B", CRCProposalTracking.DEFAULT)
+        r += struct.pack("<B", self.proposal_tracking_type)
         r += self.secretary_opinion_hash
         r = serialize.write_var_bytes(r, self.secretary_general_sign)
         return r
 
     def serialize_unsigned(self, r: bytes, version=0):
-        r += struct.pack("<B", self.proposal_tracking_type)
         r += self.proposal_hash
         r += self.document_hash
         r += serialize.write_var_uint(self.stage)

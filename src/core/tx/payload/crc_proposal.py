@@ -1,7 +1,6 @@
 import struct
 
 from src.tools import serialize
-from src.tools.log import Logger
 
 from src.core.wallet.account import Account
 from src.core.tx.payload.payload import Payload
@@ -23,7 +22,7 @@ class CRCProposal(Payload):
     WRONG = 0x4321
 
     def __init__(self, private_key: str, cr_private_key: str, proposal_type: int, category_data: str,
-                 draft_hash: bytes, budget: list, recipient: bytes, cr_opinion_hash: bytes):
+                 draft_hash: bytes, budget: list, recipient: bytes):
         Payload.__init__(self, self.DEFAULT_VERSION)
         self.account = Account(private_key)
         self.cr_account = Account(cr_private_key)
@@ -34,7 +33,6 @@ class CRCProposal(Payload):
         self.recipient = recipient
         self.sign = None
         self.cr_sponsor_did = bytes.fromhex(self.cr_account.did())
-        self.cr_opinion_hash = cr_opinion_hash
         self.cr_sign = None
         self.gen_signature()
         self.hash = self.gen_hash()
@@ -52,7 +50,6 @@ class CRCProposal(Payload):
         r = self.serialize_unsigned(r, version)
         r = serialize.write_var_bytes(r, self.sign)
         r += self.cr_sponsor_did
-        r += self.cr_opinion_hash
         r = serialize.write_var_bytes(r, self.cr_sign)
         return r
 
@@ -97,7 +94,6 @@ class CRCProposal(Payload):
                + "recipient: {}".format(keytool.create_address(self.recipient)) + "\n\t" \
                + "sign: {}".format(self.sign.hex()) + "\n\t" \
                + "cr_sponsor_did: {}".format(keytool.create_address(self.cr_sponsor_did)) + "\n\t" \
-               + "cr_opinion_hash: {}".format(self.cr_opinion_hash.hex()) + "\n\t" \
                + "cr_sign: {}".format(self.cr_sign.hex()) + "\n\t" \
                + "hash: {}".format(self.hash.hex()) + "\n\t" \
                + "}"

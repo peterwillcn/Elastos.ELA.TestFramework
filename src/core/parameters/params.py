@@ -149,6 +149,7 @@ class Parameter(object):
                 "CRCCommitteeAddress": "Ec8gwTF8FwvVrekhwngTwJsKnSpeRdQAHs", # privateKey:8CD05DA8CB94EF2D991EEC747474E6ED194850F37FF14324FE8162F6424F6695
                 "RPCServiceLevel": "MiningPermitted",
                 "NodeProfileStrategy": "Balanced",
+                "MaxBlockSize": 8000000
             }
         }
         return ela_config
