@@ -36,7 +36,7 @@ def post_request(url, method, params):
         s = requests.Session()
         s.keep_alive = False
         response = s.post(url, json={"method": method, "params": params},
-                             headers={"content-type": "application/json"}, timeout=120)
+                             headers={"content-type": "application/json"}, timeout=10)
         s.close()
         resp = response.json()
         if resp["error"] == None:

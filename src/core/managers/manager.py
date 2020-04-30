@@ -27,20 +27,15 @@ from src.tools import constant
 from src.tools.log import Logger
 
 
-class TransactionManager(object):
+class TxManager(object):
 
-    def __init__(self, node_manager: NodeManager):
+    def __init__(self, port: int):
         self.tag = util.tag_from_path(__file__, self.__class__.__name__)
-        self.node_manager = node_manager
-        self.params = self.node_manager.params
         self.fee = 10000
-        self.rpc_port = rpc.DEFAULT_PORT
-        self.register_producers_list = list()
+        self.rpc_port = port
         self.register_cr_list = list()
         self.cancel_producers_list = list()
         self.crc_proposal_list = list()
-
-        self.tap_account = self.node_manager.keystore_manager.tap_account
 
     def transfer_asset(self, input_private_key: str, output_addresses: list, amount: int):
 
@@ -56,9 +51,9 @@ class TransactionManager(object):
             return False
         # single sign this tx
         tx = txbuild.single_sign_transaction(input_private_key, tx)
-
+        Logger.debug("transaction:\n{} ".format(tx))
         # return the result
-        ret = self.handle_tx_result(tx)
+        ret = self.handle_tx_result(tx, self.rpc_port)
 
         return ret
 
@@ -77,9 +72,9 @@ class TransactionManager(object):
             return False
         # single sign this tx
         tx = txbuild.single_sign_transaction(input_private_key, tx)
-
+        Logger.debug("transaction:\n{} ".format(tx))
         # return the result
-        ret = self.handle_tx_result(tx)
+        ret = self.handle_tx_result(tx, self.rpc_port)
 
         return ret
 
@@ -98,7 +93,7 @@ class TransactionManager(object):
             return False
 
         tx = txbuild.single_sign_transaction(input_private_key, tx)
-        Logger.warn("cross chain asset transaction: \n{}".format(tx))
+        Logger.debug("cross chain asset transaction: \n{}".format(tx))
         ret = self.handle_tx_result(tx, port)
 
         return ret
@@ -116,7 +111,7 @@ class TransactionManager(object):
         if tx is None:
             return False
         tx = txbuild.single_sign_transaction(input_private_key, tx)
-        Logger.info("crc proposal review transaction:\n{} ".format(tx))
+        Logger.debug("crc proposal review transaction:\n{} ".format(tx))
         ret = self.handle_tx_result(tx, port)
         return ret
 
@@ -133,7 +128,7 @@ class TransactionManager(object):
 
         if tx is None:
             return False
-        Logger.info("crc proposal withdraw transaction:\n{} ".format(tx))
+        Logger.debug("crc proposal withdraw transaction:\n{} ".format(tx))
         ret = self.handle_tx_result(tx, port)
         return ret
 
@@ -150,7 +145,7 @@ class TransactionManager(object):
         if tx is None:
             return False
         tx = txbuild.single_sign_transaction(input_private_key, tx)
-        Logger.info("crc proposal tracking transaction:\n{} ".format(tx))
+        Logger.debug("crc proposal tracking transaction:\n{} ".format(tx))
         ret = self.handle_tx_result(tx, port)
         return ret
 
@@ -166,10 +161,8 @@ class TransactionManager(object):
         if tx is None:
             return False
         tx = txbuild.single_sign_transaction(input_private_key, tx)
-        Logger.info("crc proposal transaction:\n{} ".format(tx))
+        Logger.debug("crc proposal transaction:\n{} ".format(tx))
         ret = self.handle_tx_result(tx, port)
-        if ret:
-            self.crc_proposal_list.append(crc_proposal)
         return ret
 
     def register_cr(self, input_private_key: str, amount: int, cr_info: CRInfo, port=rpc.DEFAULT_PORT):
@@ -185,10 +178,8 @@ class TransactionManager(object):
             return False
         tx.payload_version = cr_info.CR_INFO_DID_VERSION
         tx = txbuild.single_sign_transaction(input_private_key, tx)
-        Logger.info("register cr transaction:\n{} ".format(tx))
+        Logger.debug("register cr transaction:\n{} ".format(tx))
         ret = self.handle_tx_result(tx, port)
-        if ret:
-            self.register_cr_list.append(cr_info)
         return ret
 
     def update_cr(self, input_private_key: str, cr_info: CRInfo, port=rpc.DEFAULT_PORT):
@@ -203,7 +194,7 @@ class TransactionManager(object):
 
         tx.payload_version = cr_info.CR_INFO_DID_VERSION
         tx = txbuild.single_sign_transaction(input_private_key, tx)
-        Logger.info("update cr transaction:\n{}".format(tx))
+        Logger.debug("update cr transaction:\n{}".format(tx))
         ret = self.handle_tx_result(tx, port)
 
         return ret
@@ -221,7 +212,7 @@ class TransactionManager(object):
             return False
 
         tx = txbuild.single_sign_transaction(input_private_key, tx)
-        Logger.info("ungister cr transaction:\n{}".format(tx))
+        Logger.debug("ungister cr transaction:\n{}".format(tx))
         ret = self.handle_tx_result(tx, port)
 
         return ret
@@ -238,7 +229,7 @@ class TransactionManager(object):
             return False
 
         tx = txbuild.single_sign_transaction(crc_info.account.private_key(), tx)
-        Logger.info("redeem cr transaction:\n{}".format(tx))
+        Logger.debug("redeem cr transaction:\n{}".format(tx))
         ret = self.handle_tx_result(tx, port)
 
         return ret
@@ -257,10 +248,7 @@ class TransactionManager(object):
         if tx is None:
             return False
 
-        ret = self.handle_tx_result(tx)
-        if ret:
-            self.register_producers_list.append(producer)
-
+        ret = self.handle_tx_result(tx, self.rpc_port)
         return ret
 
     def update_producer(self, producer: Producer, producer_info: ProducerInfo):
@@ -270,7 +258,7 @@ class TransactionManager(object):
         if tx is None:
             return False
 
-        ret = self.handle_tx_result(tx)
+        ret = self.handle_tx_result(tx, self.rpc_port)
 
         return ret
 
@@ -280,10 +268,8 @@ class TransactionManager(object):
         if tx is None:
             return False
 
-        ret = self.handle_tx_result(tx)
+        ret = self.handle_tx_result(tx, self.rpc_port)
 
-        if ret:
-            self.cancel_producers_list.append(producer)
         return ret
 
     def redeem_producer(self, producer: Producer):
@@ -292,7 +278,7 @@ class TransactionManager(object):
         if tx is None:
             return False
 
-        ret = self.handle_tx_result(tx)
+        ret = self.handle_tx_result(tx, self.rpc_port)
 
         return ret
 
@@ -302,18 +288,15 @@ class TransactionManager(object):
         if tx is None:
             return False
 
-        ret = self.handle_tx_result(tx)
+        ret = self.handle_tx_result(tx, self.rpc_port)
 
         return ret
 
     def vote_producer(self, input_private_key: str, amount: int, candidates: list):
-        candidates_list = list()
-        for producer in candidates:
-            candidates_list.append(CandidateVotes(bytes.fromhex(producer.owner_account().public_key()), amount))
-        vote_content = VoteContent(VoteContent.DELEGATE, candidates_list)
+        vote_content = VoteContent(VoteContent.DELEGATE, candidates)
         tx = txbuild.create_vote_transaction(
             input_private_key=input_private_key,
-            candidates_list=candidates_list,
+            candidates_list=candidates,
             amount=amount,
             rpc_port=self.rpc_port,
             vote_content=vote_content
@@ -324,18 +307,15 @@ class TransactionManager(object):
 
         tx = txbuild.single_sign_transaction(input_private_key, tx)
         Logger.info("vote producer transaction:\n{} ".format(tx))
-        ret = self.handle_tx_result(tx)
+        ret = self.handle_tx_result(tx, self.rpc_port)
 
         return ret
 
     def vote_cr(self, input_private_key: str, amount: int, candidates: list):
-        candidates_list = list()
-        for cr_info in candidates:
-            candidates_list.append(CandidateVotes(bytes.fromhex(cr_info.cid), amount))
-        vote_content = VoteContent(VoteContent.CRC, candidates_list)
+        vote_content = VoteContent(VoteContent.CRC, candidates)
         tx = txbuild.create_vote_transaction(
             input_private_key=input_private_key,
-            candidates_list=candidates_list,
+            candidates_list=candidates,
             amount=amount,
             rpc_port=self.rpc_port,
             vote_content=vote_content
@@ -346,14 +326,14 @@ class TransactionManager(object):
 
         tx = txbuild.single_sign_transaction(input_private_key, tx)
         Logger.info("vote cr transaction:\n{} ".format(tx))
-        ret = self.handle_tx_result(tx)
+        ret = self.handle_tx_result(tx, self.rpc_port)
 
         return ret
 
     def vote_proposal(self, input_private_key: str, amount: int, candidates: list):
         candidates_list = list()
-        for crc_proposal_hash in candidates:
-            candidates_list.append(CandidateVotes(crc_proposal_hash, amount))
+        for crc_proposal in candidates:
+            candidates_list.append(CandidateVotes(crc_proposal.hash, amount))
         vote_content = VoteContent(VoteContent.CRC_PROPOSAL, candidates_list)
         tx = txbuild.create_vote_transaction(
             input_private_key=input_private_key,
@@ -368,7 +348,7 @@ class TransactionManager(object):
 
         tx = txbuild.single_sign_transaction(input_private_key, tx)
         Logger.info("vote cr proposal transaction:\n{} ".format(tx))
-        ret = self.handle_tx_result(tx)
+        ret = self.handle_tx_result(tx, self.rpc_port)
 
         return ret
 
@@ -589,7 +569,6 @@ class TransactionManager(object):
         return result
 
     def redeem_producers_candidates(self):
-        print("cancel producers size: ", len(self.cancel_producers_list))
         for producer in self.cancel_producers_list:
             ret = self.redeem_producer(producer)
             if not ret:
@@ -597,56 +576,26 @@ class TransactionManager(object):
             rpc.discrete_mining(1)
         return True
 
-    def vote_producers_candidates(self):
-        for i in range(self.params.ela_params.crc_number + 1,
-                       self.params.ela_params.number - round(self.params.ela_params.later_start_number / 2) + 1):
-            producer = self.register_producers_list[i - self.params.ela_params.crc_number - 1]
-            vote_amount = (self.params.ela_params.number - i + 1) * constant.TO_SELA
-            ret = self.vote_producer(
-                input_private_key=producer.node_account().private_key(),
-                amount=vote_amount,
-                candidates=[producer],
-            )
-            if not ret:
-                return False
-            rpc.discrete_mining(1)
-            Logger.info("{} vote node-{} {} Elas on success!\n".format(self.tag, i, vote_amount))
-        return True
-
-    def vote_cr_candidates(self):
-        for i in range(1, self.params.ela_params.crc_number + 1):
-            crs = self.register_cr_list[i - 1]
+    def vote_crc_proposal_candidates(self):
+        for i in range(len(self.crc_proposal_list)):
+            proposal = self.crc_proposal_list[i]
             vote_amount = (self.params.ela_params.crc_number - i + 1) * constant.TO_SELA
-            ret = self.vote_cr(
+            ret = self.vote_proposal(
                 input_private_key=self.tap_account.private_key(),
                 amount=vote_amount,
-                candidates=[crs],
-            )
+                candidates=[proposal])
             if not ret:
                 return False
             rpc.discrete_mining(1)
-            Logger.info("{} vote CR-{} {} Elas on success!\n".format(self.tag, i, vote_amount))
-        return True
-
-    def vote_crc_proposal_candidates(self, crc_proposal_hash: bytes):
-        vote_amount = 1 * constant.TO_SELA
-        ret = self.vote_proposal(
-            input_private_key=self.tap_account.private_key(),
-            amount=vote_amount,
-            candidates=[crc_proposal_hash])
-        if not ret:
-            return False
-        rpc.discrete_mining(1)
-        Logger.info(
-            "{} vote crc proposal:{} amount:{} on success!\n".format(self.tag, crc_proposal_hash.hex(), vote_amount))
+            Logger.info("{} vote crc proposal:{} on success!\n".format(self.tag, proposal.hash, vote_amount))
         return True
 
     def vote_producers(self, start: int, end: int):
         for i in range(start, end):
-            producer = self.register_producers_list[i - self.params.ela_params.crc_number - 1]
-            vote_amount = (self.params.ela_params.number - i + 1) * constant.TO_SELA
+            producer = self.register_producers_list
+            vote_amount = constant.TO_SELA
             ret = self.vote_producer(
-                input_private_key=producer.node_account().private_key(),
+                input_private_key=self.private_key,
                 amount=vote_amount,
                 candidates=[producer]
             )
@@ -656,7 +605,7 @@ class TransactionManager(object):
             rpc.discrete_mining(1)
         return True
 
-    def handle_tx_result(self, tx: Transaction, port=rpc.DEFAULT_PORT):
+    def handle_tx_result(self, tx: Transaction, port):
         # Logger.debug("{} {}".format(self.tag, tx))
 
         r = tx.serialize()

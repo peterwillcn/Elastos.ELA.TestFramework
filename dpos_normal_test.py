@@ -74,10 +74,10 @@ def test_content():
 
         # crc proposal
         if current_height == h3 + 1:
-            p_hash = controller.ready_for_crc_proposal()
-            controller.ready_for_crc_proposal_review(p_hash)
-            controller.ready_for_crc_proposal_tracking(p_hash)
-            controller.ready_for_crc_proposal_withdraw(p_hash)
+            controller.ready_for_crc_proposal()
+            controller.ready_for_crc_proposal_review()
+            controller.ready_for_crc_proposal_tracking()
+            controller.ready_for_crc_proposal_withdraw()
             break
 
         # if current_height > h2 and controller.has_dpos_reward(current_height):

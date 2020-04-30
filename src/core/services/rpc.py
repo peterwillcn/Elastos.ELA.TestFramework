@@ -5,14 +5,16 @@
 
 from src.core.services import net
 
-DEFAULT_HOST = "http://127.0.0.1"
-DEFAULT_HOST2 = "http://0.0.0.0"
+# DEFAULT_HOST = "23.22.178.172"
+DEFAULT_HOST = "127.0.0.1"
+DEFAULT_HOST2 = "0.0.0.0"
+# DEFAULT_PORT = 22336
 DEFAULT_PORT = 10016
 DEFAULT_NEO_PORT = 10156
 
 
 def post_request(method, params, port: int):
-    url = DEFAULT_HOST + ":" + str(port)
+    url = "http://" + DEFAULT_HOST + ":" + str(port)
     return net.post_request(url, method, params)
 
 
@@ -95,12 +97,12 @@ def set_log_level(level: int, port=DEFAULT_PORT):
     return post_request("setloglevel", params={"level": level}, port=port)
 
 
-def list_producers(start: int, limit: int, port=DEFAULT_PORT):
-    return post_request("listproducers", params={"start": start, "limit": limit, "state": "all"}, port=port)
+def list_producers(start: int, limit: int, state="all", port=DEFAULT_PORT):
+    return post_request("listproducers", params={"start": start, "limit": limit, "state": state}, port=port)
 
 
-def list_cr_candidates(start: int, limit: int, port=DEFAULT_PORT):
-    return post_request("listcrcandidates", params={"start": start, "limit": limit}, port=port)
+def list_cr_candidates(start: int, limit: int, state="all", port=DEFAULT_PORT):
+    return post_request("listcrcandidates", params={"start": start, "limit": limit, "state": state}, port=port)
 
 
 def list_current_crs(port=DEFAULT_PORT):

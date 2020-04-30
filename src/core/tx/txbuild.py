@@ -334,10 +334,9 @@ def create_crc_proposal_review_transaction(input_private_key: str, amount: int, 
     return tx
 
 
-def create_crc_proposal_withdraw_transaction(input_private_key: str, amount: int, payload: CRCProposalWithdraw,
+def create_crc_proposal_withdraw_transaction(input_address: str, amount: int, payload: CRCProposalWithdraw,
                                              rpc_port: int, output_address: str):
     # create outputs
-    account = Account(input_private_key)
     outputs, total_amount = create_normal_outputs(
         output_addresses=[output_address],
         amount=amount,
@@ -346,7 +345,7 @@ def create_crc_proposal_withdraw_transaction(input_private_key: str, amount: int
     )
 
     # create inputs
-    inputs, change_outputs = create_normal_inputs(account.address(), total_amount, rpc_port)
+    inputs, change_outputs = create_normal_inputs(input_address, total_amount, rpc_port)
     if inputs is None or change_outputs is None:
         Logger.error("Create normal inputs failed")
         return None

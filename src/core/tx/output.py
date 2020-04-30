@@ -5,6 +5,7 @@
 
 import struct
 
+from src.core.wallet import keytool
 from src.tools import util
 
 
@@ -45,7 +46,7 @@ class Output(object):
                + "asset_id: " + self.asset_id.hex() + "\n\t" \
                + "value: " + str(self.value) + "\n\t" \
                + "output_lock: " + str(self.output_lock) + "\n\t" \
-               + "program_hash: " + self.program_hash.hex() + "\n\t" \
+               + "address: " + keytool.create_address(self.program_hash) + "\n\t" \
                + "output_type: " + str(self.output_type) + "\n\t" \
                + "output_payload: {}".format(self.output_payload) + "\n" \
                + "}"

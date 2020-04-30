@@ -145,8 +145,8 @@ class Parameter(object):
                 },
                 "CheckRewardHeight": 100,
                 "FoundationAddress": "EgLe9ZAQyLmjxFZLp5em9VfqsYKvdhpGys",
-                "CRCFoundation": "EULhetag9FKS6Jd6aifFaPqjFTpZbSMY7u",  # privateKey:E0076A271A137A2BD4429FA46E79BE3E10F2A730585F8AC2763D570B60469F11
-                "CRCCommitteeAddress": "Ec8gwTF8FwvVrekhwngTwJsKnSpeRdQAHs", # privateKey:8CD05DA8CB94EF2D991EEC747474E6ED194850F37FF14324FE8162F6424F6695
+                "CRCFoundation": "CRASSETSXXXXXXXXXXXXXXXXXXXX2qDX5J",
+                "CRCCommitteeAddress": "CREXPENSESXXXXXXXXXXXXXXXXXX4UdT6b",
                 "RPCServiceLevel": "MiningPermitted",
                 "NodeProfileStrategy": "Balanced",
                 "MaxBlockSize": 8000000

@@ -23,7 +23,7 @@ config = {
     "side": False,
     "times": 1,
     "inputs_num": 1,  # transaction inputs number
-    "block_size": 4000000  # attribute data size
+    "block_size": 1  # attribute data size
 }
 
 
@@ -73,14 +73,18 @@ def test_content():
             Logger.info("H2 PASS!")
             Logger.info("H2 PASS!")
 
-            # pressure test inputs more
-            controller.ready_for_pressure_inputs(inputs_num)
-            controller.ready_for_pressure_big_block(block_size)
-            break
+            controller.ready_for_cr()
 
-        #     # register cr
-        #     controller.ready_for_cr()
-        #     break
+        # pressure test inputs more
+        # controller.ready_for_pressure_inputs(inputs_num)
+        # controller.ready_for_pressure_big_block(block_size)
+
+        # crc proposal
+        if current_height > h3:
+            controller.ready_for_crc_proposal()
+            controller.ready_for_crc_proposal_review()
+            controller.ready_for_crc_proposal_tracking()
+            controller.ready_for_crc_proposal_withdraw()
 
         controller.discrete_mining_blocks(1)
         time.sleep(1)
