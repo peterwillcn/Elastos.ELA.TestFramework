@@ -1,15 +1,9 @@
 #!/usr/bin/env python
-# -*- coding:utf-8 -*-
-# date: 2019/5/7 7:05 PM
-# author: liteng
 
-import os
 import math
 import time
 from decimal import Decimal
-
 from Crypto import Random
-
 from src.core.managers.manager import TxManager
 from src.core.services import rpc
 from src.core.tx.attribute import Attribute
@@ -52,12 +46,18 @@ class TxControl(object):
     def _init_config(self, config: dict):
         self.rpc_port = config["rpc_port"]
         self.host = config["host"]
+        self.outputs_num = config["outputs_num"]
         self.inputs_num = config["inputs_num"]
         self.block_size = config["block_size"]
         self.pressure_private_key = config["pressure_private_key"]
         self.tap_private_key = config["tap_private_key"]
         rpc.DEFAULT_HOST = self.host
         rpc.DEFAULT_PORT = self.rpc_port
+
+    def ready_for_pressure_outputs(self):
+        ret = self.pressure_outputs()
+        self.check_result("pressure outputs number:{}".format(self.outputs_num), ret)
+        Logger.info("{}pressure outputs on success!".format(self.tag))
 
     def ready_for_pressure_inputs(self):
         ret = self.pressure_inputs()
@@ -69,28 +69,31 @@ class TxControl(object):
         self.check_result("pressure big block size:{} ".format(self.block_size), ret)
         Logger.info("{}pressure big block on success!".format(self.tag, self.block_size))
 
-    def  pressure_inputs(self):
+    def pressure_outputs(self):
         output_addresses = list()
-        for i in range(self.inputs_num):
+        for i in range(self.outputs_num):
             output_addresses.append(self.pressure_account.address())
-        ret = self.tx_manager.transfer_asset(self.tap_account.private_key(), output_addresses, 10001)
+        ret = self.tx_manager.transfer_asset(self.tap_account.private_key(), output_addresses, util.TX_FEE)
         if ret:
             self.wait_block()
-            value = rpc.get_balance_by_address(self.pressure_account.address())
-            Logger.debug("{} account {} wallet balance: {}".format(self.tag, self.pressure_account.address(), value))
-
-            ret = self.tx_manager.transfer_asset(self.pressure_account.private_key(), [self.pressure_account.address()],
-                                                 int(Decimal(value) * util.TO_SELA - util.TX_FEE))
-            if ret:
-                self.wait_block()
-                return True
-            else:
-                Logger.error("{} pressure inputs transfer failed".format(self.tag))
-                return False
+            return True
         else:
-            Logger.error("{} pressure outupts transfer failed".format(self.tag))
+            Logger.error("{} pressure outputs transfer failed".format(self.tag))
+            return False
 
-        return ret
+    def pressure_inputs(self):
+
+        value = self.inputs_num * util.TX_FEE
+        Logger.debug("{} account {} wallet balance: {}".format(self.tag, self.pressure_account.address(), value))
+
+        ret = self.tx_manager.transfer_asset(self.pressure_account.private_key(), [self.tap_account.address()],
+                                             value - util.TX_FEE)
+        if ret:
+            self.wait_block()
+            return True
+        else:
+            Logger.error("{} pressure inputs transfer failed".format(self.tag))
+            return False
 
     def pressure_big_block(self):
         attributes = list()
@@ -121,12 +124,14 @@ class TxControl(object):
         # self.get_dpos_votes()
 
     def ready_for_cr(self):
-        candidates = rpc.list_cr_candidates(0, 100, state="active")
-        if candidates is None:
-            Logger.info('{} list candidates is null'.format(self.tag))
+        cr = rpc.list_current_crs()
+        # cr = rpc.list_cr_candidates(0, 100, state="active")
+        if cr is None:
+            Logger.info('{} list cr is null'.format(self.tag))
             return
-        Logger.debug('{} list candidates:{}'.format(self.tag, candidates))
-        self.cr_list = candidates["crcandidatesinfo"]
+        Logger.debug('{} list cr:{}'.format(self.tag, cr))
+        # self.cr_list = cr["crcandidatesinfo"]
+        self.cr_list = cr["crmembersinfo"]
         ret = self.vote_cr_candidates()
         self.check_result("vote cr", ret)
         Logger.info("{} vote cr on success!".format(self.tag))
@@ -633,11 +638,11 @@ class TxControl(object):
         count_height = 0
         height = self.get_current_height()
         while True:
-            if height + 1 >= count_height:
+            if height + 1 < count_height:
+                break
+            else:
                 time.sleep(60)
                 count_height = self.get_current_height()
-            else:
-                break
 
     def has_dpos_reward(self, height: int):
         response = rpc.get_block_by_height(height)

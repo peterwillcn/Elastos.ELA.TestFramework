@@ -31,15 +31,15 @@ def post_request(url, method, params):
     try:
         Logger.debug("{} url: {}".format(tag, url))
         Logger.debug("{} method: {}".format(tag, method))
-        Logger.debug("{} params: {}".format(tag, params))
+        # Logger.debug("{} params: {}".format(tag, params))
         requests.adapters.DEFAULT_RETRIES = 5
         s = requests.Session()
         s.keep_alive = False
         response = s.post(url, json={"method": method, "params": params},
-                             headers={"content-type": "application/json"}, timeout=10)
+                             headers={"content-type": "application/json"}, timeout=50)
         s.close()
         resp = response.json()
-        if resp["error"] == None:
+        if resp["error"] is None:
             return resp["result"]
         else:
             return resp["error"]

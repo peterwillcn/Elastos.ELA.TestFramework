@@ -5,7 +5,7 @@
 
 from src.core.services import net
 
-# DEFAULT_HOST = "23.22.178.172"
+# DEFAULT_HOST = "18.217.238.246"
 DEFAULT_HOST = "127.0.0.1"
 DEFAULT_HOST2 = "0.0.0.0"
 # DEFAULT_PORT = 22336

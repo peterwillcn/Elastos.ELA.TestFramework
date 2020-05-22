@@ -7,9 +7,7 @@ import os
 import math
 import time
 from decimal import Decimal
-
 from Crypto import Random
-
 from src.core.services import rpc
 from src.core.parameters.params import Parameter
 from src.core.managers.env_manager import EnvManager
@@ -24,7 +22,6 @@ from src.core.tx.payload.crc_proposal_review import CRCProposalReview
 from src.core.tx.payload.crc_proposal_tracking import CRCProposalTracking
 from src.core.tx.payload.crc_proposal_withdraw import CRCProposalWithdraw
 from src.core.wallet.account import Account
-
 from src.tools import util, serialize
 from src.tools import constant
 from src.tools.log import Logger
@@ -335,7 +332,7 @@ class Controller(object):
         )
         Logger.info("{} create crc proposal withdraw on success. \n{}".format(self.tag, withdraw))
 
-        amount = self.get_withdraw_amount(self.crc_proposal_hash.hex()) - util.TX_FEE
+        amount = self.get_withdraw_amount(util.bytes_reverse(self.crc_proposal_hash).hex()) - util.TX_FEE
         ret = self.tx_manager.crc_proposal_withdraw(input_address=self.CRC_COMMITTEE_ADDRESS,
                                                     amount=amount,
                                                     crc_proposal_withdraw=withdraw,
@@ -442,7 +439,7 @@ class Controller(object):
             if not result:
                 Logger.error("{} register CR {} failed".format(self.tag, ela_node.name))
                 break
-            Logger.info("{} register node-{} to be a CR on success!\n".format(self.tag, i))
+            Logger.info("{} register CR-{} to be a CR on success!\n".format(self.tag, i))
 
         return result
 

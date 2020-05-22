@@ -83,6 +83,8 @@ class CRCProposalTracking(Payload):
             r = serialize.write_var_bytes(r, self.new_leader_sign)
         else:
             self.new_leader_sign = None
+            r += struct.pack("<B", CRCProposalTracking.DEFAULT)
+        r += struct.pack("<B", self.proposal_tracking_type)
         r += self.secretary_opinion_hash
         self.secretary_general_sign = keytool.ecdsa_sign(bytes.fromhex(self.secretary_general_account.private_key()), r)
         return r

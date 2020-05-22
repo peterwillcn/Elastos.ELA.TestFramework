@@ -1,10 +1,6 @@
 #!/usr/bin/env python
-# -*- coding:utf-8 -*-
-# date: 2019/4/8 9:45 AM
-# author: liteng
 
 import time
-
 from src.tools.log import Logger
 from src.control.control import Controller
 
@@ -79,27 +75,6 @@ def test_content():
             controller.ready_for_crc_proposal_tracking()
             controller.ready_for_crc_proposal_withdraw()
             break
-
-        # if current_height > h2 and controller.has_dpos_reward(current_height):
-        #     tx_fee = controller.get_total_tx_fee(after_h2_transactions)
-        #     real_income = controller.get_dpos_real_income(current_height)
-        #     theory_income = controller.get_dpos_theory_income(current_height - last_income_height, tx_fee, dpos_votes)
-        #     result = controller.check_dpos_income(real_income, theory_income)
-        #     controller.check_result("check dpos income", result)
-        #     after_h2_transactions.clear()
-        #     last_income_height = current_height
-        #     dpos_votes = controller.get_dpos_votes()
-
-        # current is equal 380, start the later nodes include two candidates and two normal nodes
-        # if start_height == 0 and current_height > h2 + crc_number * 3 * 6:
-        #     controller.start_later_nodes()
-        #     start_height = current_height
-        #
-        # if start_height != 0 and current_height > start_height + 36:
-        #     result = controller.check_nodes_height()
-        #     controller.check_result("check all the nodes height", result)
-        #     break
-
         controller.discrete_mining_blocks(1)
         time.sleep(0.5)
 

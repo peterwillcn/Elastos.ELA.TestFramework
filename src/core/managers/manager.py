@@ -51,7 +51,7 @@ class TxManager(object):
             return False
         # single sign this tx
         tx = txbuild.single_sign_transaction(input_private_key, tx)
-        Logger.debug("transaction:\n{} ".format(tx))
+        # Logger.debug("transaction:\n{} ".format(tx))
         # return the result
         ret = self.handle_tx_result(tx, self.rpc_port)
 
