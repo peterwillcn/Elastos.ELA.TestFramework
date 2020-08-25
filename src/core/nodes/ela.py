@@ -81,8 +81,8 @@ class ElaNode(Node):
         _config[constant.MAX_NODE_PER_HOST] = self.params.max_node_per_host
 
         # cr set
-        _config[constant.CONFIG_CR_VOTING_START_HEIGHT] = self.params.cr_voting_start_height
-        _config[constant.CONFIG_CR_COMMITTEE_START_HEIGHT] = self.params.cr_committee_start_height
+        _config[constant.CONFIG_CR_CONFIGURATION][constant.CONFIG_CR_VOTING_START_HEIGHT] = self.params.cr_voting_start_height
+        _config[constant.CONFIG_CR_CONFIGURATION][constant.CONFIG_CR_COMMITTEE_START_HEIGHT] = self.params.cr_committee_start_height
         _config[constant.CONFIG_CR_CONFIGURATION][constant.CONFIG_MEMBER_COUNT] = self.params.crc_number    ## crc_number = member_count
         _config[constant.CONFIG_CR_CONFIGURATION][constant.CONFIG_CR_VOTING_PERIOD] = self.params.cr_voting_period
         _config[constant.CONFIG_CR_CONFIGURATION][constant.CONFIG_CR_DUTY_PERIOD] = self.params.cr_duty_period
@@ -95,6 +95,7 @@ class ElaNode(Node):
         _config[constant.CONFIG_CR_CONFIGURATION][constant.CONFIG_CR_AGREEMENT_COUNT] = self.params.cr_agreement_count
         _config[constant.CONFIG_CR_CONFIGURATION][constant.CONFIG_VOTER_REJECT_PERCENTAGE] = self.params.voter_reject_percentage
         _config[constant.CONFIG_CR_CONFIGURATION][constant.CONFIG_REGISTER_CR_BY_DID_HEIGHT] = self.params.register_cr_by_did_height
+        _config[constant.CONFIG_CR_CONFIGURATION][constant.CR_CLAIM_DPOS_NODE_START_HEIGHT] = self.params.cr_claim_dpos_node_start_height
         _config[constant.CONFIG_CR_CHECK_REWARD_HEIGHT] = self.params.cr_check_reward_height
 
         # rpc accept set

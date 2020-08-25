@@ -67,6 +67,7 @@ class CRInfo(Payload):
 
     def __repr__(self):
         return "CRInfo {" + "\n\t" \
+               + "privateKey: {}".format(self.account.private_key()) + "\n\t" \
                + "code: {}".format(self.code) + "\n\t" \
                + "cid : {}".format(keytool.create_address(bytes.fromhex(self.cid))) + "\n\t" \
                + "did : {}".format(keytool.create_address(bytes.fromhex(self.did))) + "\n\t" \

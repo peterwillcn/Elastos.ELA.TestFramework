@@ -14,7 +14,8 @@ config = {
         "pre_connect_offset": 5,
         "crc_dpos_height": 300,
         "public_dpos_height": 308,
-        "cr_committee_start_height": 350
+        "cr_committee_start_height": 350,
+        "cr_claim_dpos_node_start_height": 400
     },
     "side": False,
     "times": 1
@@ -27,6 +28,7 @@ def test_content():
     h1 = controller.params.ela_params.crc_dpos_height
     h2 = controller.params.ela_params.public_dpos_height
     h3 = controller.params.ela_params.cr_committee_start_height
+    h4 = controller.params.ela_params.cr_claim_dpos_node_start_height
     pre_offset = config["ela"]["pre_connect_offset"]
 
     current_height = controller.get_current_height()
@@ -72,6 +74,8 @@ def test_content():
         if current_height == h3 + 1:
             controller.ready_for_crc_proposal()
             controller.ready_for_crc_proposal_review()
+            controller.ready_for_crc_proposal_change_owner()
+            controller.ready_for_crc_proposal_secretary_general()
             controller.ready_for_crc_proposal_tracking()
             controller.ready_for_crc_proposal_withdraw()
             break

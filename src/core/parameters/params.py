@@ -103,7 +103,7 @@ class Parameter(object):
                     "NormalArbitratorsCount": 8,
                     "CandidatesCount": 24,
                     "EmergencyInactivePenalty": 0,
-                    "MaxInactiveRounds": 0,
+                    "MaxInactiveRounds": 20,
                     "InactivePenalty": 0,
                     "PreConnectOffset": 5,
                     "PublicKey": "0342eeb0d664e2507d732382c66d0eedbd0a0f989179fd33d71679aa607d5d3b57"
@@ -125,8 +125,6 @@ class Parameter(object):
                     "127.0.0.1:10818",
                     "127.0.0.1:10918"
                 ],
-                "CRVotingStartHeight": 300,
-                "CRCommitteeStartHeight": 350,
                 "MaxNodePerHost": 100,
                 "CRConfiguration": {
                     "MemberCount": 4,
@@ -141,12 +139,23 @@ class Parameter(object):
                     "CRAgreementCount": 4,
                     "VoterRejectPercentage": 10,
                     "RegisterCRByDIDHeight": 300,
-                    "SecretaryGeneral": "02A9D37E010950F810485512926BA13713BAF7F7675CC08DC4040E9802A84F410C"  # privateKey:E0076A271A137A2BD4429FA46E79BE3E10F2A730585F8AC2763D570B60469F11
+                    "CRAssetsAddress": "CRASSETSXXXXXXXXXXXXXXXXXXXX2qDX5J",
+                    "CRExpensesAddress": "CREXPENSESXXXXXXXXXXXXXXXXXX4UdT6b",
+                    "CRCAddress": "",
+                    "CRVotingStartHeight": 300,
+                    "CRCommitteeStartHeight": 350,
+                    "SecretaryGeneral": "02A9D37E010950F810485512926BA13713BAF7F7675CC08DC4040E9802A84F410C",  # privateKey:E0076A271A137A2BD4429FA46E79BE3E10F2A730585F8AC2763D570B60469F11
+                    "MaxCRAssetsAddressUTXOCount": 100,
+                    "MinCRAssetsAddressUTXOCount": 50,
+                    "CRAssetsRectifyTransactionHeight": 2000,
+                    "CRCProposalWithdrawPayloadV1Height": 100,
+                    "RectifyTxFee": 10000,
+                    "RealWithdrawSingleFee": 10000,
+                    "CRClaimDPOSNodeStartHeight": 385,
+                    "CRClaimDPOSNodePeriod": 20
                 },
                 "CheckRewardHeight": 100,
                 "FoundationAddress": "EgLe9ZAQyLmjxFZLp5em9VfqsYKvdhpGys",
-                "CRCFoundation": "CRASSETSXXXXXXXXXXXXXXXXXXXX2qDX5J",
-                "CRCCommitteeAddress": "CREXPENSESXXXXXXXXXXXXXXXXXX4UdT6b",
                 "RPCServiceLevel": "MiningPermitted",
                 "NodeProfileStrategy": "Balanced",
                 "MaxBlockSize": 8000000

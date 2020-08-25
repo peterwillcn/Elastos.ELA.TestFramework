@@ -615,10 +615,8 @@ class TxManager(object):
             Logger.error("rpc send raw transaction failed")
             return False
 
-        # response return on success, response is tx hash, but we should reverse it at first
-        reverse_res = util.bytes_reverse(bytes.fromhex(response)).hex()
-        Logger.debug("{} tx hash : {}".format(self.tag, tx.hash()))
-        Logger.debug("{} response: {}".format(self.tag, reverse_res))
-        Logger.debug("{} reverse:  {}".format(self.tag, response))
+        tx_hash = util.bytes_reverse(bytes.fromhex(tx.hash())).hex()
+        Logger.debug("{} tx hash : {}".format(self.tag, tx_hash))
+        Logger.debug("{} response: {}".format(self.tag, response))
 
-        return tx.hash() == reverse_res
+        return tx_hash

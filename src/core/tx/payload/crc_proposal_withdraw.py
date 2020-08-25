@@ -48,7 +48,7 @@ class CRCProposalWithdraw(Payload):
 
     def __repr__(self):
         return "CRCProposalWithdraw {" + "\n\t" \
-               + "proposal_hash: {}".format(self.proposal_hash.hex()) + "\n\t" \
-               + "sponsor_public_key : {}".format(self.sponsor_public_key.hex()) + "\n\t" \
+               + "proposalHash: {}".format(self.proposal_hash.hex()) + "\n\t" \
+               + "sponsorPublicKey : {}".format(self.sponsor_public_key.hex()) + "\n\t" \
                + "sign: {}".format(self.sign.hex()) + "\n\t" \
                + "}"

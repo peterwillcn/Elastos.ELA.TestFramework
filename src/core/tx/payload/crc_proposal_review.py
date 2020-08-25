@@ -56,9 +56,10 @@ class CRCProposalReview(Payload):
 
     def __repr__(self):
         return "CRCProposalReview {" + "\n\t" \
-               + "proposal_hash: {}".format(self.proposal_hash.hex()) + "\n\t" \
-               + "vote_result : {}".format(self.vote_result) + "\n\t" \
-               + "cr_opinion_hash: {}".format(self.opinion_hash.hex()) + "\n\t" \
+               + "privateKey: {}".format(self.account.private_key()) + "\n\t" \
+               + "proposalHash: {}".format(self.proposal_hash.hex()) + "\n\t" \
+               + "voteResult : {}".format(self.vote_result) + "\n\t" \
+               + "crOpinionHash: {}".format(self.opinion_hash.hex()) + "\n\t" \
                + "did : {}".format(keytool.create_address(self.did)) + "\n\t" \
                + "sign: {}".format(self.sign.hex()) + "\n\t" \
                + "}"

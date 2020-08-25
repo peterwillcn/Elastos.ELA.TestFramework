@@ -31,7 +31,7 @@ def post_request(url, method, params):
     try:
         Logger.debug("{} url: {}".format(tag, url))
         Logger.debug("{} method: {}".format(tag, method))
-        # Logger.debug("{} params: {}".format(tag, params))
+        Logger.debug("{} params: {}".format(tag, params))
         requests.adapters.DEFAULT_RETRIES = 5
         s = requests.Session()
         s.keep_alive = False

@@ -68,6 +68,8 @@ class Controller(object):
 
         self.dpos_votes_dict = dict()
         self.crc_proposal_hash = bytes()
+        self.owner_private_key = None
+        self.secretary_private_key = self.SECRETARY_PRIVATE_KEY
 
     def init_for_testing(self):
         self.node_manager.deploy_nodes()
@@ -247,6 +249,19 @@ class Controller(object):
         self.check_result("crc proposal", ret)
         Logger.info("{} crc proposal on success!".format(self.tag))
 
+    def ready_for_crc_proposal_secretary_general(self):
+        ret = self.crc_proposal_secretary_general()
+        self.get_current_height()
+        self.check_result("crc proposal change secretary general", ret)
+        Logger.info("{} crc proposal change secretary general on success!".format(self.tag))
+
+    def ready_for_crc_proposal_change_owner(self):
+        ret = self.crc_proposal_change_owner()
+        self.get_current_height()
+        self.check_result("crc proposal change owner", ret)
+        Logger.info("{} crc proposal change owneron success!".format(self.tag))
+
+
     def ready_for_crc_proposal_review(self):
         ret = self.crc_proposal_review()
         self.get_current_height()
@@ -261,28 +276,26 @@ class Controller(object):
         self.discrete_miner(self.params.ela_params.proposal_public_voting_period)
 
     def ready_for_crc_proposal_tracking(self):
-        ela_node = self.node_manager.ela_nodes[1]
-        leader_private_key = ela_node.cr_account.private_key()
         # common
-        ret = self.crc_proposal_tracking(leader_private_key, None, CRCProposalTracking.COMMON, 0)
+        ret = self.crc_proposal_tracking(None, CRCProposalTracking.COMMON, 0)
         self.get_current_height()
         self.check_result("crc proposal tracking common type", ret)
         Logger.info("{} crc proposal tracking common on success!".format(self.tag))
 
         # progress
-        ret = self.crc_proposal_tracking(leader_private_key, None, CRCProposalTracking.PROGRESS, 1)
+        ret = self.crc_proposal_tracking(None, CRCProposalTracking.PROGRESS, 1)
         self.get_current_height()
         self.check_result("crc proposal tracking progress type", ret)
         Logger.info("{} crc proposal tracking progress on success!".format(self.tag))
 
         # Reject
-        ret = self.crc_proposal_tracking(leader_private_key, None, CRCProposalTracking.REJECTED, 2)
+        ret = self.crc_proposal_tracking(None, CRCProposalTracking.REJECTED, 2)
         self.get_current_height()
         self.check_result("crc proposal tracking reject type", ret)
         Logger.info("{} crc proposal tracking reject on success!".format(self.tag))
 
         # progress
-        ret = self.crc_proposal_tracking(leader_private_key, None, CRCProposalTracking.PROGRESS, 2)
+        ret = self.crc_proposal_tracking(None, CRCProposalTracking.PROGRESS, 2)
         self.get_current_height()
         self.check_result("crc proposal tracking progress type", ret)
         Logger.info("{} crc proposal tracking progress on success!".format(self.tag))
@@ -290,14 +303,15 @@ class Controller(object):
         # proposal leader
         ela_node = self.node_manager.ela_nodes[2]
         new_leader_private_key = ela_node.cr_account.private_key()
-        ret = self.crc_proposal_tracking(leader_private_key, new_leader_private_key,
+        ret = self.crc_proposal_tracking(new_leader_private_key,
                                          CRCProposalTracking.PROPOSAL_LEADER, 0)
         self.get_current_height()
         self.check_result("crc proposal tracking proposal leader type", ret)
         Logger.info("{} crc proposal tracking proposal leader on success!".format(self.tag))
+        self.owner_private_key = new_leader_private_key
 
         # finalized
-        ret = self.crc_proposal_tracking(new_leader_private_key, None, CRCProposalTracking.FINALIZED, 3)
+        ret = self.crc_proposal_tracking(None, CRCProposalTracking.FINALIZED, 3)
         self.get_current_height()
         self.check_result("crc proposal tracking finalized type", ret)
         Logger.info("{} crc proposal tracking finalized on success!".format(self.tag))
@@ -364,13 +378,12 @@ class Controller(object):
             Logger.info("{} node-{} review on success!\n".format(self.tag, i))
         return result
 
-    def crc_proposal_tracking(self, leader_private_key: str, new_leader_private_key, tracking_type: int,
-                              stage: int):
+    def crc_proposal_tracking(self, new_leader_private_key, tracking_type: int, stage: int):
         global result
         result = True
         tracking = CRCProposalTracking(
-            secretary_private_key=self.SECRETARY_PRIVATE_KEY,
-            leader_private_key=leader_private_key,
+            secretary_private_key=self.secretary_private_key,
+            leader_private_key=self.owner_private_key,
             new_leader_private_key=new_leader_private_key,
             proposal_hash=self.crc_proposal_hash,
             document_hash=Random.get_random_bytes(serialize.UINT256SIZE),
@@ -387,9 +400,60 @@ class Controller(object):
         self.discrete_miner(1)
         return result
 
+    def crc_proposal_secretary_general(self):
+        ela_node = self.node_manager.ela_nodes[1]
+        cr_private_key = ela_node.cr_account.private_key()
+        ela_node = self.node_manager.ela_nodes[2]
+        secretary_general_private_key = ela_node.cr_account.private_key()
+
+        result = True
+        crc_proposal = CRCProposal(
+            private_key=cr_private_key,
+            cr_private_key=cr_private_key,
+            secretary_general_private_key=secretary_general_private_key,
+            proposal_type=CRCProposal.SECRETARY_GENERAL,
+            category_data="",
+            draft_hash=Random.get_random_bytes(serialize.UINT256SIZE)
+        )
+        Logger.info("{} create crc proposal change secretary general on success. \n{}".format(self.tag, crc_proposal))
+
+        ret = self.tx_manager.crc_proposal(input_private_key=self.tap_account.private_key(),
+                                           amount=10 * constant.TO_SELA,
+                                           crc_proposal=crc_proposal)
+        if not ret:
+            return False
+        self.discrete_miner(1)
+        return result
+
+    def crc_proposal_change_owner(self):
+        ela_node = self.node_manager.ela_nodes[1]
+        cr_private_key = ela_node.cr_account.private_key()
+        ela_node = self.node_manager.ela_nodes[2]
+        new_owner_private_key = ela_node.cr_account.private_key()
+        result = True
+        crc_proposal = CRCProposal(
+            private_key=cr_private_key,
+            cr_private_key=cr_private_key,
+            new_owner_private_key=new_owner_private_key,
+            proposal_type=CRCProposal.CHANGE_SPONSOR_OWNER,
+            category_data="",
+            draft_hash=Random.get_random_bytes(serialize.UINT256SIZE),
+            target_proposal_hash=self.crc_proposal_hash
+        )
+        Logger.info("{} create crc proposal change owner on success. \n{}".format(self.tag, crc_proposal))
+
+        ret = self.tx_manager.crc_proposal(input_private_key=self.tap_account.private_key(),
+                                           amount=10 * constant.TO_SELA,
+                                           crc_proposal=crc_proposal)
+        if not ret:
+            return False
+        self.discrete_miner(1)
+        return result
+
     def crc_proposal(self):
         ela_node = self.node_manager.ela_nodes[1]
         cr_private_key = ela_node.cr_account.private_key()
+        self.owner_private_key = cr_private_key
         budget_list = list()
         budget_list.append(Budget(budget_type=Budget.IMPREST, stage=0, amount=100000))
         budget_list.append(Budget(budget_type=Budget.NORMAL_PAYMENT, stage=1, amount=200000))

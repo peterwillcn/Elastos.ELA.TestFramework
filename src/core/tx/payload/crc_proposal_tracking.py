@@ -96,14 +96,15 @@ class CRCProposalTracking(Payload):
 
     def __repr__(self):
         return "CRCProposalTracking {" + "\n\t" \
-               + "proposal_tracking_type: {}".format(self.proposal_tracking_type) + "\n\t" \
-               + "proposal_hash: {}".format(self.proposal_hash.hex()) + "\n\t" \
-               + "document_hash : {}".format(self.document_hash) + "\n\t" \
+               + "SecretaryGeneralPrivateKey: {}".format(self.secretary_general_account.private_key()) + "\n\t" \
+               + "proposalTrackingType: {}".format(self.proposal_tracking_type) + "\n\t" \
+               + "proposalHash: {}".format(self.proposal_hash.hex()) + "\n\t" \
+               + "documentHash : {}".format(self.document_hash) + "\n\t" \
                + "stage : {}".format(self.stage) + "\n\t" \
-               + "leader_public_key: {}".format(self.leader_public_key.hex()) + "\n\t" \
-               + "new_leader_public_key: {}".format(self.new_leader_public_key) + "\n\t" \
-               + "leader_sign: {}".format(self.leader_sign.hex()) + "\n\t" \
-               + "new_leader_sign: {}".format(self.new_leader_sign) + "\n\t" \
-               + "secretary_opinion_hash: {}".format(self.secretary_opinion_hash) + "\n\t" \
-               + "secretary_general_sign: {}".format(self.secretary_general_sign.hex()) + "\n\t" \
+               + "leaderPublicKey: {}".format(self.leader_public_key.hex()) + "\n\t" \
+               + "newLeaderPublicKey: {}".format(self.new_leader_public_key) + "\n\t" \
+               + "leaderSign: {}".format(self.leader_sign.hex()) + "\n\t" \
+               + "newLeaderSign: {}".format(self.new_leader_sign) + "\n\t" \
+               + "secretaryOpinionHash: {}".format(self.secretary_opinion_hash) + "\n\t" \
+               + "secretaryGeneralSign: {}".format(self.secretary_general_sign.hex()) + "\n\t" \
                + "}"

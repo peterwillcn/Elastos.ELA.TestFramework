@@ -49,3 +49,4 @@ class ElaParams(object):
         self.cr_agreement_count = config["cr_agreement_count"]
         self.voter_reject_percentage = config["voter_reject_percentage"]
         self.register_cr_by_did_height = config["register_cr_by_did_height"]
+        self.cr_claim_dpos_node_start_height = config["cr_claim_dpos_node_start_height"]
