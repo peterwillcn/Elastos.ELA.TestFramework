@@ -51,8 +51,8 @@ class TxControl(object):
         self.block_size = config["block_size"]
         self.pressure_private_key = config["pressure_private_key"]
         self.tap_private_key = config["tap_private_key"]
+        self.lock_address = config["lock_address"]
         rpc.DEFAULT_HOST = self.host
-        rpc.DEFAULT_PORT = self.rpc_port
 
     def ready_for_pressure_outputs(self):
         ret = self.pressure_outputs()
@@ -64,6 +64,13 @@ class TxControl(object):
         self.check_result("pressure inputs number:{}".format(self.inputs_num), ret)
         Logger.info("{}pressure inputs on success!".format(self.tag))
 
+    def ready_for_pressure_cross_chain(self):
+        Logger.info("waiting for cross chain pressure test ... ")
+        ret = self.pressure_cross_chain()
+        self.check_result(
+            "pressure cross chain number:{}".format(self.outputs_num), ret)
+        Logger.info("{}pressure cross chain on success!".format(self.tag))
+
     def ready_for_pressure_big_block(self):
         ret = self.pressure_big_block()
         self.check_result("pressure big block size:{} ".format(self.block_size), ret)
@@ -73,7 +80,7 @@ class TxControl(object):
         output_addresses = list()
         for i in range(self.outputs_num):
             output_addresses.append(self.pressure_account.address())
-        ret = self.tx_manager.transfer_asset(self.tap_account.private_key(), output_addresses, util.TX_FEE)
+        ret = self.tx_manager.transfer_asset(self.tap_account.private_key(), output_addresses, util.TX_SINGLE_OUTPUT)
         if ret:
             self.wait_block()
             return True
@@ -88,6 +95,27 @@ class TxControl(object):
 
         ret = self.tx_manager.transfer_asset(self.pressure_account.private_key(), [self.tap_account.address()],
                                              value - util.TX_FEE)
+        if ret:
+            self.wait_block()
+            return True
+        else:
+            Logger.error("{} pressure inputs transfer failed".format(self.tag))
+            return False
+
+    def pressure_cross_chain(self):
+
+        value = self.outputs_num * util.TX_SINGLE_OUTPUT
+        Logger.info("{} account {} wallet balance: {}".format(self.tag, self.pressure_account.address(), value))
+
+        ret = self.tx_manager.transfer_multi_cross_chain_asset(
+            self.pressure_account.private_key(),
+            self.lock_address,
+            self.tap_account.address(),
+            self.outputs_num,
+            util.TX_SINGLE_OUTPUT - util.TX_FEE,
+            util.TX_SINGLE_OUTPUT - 2*util.TX_FEE,
+            self.rpc_port
+        )
         if ret:
             self.wait_block()
             return True
@@ -638,10 +666,10 @@ class TxControl(object):
         count_height = 0
         height = self.get_current_height()
         while True:
-            if height + 1 < count_height:
+            if height < count_height:
                 break
             else:
-                time.sleep(60)
+                time.sleep(10)
                 count_height = self.get_current_height()
 
     def has_dpos_reward(self, height: int):

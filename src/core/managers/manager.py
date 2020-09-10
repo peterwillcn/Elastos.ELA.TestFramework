@@ -98,6 +98,30 @@ class TxManager(object):
 
         return ret
 
+    def transfer_multi_cross_chain_asset(self, input_private_key: str, block_address: str,
+                                         cross_address: str, tx_count: int, amount: int,
+                                         recharge: bool, port: int):
+         for i in range(tx_count):
+            Logger.info("current cross chain index: {}".format(i))
+            tx = txbuild.create_cross_chain_transaction(
+                input_private_key=input_private_key,
+                lock_address=block_address,
+                cross_chain_address=cross_address,
+                amount=amount,
+                recharge=recharge,
+                rpc_port=port,
+                utxo_index=i
+            )
+
+            if tx is None:
+               return False
+
+            tx = txbuild.single_sign_transaction(input_private_key, tx)
+            Logger.debug("cross chain asset transaction: \n{}".format(tx))
+            ret = self.handle_tx_result(tx, port)
+
+         return ret
+
     def crc_proposal_review(self, input_private_key: str, amount: int, crc_proposal_review: CRCProposalReview,
                             port=rpc.DEFAULT_PORT):
 

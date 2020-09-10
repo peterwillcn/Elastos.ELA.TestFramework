@@ -136,7 +136,7 @@ def create_transaction(input_private_key: str, output_addresses: list, amount: i
     return tx
 
 def create_cross_chain_transaction(input_private_key: str, lock_address: str, cross_chain_address: str, amount: int,
-                                   recharge: bool, rpc_port: int):
+                                   recharge: bool, rpc_port: int, utxo_index=-1):
     if lock_address is None or lock_address is "":
         Logger.error("Invalid lock address")
         return None
@@ -155,7 +155,8 @@ def create_cross_chain_transaction(input_private_key: str, lock_address: str, cr
     )
 
     # create inputs:
-    inputs, change_outputs = create_normal_inputs(account.address(), total_amount, rpc_port)
+    inputs, change_outputs = create_normal_inputs(
+        account.address(), total_amount, rpc_port, utxo_index)
     if inputs is None or change_outputs is None:
         Logger.error("Create normal inputs failed")
         return None
@@ -793,7 +794,7 @@ def create_vote_transaction(input_private_key: str, candidates_list: list, amoun
     return tx
 
 
-def create_normal_inputs(address: str, total_amount: int, rpc_port: int):
+def create_normal_inputs(address: str, total_amount: int, rpc_port: int, utxo_index=-1):
     global total_amount_global
     global response
     total_amount_global = total_amount
@@ -807,8 +808,12 @@ def create_normal_inputs(address: str, total_amount: int, rpc_port: int):
         Logger.error("get utxos return error: {}".format(response))
         return None, None
     utxos = response
+    if utxo_index >= 0 and len(utxos) >= utxo_index+1:
+        utxo = utxos[utxo_index]
+        utxos = list()
+        utxos.append(utxo)
+    Logger.info("utxos: {}".format(utxos))
 
-    # Logger.debug("utxos: {}".format(utxos))
     inputs = list()
     change_outputs = list()
 
