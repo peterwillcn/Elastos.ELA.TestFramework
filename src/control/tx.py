@@ -52,6 +52,7 @@ class TxControl(object):
         self.pressure_private_key = config["pressure_private_key"]
         self.tap_private_key = config["tap_private_key"]
         self.lock_address = config["lock_address"]
+        self.recharge = config["recharge"]
         rpc.DEFAULT_HOST = self.host
 
     def ready_for_pressure_outputs(self):
@@ -113,7 +114,7 @@ class TxControl(object):
             self.tap_account.address(),
             self.outputs_num,
             util.TX_SINGLE_OUTPUT - util.TX_FEE,
-            util.TX_SINGLE_OUTPUT - 2*util.TX_FEE,
+            self.recharge,
             self.rpc_port
         )
         if ret:

@@ -98,14 +98,14 @@ class TxManager(object):
 
         return ret
 
-    def transfer_multi_cross_chain_asset(self, input_private_key: str, block_address: str,
+    def transfer_multi_cross_chain_asset(self, input_private_key: str, lock_address: str,
                                          cross_address: str, tx_count: int, amount: int,
                                          recharge: bool, port: int):
          for i in range(tx_count):
             Logger.info("current cross chain index: {}".format(i))
             tx = txbuild.create_cross_chain_transaction(
                 input_private_key=input_private_key,
-                lock_address=block_address,
+                lock_address=lock_address,
                 cross_chain_address=cross_address,
                 amount=amount,
                 recharge=recharge,
