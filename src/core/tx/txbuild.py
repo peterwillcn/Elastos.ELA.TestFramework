@@ -798,12 +798,8 @@ def create_normal_inputs(address: str, total_amount: int, rpc_port: int, utxo_in
     global total_amount_global
     global response
     total_amount_global = total_amount
-    total_amount_format = str(Decimal(str(total_amount_global)) / Decimal(util.TO_SELA))
 
-    if rpc_port != rpc.DEFAULT_PORT:
-        response = rpc.list_unspent_utxos(address, port=rpc_port)
-    else:
-        response = rpc.get_utxos_by_amount(address, total_amount_format, rpc_port)
+    response = rpc.list_unspent_utxos(address, port=rpc_port)
     if not response or isinstance(response, dict):
         Logger.error("get utxos return error: {}".format(response))
         return None, None

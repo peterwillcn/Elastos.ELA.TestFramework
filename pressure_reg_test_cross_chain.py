@@ -30,7 +30,7 @@ config = {
     # EM7U5Y8AJcv49pUPQ5jPpt93Nmcwh3ti4Y
     "tap_private_key": "bd758440a858baaff56ec1783388bc44135ed44bb0e4f25ad6cf28be45896d74",
     # EWRwrmBWpYFwnvAQffcP1vrPCS5sGTgWEB
-    "lock_address": "XFNwHEkHvAvMK7b3BuF5dJUJ1ZvbpprQ14"
+    "lock_address": "XKUh4GLhFJiqAMTF6HyWQrV9pK9HcGUdfJ"
 }
 
 
