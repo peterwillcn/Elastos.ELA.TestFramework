@@ -37,14 +37,15 @@ class TxManager(object):
         self.cancel_producers_list = list()
         self.crc_proposal_list = list()
 
-    def transfer_asset(self, input_private_key: str, output_addresses: list, amount: int):
+    def transfer_asset(self, input_private_key: str, output_addresses: list, amount: int, side_chain: bool):
 
         # create transfer asset tx
         tx = txbuild.create_transaction(
             input_private_key=input_private_key,
             output_addresses=output_addresses,
             amount=amount,
-            rpc_port=self.rpc_port
+            rpc_port=self.rpc_port,
+            side_chain=side_chain
         )
 
         if tx is None:

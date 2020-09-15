@@ -81,7 +81,7 @@ class TxControl(object):
         output_addresses = list()
         for i in range(self.outputs_num):
             output_addresses.append(self.pressure_account.address())
-        ret = self.tx_manager.transfer_asset(self.tap_account.private_key(), output_addresses, util.TX_SINGLE_OUTPUT)
+        ret = self.tx_manager.transfer_asset(self.tap_account.private_key(), output_addresses, util.TX_SINGLE_OUTPUT, not self.recharge)
         if ret:
             self.wait_block()
             return True

@@ -86,7 +86,7 @@ def create_abnormal_transaction(input_private_key: str, output_addresses: list, 
     return tx
 
 
-def create_transaction(input_private_key: str, output_addresses: list, amount: int, rpc_port: int,):
+def create_transaction(input_private_key: str, output_addresses: list, amount: int, rpc_port: int, side_chain: bool):
     account = Account(input_private_key)
     # check output
     if output_addresses is None or len(output_addresses) == 0:
@@ -124,7 +124,11 @@ def create_transaction(input_private_key: str, output_addresses: list, amount: i
     attributes.append(attribute)
 
     tx = Transaction()
-    tx.version = Transaction.TX_VERSION_09
+    if not side_chain :
+        tx.version = Transaction.TX_VERSION_09
+    else:
+        tx.version = Transaction.TX_VERSION_DEFAULT
+
     tx.tx_type = Transaction.TRANSFER_ASSET
     tx.payload = Payload(Payload.DEFAULT_VERSION)
     tx.attributes = attributes
