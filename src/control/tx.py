@@ -118,7 +118,6 @@ class TxControl(object):
             self.rpc_port
         )
         if ret:
-            self.wait_block()
             return True
         else:
             Logger.error("{} pressure inputs transfer failed".format(self.tag))
