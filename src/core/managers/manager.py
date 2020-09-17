@@ -16,6 +16,8 @@ from src.core.tx.producer import Producer
 from src.core.tx.transaction import Transaction
 from src.core.services import rpc
 from src.core.nodes.ela import ElaNode
+from src.core.wallet.account import Account
+
 from src.core.managers.node_manager import NodeManager
 from src.core.tx.payload.producer_info import ProducerInfo
 from src.core.tx.payload.cr_info import CRInfo
@@ -102,16 +104,28 @@ class TxManager(object):
     def transfer_multi_cross_chain_asset(self, input_private_key: str, lock_address: str,
                                          cross_address: str, tx_count: int, amount: int,
                                          recharge: bool, port: int):
+         account = Account(input_private_key)
+         response = rpc.list_unspent_utxos(account.address(), port)
+         if not response or isinstance(response, dict):
+            Logger.error("get utxos return error: {}".format(response))
+            return False
+         utxos = response
+         if len(utxos) < tx_count:
+            Logger.error("utxo is not enough")
+            return False
+        
          for i in range(tx_count):
+            current_utxos = list()
+            utxo = utxos[i]
+            current_utxos.append(utxo)
             Logger.info("current cross chain index: {}".format(i))
-            tx = txbuild.create_cross_chain_transaction(
+            tx = txbuild.create_cross_chain_transaction_by_utxo(
                 input_private_key=input_private_key,
                 lock_address=lock_address,
                 cross_chain_address=cross_address,
                 amount=amount,
                 recharge=recharge,
-                rpc_port=port,
-                utxo_index=i
+                utxos=current_utxos
             )
 
             if tx is None:

@@ -203,6 +203,69 @@ def create_cross_chain_transaction(input_private_key: str, lock_address: str, cr
     return tx
 
 
+def create_cross_chain_transaction_by_utxo(input_private_key: str, lock_address: str, cross_chain_address: str, amount: int,
+                                   recharge: bool, utxos: list):
+    if lock_address is None or lock_address is "":
+        Logger.error("Invalid lock address")
+        return None
+
+    if cross_chain_address is None or cross_chain_address is "":
+        Logger.error("Invalid cross chain address")
+        return None
+
+    account = Account(input_private_key)
+    # create outputs:
+    outputs, total_amount = create_normal_outputs(
+        output_addresses=[lock_address],
+        amount=amount,
+        fee=util.TX_FEE,
+        output_lock=0
+    )
+
+    # create inputs:
+    inputs, change_outputs = create_normal_inputs_by_utxo(
+        account.address(), total_amount, utxos)
+    if inputs is None or change_outputs is None:
+        Logger.error("Create normal inputs failed")
+        return None
+    outputs.extend(change_outputs)
+
+    # create program
+    programs = list()
+    redeem_script = bytes.fromhex(account.redeem_script())
+    program = Program(code=redeem_script, params=None)
+    programs.append(program)
+
+    # create attributes
+    attributes = list()
+    attribute = Attribute(
+        usage=Attribute.NONCE,
+        data=bytes("attributes".encode())
+    )
+    attributes.append(attribute)
+
+    cross_chain_asset = TransferCrossChainAsset()
+    cross_chain_asset.cross_chain_addresses = [cross_chain_address]
+    cross_chain_asset.output_indexes = [0]
+    cross_chain_asset.cross_chain_amounts = [amount - 10000]
+
+    tx = Transaction()
+    if recharge:
+        tx.version = Transaction.TX_VERSION_09
+    else:
+        tx.version = Transaction.TX_VERSION_DEFAULT
+
+    # Logger.debug("transaction version {}".format(tx.version))
+    tx.tx_type = Transaction.TRANSFER_CROSS_CHAIN_ASSET
+    tx.payload = cross_chain_asset
+    tx.attributes = attributes
+    tx.inputs = inputs
+    tx.outputs = outputs
+    tx.lock_time = 0
+    tx.programs = programs
+
+    return tx
+
 def create_register_transaction(input_private_key: str, amount: int, payload: ProducerInfo, rpc_port: int):
     # create outputs
     outputs, total_amount = create_normal_outputs(
@@ -798,6 +861,47 @@ def create_vote_transaction(input_private_key: str, candidates_list: list, amoun
     return tx
 
 
+def create_normal_inputs_by_utxo(address: str, total_amount: int, utxos: list):
+    global total_amount_global
+    global response
+    total_amount_global = total_amount
+
+    inputs = list()
+    change_outputs = list()
+    program_hash = keytool.address_to_program_hash(address)
+
+    for utxo in utxos:
+        txid = util.bytes_reverse(bytes.fromhex(utxo["txid"]))
+        index = utxo["vout"]
+        input = Input(txid, index)
+        inputs.append(input)
+
+        amount = int(Decimal(utxo["amount"]) * util.TO_SELA)
+
+        if amount < total_amount_global:
+            # total_amount -= amount
+            total_amount_global -= amount
+        elif amount == total_amount_global:
+            total_amount_global = 0
+            break
+        elif amount > total_amount_global:
+            change = Output(
+                value=amount - total_amount_global,
+                output_lock=0,
+                program_hash=program_hash,
+                output_type=Output.OT_NONE,
+                output_payload=OutputPayload()
+            )
+            change_outputs.append(change)
+            total_amount_global = 0
+            break
+
+    if total_amount_global > 0:
+        Logger.error("Available token is not enough!")
+        return None, None
+
+    return inputs, change_outputs
+
 def create_normal_inputs(address: str, total_amount: int, rpc_port: int, utxo_index=-1):
     global total_amount_global
     global response
@@ -812,7 +916,6 @@ def create_normal_inputs(address: str, total_amount: int, rpc_port: int, utxo_in
         utxo = utxos[utxo_index]
         utxos = list()
         utxos.append(utxo)
-    Logger.info("utxos: {}".format(utxos))
 
     inputs = list()
     change_outputs = list()
