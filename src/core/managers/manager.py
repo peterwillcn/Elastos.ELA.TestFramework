@@ -105,7 +105,7 @@ class TxManager(object):
                                          cross_address: str, tx_count: int, amount: int,
                                          recharge: bool, port: int):
          account = Account(input_private_key)
-         response = rpc.list_unspent_utxos(account.address(), port)
+         response = rpc.list_unspent_utxos(account.address(), port=port)
          if not response or isinstance(response, dict):
             Logger.error("get utxos return error: {}".format(response))
             return False
