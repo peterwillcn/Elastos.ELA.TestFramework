@@ -53,6 +53,7 @@ class TxControl(object):
         self.tap_private_key = config["tap_private_key"]
         self.lock_address = config["lock_address"]
         self.recharge = config["recharge"]
+        self.eth_tap_address = config["eth_tap_address"]
         rpc.DEFAULT_HOST = self.host
 
     def ready_for_pressure_outputs(self):
@@ -108,10 +109,12 @@ class TxControl(object):
         value = self.outputs_num * util.TX_SINGLE_OUTPUT
         Logger.info("{} account {} wallet balance: {}".format(self.tag, self.pressure_account.address(), value))
 
+        #self.tap_account.address(),
+	#"0x53781e106a2e3378083bdcede1874e5c2a7225f8",
         ret = self.tx_manager.transfer_multi_cross_chain_asset(
             self.pressure_account.private_key(),
             self.lock_address,
-            self.tap_account.address(),
+            self.eth_tap_address,
             self.outputs_num,
             util.TX_SINGLE_OUTPUT - util.TX_FEE,
             self.recharge,

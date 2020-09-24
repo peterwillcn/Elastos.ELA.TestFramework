@@ -1,4 +1,7 @@
 import time
+import os
+import os.path
+import json
 
 from src.control.tx import TxControl
 from src.tools.log import Logger
@@ -18,27 +21,48 @@ from src.tools.log import Logger
 #     "lock_address": "0000000000000000000000000000000000"
 # }
 
+keystoredir = "/root/node/eth_nodes/oracle/keystore"
 # recharge to side chain
 config = {
     "recharge": 1,
-    "rpc_port": 10116,
+    "rpc_port": 10016,
     "host": "127.0.0.1",
-    "outputs_num": 10,
-    "inputs_num": 10,
+    "outputs_num": 100,
+    "inputs_num": 100,
     "block_size": 1,
     "pressure_private_key": "fcbcd369529e4229468ac4f78627467bbe2b6f1c6625b1d9f0f55bf11e638090",
     # EM7U5Y8AJcv49pUPQ5jPpt93Nmcwh3ti4Y
     "tap_private_key": "bd758440a858baaff56ec1783388bc44135ed44bb0e4f25ad6cf28be45896d74",
     # EWRwrmBWpYFwnvAQffcP1vrPCS5sGTgWEB
-    "lock_address": "XKUh4GLhFJiqAMTF6HyWQrV9pK9HcGUdfJ"
+    "eth_tap_address": "0x53781e106a2e3378083bdcede1874e5c2a7225f8",
+    "lock_address": "XaKGQrBSAUPF9pAZMz7Ek1S1SdRaw1NfKJ" # eth
+    #"lock_address":"XKUh4GLhFJiqAMTF6HyWQrV9pK9HcGUdfJ" # did
 }
 
 
 def test_content():
-    # pressure test inputs more
-    tx = TxControl(config)
 
-    while True:
+    eth_address = []
+    for parent,dirnames,filenames in os.walk(keystoredir):
+        for filename in filenames:
+            file_path = os.path.join(parent, filename)
+            #print('filename with full path: %s' % file_path)
+            f = open(file_path)
+            lines = f.readlines()
+            eth_address = eth_address +lines
+            f.close()
+
+    #print(eth_address)
+    for address in eth_address:
+        addr = "0x" + json.loads(address)['address']
+        #print(addr)
+        config["eth_tap_address"] = addr
+        print(config)
+
+        # pressure test inputs more
+        tx = TxControl(config)
+
+#    while True:
         tx.get_current_height()
         tx.ready_for_pressure_outputs()
         tx.ready_for_pressure_cross_chain()
