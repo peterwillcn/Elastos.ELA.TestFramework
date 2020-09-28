@@ -25,7 +25,7 @@ keystoredir = "/root/node/eth_nodes/oracle/keystore"
 # recharge to side chain
 config = {
     "recharge": 1,
-    "rpc_port": 10116,
+    "rpc_port": 10016,
     "host": "127.0.0.1",
     "outputs_num": 1,
     "inputs_num": 1,
@@ -41,40 +41,10 @@ config = {
 
 
 def test_content():
-
-    eth_address = []
-    for parent,dirnames,filenames in os.walk(keystoredir):
-        for filename in filenames:
-            file_path = os.path.join(parent, filename)
-            #print('filename with full path: %s' % file_path)
-            f = open(file_path)
-            lines = f.readlines()
-            eth_address = eth_address +lines
-            f.close()
-
-    #print(eth_address)
-    for address in eth_address:
-        addr = "0x" + json.loads(address)['address']
-        #print(addr)
-        config["eth_tap_address"] = addr
-        print(config)
-
-        # pressure test inputs more
-        tx = TxControl(config)
-
-#    while True:
-        tx.get_current_height()
-        tx.ready_for_pressure_outputs()
-        tx.ready_for_pressure_cross_chain()
-
-        # producer vote
-        # tx.ready_for_cross_chain()
-
-        # cr vote
-        # tx.ready_for_cr()
-
-        # crc proposal
-
+    tx = TxControl(config)
+    tx.get_current_height()
+    tx.ready_for_pressure_outputs()
+    tx.ready_for_pressure_cross_chain()
 
 if __name__ == '__main__':
     Logger.warn("[main] begin testing")
