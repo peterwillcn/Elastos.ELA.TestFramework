@@ -41,28 +41,10 @@ config = {
 
 
 def test_content():
-    eth_address = []
-    for parent, dirnames, filenames in os.walk(keystoredir):
-        for filename in filenames:
-            file_path = os.path.join(parent, filename)
-            #print('filename with full path: %s' % file_path)
-            f = open(file_path)
-            lines = f.readline()
-            #print(lines)
-            addr = "0x" + json.loads(lines)['address']
-            #print(addr)
-            eth_address.append(addr)
-            f.close()
-    print(len(eth_address))
-    for address in eth_address:
-        print(address)
-        config["eth_tap_address"] = address
-        #print(config)
-
-        tx = TxControl(config)
-        tx.get_current_height()
-        tx.ready_for_pressure_outputs()
-        tx.ready_for_pressure_cross_chain()
+    tx = TxControl(config)
+    tx.get_current_height()
+    tx.ready_for_pressure_outputs()
+    tx.ready_for_pressure_cross_chain()
 
 if __name__ == '__main__':
     Logger.warn("[main] begin testing")

@@ -33,7 +33,9 @@ port_type_dict = {
 TO_SELA = 100000000
 TX_FEE = 10000
 # 6000 ela
-TX_SINGLE_OUTPUT = 600000000000
+#TX_SINGLE_OUTPUT = 600000000000
+# 0.005 ela
+TX_SINGLE_OUTPUT = 500000
 
 
 def reset_port(index, node_type: str, port_type: str):
